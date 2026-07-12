@@ -51,7 +51,7 @@ export default function ExperiencesTab({ experiences, saving, onAdd, onUpdate, o
             </div>
             
             <button onClick={() => e.id && onDelete(e.id)} className={btnDanger} title="Delete Experience">
-              <Trash2 className="w-4.5 h-4.5" />
+              <Trash2 className="w-5 h-5" />
             </button>
           </div>
 

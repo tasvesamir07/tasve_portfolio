@@ -76,7 +76,7 @@ CREATE POLICY "Allow public read" ON profile FOR SELECT USING (true);
 CREATE POLICY "Allow public read" ON projects FOR SELECT USING (true);
 CREATE POLICY "Allow public read" ON skills FOR SELECT USING (true);
 CREATE POLICY "Allow public read" ON experiences FOR SELECT USING (true);
-CREATE POLICY "Allow public read" ON contacts FOR SELECT USING (true);
+-- NOTE: Dropped public read on contacts — only accessible via admin API
 
 -- Clear existing records and reset IDENTITY sequences
 TRUNCATE TABLE profile, projects, skills, experiences, contacts RESTART IDENTITY CASCADE;

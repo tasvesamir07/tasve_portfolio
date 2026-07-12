@@ -32,7 +32,8 @@ export async function POST(req: Request) {
 
     const { data: urlData } = supabaseAdmin.storage.from('Media').getPublicUrl(fileName)
     return NextResponse.json({ url: urlData.publicUrl })
-  } catch {
+  } catch (err) {
+    console.error('Upload failed:', err)
     return NextResponse.json({ error: 'Upload failed' }, { status: 500 })
   }
 }

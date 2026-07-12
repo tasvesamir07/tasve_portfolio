@@ -36,7 +36,7 @@ const fieldLabels: Record<string, string> = {
 export default function ProfileTab({ profile, saving, onChange, onSave }: Props) {
   const set = (field: string, value: string) => onChange({ ...profile, [field]: value })
 
-  const fields = ['name', 'title', 'intro', 'description', 'email', 'location', 'github', 'linkedin', 'twitter', 'codepen']
+  const fields: (keyof ProfileData)[] = ['name', 'title', 'intro', 'description', 'email', 'location', 'github', 'linkedin', 'twitter', 'codepen']
 
   return (
     <div className="flex flex-col gap-5">
@@ -47,10 +47,10 @@ export default function ProfileTab({ profile, saving, onChange, onSave }: Props)
               {fieldLabels[f] || f}
             </label>
             {f === 'description' ? (
-              <textarea value={(profile as any)[f] || ''} onChange={e => set(f, e.target.value)}
+              <textarea value={profile[f as keyof ProfileData] || ''} onChange={e => set(f, e.target.value)}
                 className={textareaClass} rows={4} placeholder="Describe yourself in one short sentence..." />
             ) : (
-              <input value={(profile as any)[f] || ''} onChange={e => set(f, e.target.value)}
+              <input value={profile[f as keyof ProfileData] || ''} onChange={e => set(f, e.target.value)}
                 className={inputClass} placeholder={`Enter ${fieldLabels[f] || f}`} />
             )}
           </div>

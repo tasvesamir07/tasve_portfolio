@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { LoginSchema } from '@/lib/validation'
 import { checkRateLimit } from '@/lib/rate-limit'
+import { createSessionToken, validateSessionToken } from '@/lib/session'
 
 export async function POST(req: Request) {
   const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
@@ -20,16 +21,21 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const token = Buffer.from(`${password}:${Date.now()}`).toString('base64')
-  const cookieStore = await cookies()
-  cookieStore.set('admin_token', token, {
-    httpOnly: true,
-    secure: false,
-    sameSite: 'lax',
-    maxAge: 86400,
-    path: '/',
-  })
-  return NextResponse.json({ success: true })
+  try {
+    const token = createSessionToken(adminPassword)
+    const cookieStore = await cookies()
+    cookieStore.set('admin_token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 86400,
+      path: '/',
+    })
+    return NextResponse.json({ success: true })
+  } catch (err) {
+    console.error('Auth POST error:', err)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  }
 }
 
 export async function GET() {
@@ -42,10 +48,22 @@ export async function GET() {
   }
 
   try {
-    const decoded = Buffer.from(token, 'base64').toString('ascii')
-    const storedPassword = decoded.split(':')[0]
-    return NextResponse.json({ authenticated: storedPassword === adminPassword })
-  } catch {
+    const authenticated = validateSessionToken(token, adminPassword)
+    return NextResponse.json({ authenticated })
+  } catch (err) {
+    console.error('Auth GET error:', err)
     return NextResponse.json({ authenticated: false })
   }
+}
+
+export async function DELETE() {
+  const cookieStore = await cookies()
+  cookieStore.set('admin_token', '', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    maxAge: 0,
+    path: '/',
+  })
+  return NextResponse.json({ success: true })
 }

@@ -74,7 +74,7 @@ export default function SkillsTab({ skills, saving, onAdd, onUpdate, onDelete, o
           {/* Delete Action */}
           <div className="self-end md:self-center shrink-0 pt-2 md:pt-0">
             <button onClick={() => s.id && onDelete(s.id)} className={btnDanger} title="Delete Skill">
-              <Trash2 className="w-4.5 h-4.5" />
+              <Trash2 className="w-5 h-5" />
             </button>
           </div>
 

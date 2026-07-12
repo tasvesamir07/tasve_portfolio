@@ -45,13 +45,11 @@ export default function Card3DTilt({ children, className = '' }: Props) {
       onMouseLeave={handleMouseLeave}
       className={`relative transition-transform duration-100 ease-out style-3d ${className}`}
       style={{
-        transformStyle: 'preserve-3d',
+        transformStyle: 'preserve-3d' as const,
         perspective: '1000px',
-        // Pass mouse coords as CSS variables for card radial lighting
-        // @ts-ignore
         '--mouse-x': coords.x,
-        '--mouse-y': coords.y
-      }}
+        '--mouse-y': coords.y,
+      } as React.CSSProperties & { '--mouse-x': string; '--mouse-y': string }}
     >
       {children}
     </div>

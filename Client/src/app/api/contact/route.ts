@@ -18,7 +18,8 @@ export async function POST(req: Request) {
     const { error } = await supabaseAdmin.from('contacts').insert(parsed.data)
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
     return NextResponse.json({ success: true })
-  } catch {
+  } catch (error) {
+    console.error('Contact form error:', error)
     return NextResponse.json({ error: 'Failed to send message' }, { status: 500 })
   }
 }

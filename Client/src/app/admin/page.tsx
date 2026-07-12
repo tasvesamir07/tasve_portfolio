@@ -64,15 +64,15 @@ export default function AdminPage() {
 
   useEffect(() => {
     if (!authed) return
-    fetch('/api/admin/profile').then(r => r.json()).then(setProfile)
-    fetch('/api/admin/projects').then(r => r.json()).then(setProjects)
-    fetch('/api/admin/skills').then(r => r.json()).then(setSkills)
-    fetch('/api/admin/experiences').then(r => r.json()).then(setExperiences)
+    fetch('/api/admin/profile').then(r => r.json()).then(setProfile).catch(() => { showToast('Failed to load data'); setProfile(null) })
+    fetch('/api/admin/projects').then(r => r.json()).then(setProjects).catch(() => { showToast('Failed to load data'); setProjects([]) })
+    fetch('/api/admin/skills').then(r => r.json()).then(setSkills).catch(() => { showToast('Failed to load data'); setSkills([]) })
+    fetch('/api/admin/experiences').then(r => r.json()).then(setExperiences).catch(() => { showToast('Failed to load data'); setExperiences([]) })
   }, [authed])
 
-  const handleLogout = () => {
-    document.cookie = 'admin_token=; path=/; max-age=0'
-    router.push('/admin/login')
+  const handleLogout = async () => {
+    await fetch('/api/admin/auth', { method: 'DELETE' })
+    window.location.href = '/admin/login'
   }
 
   const saveProfile = async () => {
@@ -95,11 +95,17 @@ export default function AdminPage() {
   const saveProjects = async () => {
     setSaving(true)
     await Promise.all(
-      projects.map((p, i) => {
-        if (!p.id) return Promise.resolve()
+      projects.map(async (p, i) => {
+        const payload = { ...p, sort_order: i }
+        if (!p.id) {
+          const res = await fetch('/api/admin/projects', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
+          const saved = await res.json()
+          setProjects(prev => { const next = [...prev]; next[i] = { ...next[i], id: saved.id }; return next })
+          return
+        }
         return fetch(`/api/admin/projects/${p.id}`, {
           method: 'PUT', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...p, sort_order: i }),
+          body: JSON.stringify(payload),
         })
       })
     )
@@ -110,15 +116,21 @@ export default function AdminPage() {
   const addProject = async () => {
     const newP = { title: '', category: '', tag: '', desc: '', tags: '', github: '', live: '', image: '', sort_order: projects.length }
     const res = await fetch('/api/admin/projects', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newP) })
+    if (!res.ok) { showToast('Failed to add'); return }
     const saved = await res.json()
     setProjects([...projects, saved])
     showToast('Project added')
   }
 
   const deleteProject = async (id: number) => {
-    await fetch(`/api/admin/projects/${id}`, { method: 'DELETE' })
-    setProjects(projects.filter(p => p.id !== id))
-    showToast('Project deleted')
+    try {
+      const res = await fetch(`/api/admin/projects/${id}`, { method: 'DELETE' })
+      if (!res.ok) throw new Error('Failed to delete')
+      setProjects(projects.filter(p => p.id !== id))
+      showToast('Project deleted')
+    } catch {
+      showToast('Failed to delete project')
+    }
   }
 
   const moveProject = (idx: number, dir: 'up' | 'down') => {
@@ -130,11 +142,17 @@ export default function AdminPage() {
   const saveSkills = async () => {
     setSaving(true)
     await Promise.all(
-      skills.map((s, i) => {
-        if (!s.id) return Promise.resolve()
+      skills.map(async (s, i) => {
+        const payload = { ...s, sort_order: i }
+        if (!s.id) {
+          const res = await fetch('/api/admin/skills', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
+          const saved = await res.json()
+          setSkills(prev => { const next = [...prev]; next[i] = { ...next[i], id: saved.id }; return next })
+          return
+        }
         return fetch(`/api/admin/skills/${s.id}`, {
           method: 'PUT', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...s, sort_order: i }),
+          body: JSON.stringify(payload),
         })
       })
     )
@@ -145,15 +163,21 @@ export default function AdminPage() {
   const addSkill = async () => {
     const newS = { category: '', name: '', value: 0, sort_order: skills.length }
     const res = await fetch('/api/admin/skills', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newS) })
+    if (!res.ok) { showToast('Failed to add'); return }
     const saved = await res.json()
     setSkills([...skills, saved])
     showToast('Skill added')
   }
 
   const deleteSkill = async (id: number) => {
-    await fetch(`/api/admin/skills/${id}`, { method: 'DELETE' })
-    setSkills(skills.filter(s => s.id !== id))
-    showToast('Skill deleted')
+    try {
+      const res = await fetch(`/api/admin/skills/${id}`, { method: 'DELETE' })
+      if (!res.ok) throw new Error('Failed to delete')
+      setSkills(skills.filter(s => s.id !== id))
+      showToast('Skill deleted')
+    } catch {
+      showToast('Failed to delete skill')
+    }
   }
 
   const moveSkill = (idx: number, dir: 'up' | 'down') => {
@@ -165,11 +189,17 @@ export default function AdminPage() {
   const saveExperiences = async () => {
     setSaving(true)
     await Promise.all(
-      experiences.map((e, i) => {
-        if (!e.id) return Promise.resolve()
+      experiences.map(async (e, i) => {
+        const payload = { ...e, sort_order: i }
+        if (!e.id) {
+          const res = await fetch('/api/admin/experiences', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
+          const saved = await res.json()
+          setExperiences(prev => { const next = [...prev]; next[i] = { ...next[i], id: saved.id }; return next })
+          return
+        }
         return fetch(`/api/admin/experiences/${e.id}`, {
           method: 'PUT', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...e, sort_order: i }),
+          body: JSON.stringify(payload),
         })
       })
     )
@@ -180,15 +210,21 @@ export default function AdminPage() {
   const addExperience = async () => {
     const newE = { date: '', title: '', company: '', desc: '', sort_order: experiences.length }
     const res = await fetch('/api/admin/experiences', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newE) })
+    if (!res.ok) { showToast('Failed to add'); return }
     const saved = await res.json()
     setExperiences([...experiences, saved])
     showToast('Experience added')
   }
 
   const deleteExperience = async (id: number) => {
-    await fetch(`/api/admin/experiences/${id}`, { method: 'DELETE' })
-    setExperiences(experiences.filter(e => e.id !== id))
-    showToast('Experience deleted')
+    try {
+      const res = await fetch(`/api/admin/experiences/${id}`, { method: 'DELETE' })
+      if (!res.ok) throw new Error('Failed to delete')
+      setExperiences(experiences.filter(e => e.id !== id))
+      showToast('Experience deleted')
+    } catch {
+      showToast('Failed to delete experience')
+    }
   }
 
   const moveExperience = (idx: number, dir: 'up' | 'down') => {
@@ -213,10 +249,15 @@ export default function AdminPage() {
       )}
 
       <header className="sticky top-0 z-40 bg-[#0f121d]/80 backdrop-blur-xl border-b border-white/5 px-6 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <span className="text-cyan-400 font-bold text-lg">&lt;</span>
-          <h1 className="text-lg font-bold text-white">Admin</h1>
-          <span className="text-cyan-400 font-bold text-lg">/&gt;</span>
+        <div className="flex items-center gap-6">
+          <div className="flex items-center gap-3">
+            <span className="text-cyan-400 font-bold text-lg">&lt;</span>
+            <h1 className="text-lg font-bold text-white">Admin</h1>
+            <span className="text-cyan-400 font-bold text-lg">/&gt;</span>
+          </div>
+          <a href="/" className="text-xs text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-lg border border-white/5 transition-all">
+            ← View Portfolio
+          </a>
         </div>
         <button onClick={handleLogout} className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors">
           <LogOut className="w-4 h-4" /> Logout

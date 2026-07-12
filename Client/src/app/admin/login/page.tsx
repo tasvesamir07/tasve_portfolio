@@ -60,6 +60,11 @@ export default function LoginPage() {
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
+        <div className="mt-6 text-center border-t border-white/5 pt-4">
+          <a href="/" className="text-xs text-gray-500 hover:text-cyan-400 font-semibold transition-colors flex items-center justify-center gap-1.5">
+            ← Back to Portfolio
+          </a>
+        </div>
       </div>
     </div>
   )

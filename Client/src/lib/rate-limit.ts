@@ -20,3 +20,12 @@ export function checkRateLimit(
 
   return { allowed: true, remaining: maxAttempts - entry.count }
 }
+
+if (typeof setInterval !== 'undefined') {
+  setInterval(() => {
+    const now = Date.now()
+    for (const [key, entry] of rateMap) {
+      if (now > entry.resetAt) rateMap.delete(key)
+    }
+  }, 300_000)
+}

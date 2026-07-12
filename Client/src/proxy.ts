@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { validateSessionToken } from '@/lib/session'
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -14,13 +15,12 @@ export function proxy(request: NextRequest) {
   }
 
   try {
-    const decoded = Buffer.from(token, 'base64').toString('ascii')
-    const storedPassword = decoded.split(':')[0]
     const adminPassword = process.env.ADMIN_PASSWORD
-    if (!adminPassword || storedPassword !== adminPassword) {
+    if (!adminPassword || !validateSessionToken(token, adminPassword)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-  } catch {
+  } catch (err) {
+    console.error('Proxy auth error:', err)
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

@@ -28,7 +28,9 @@ export async function generateMetadata(): Promise<Metadata> {
         authors: [{ name: data.name }],
       }
     }
-  } catch {}
+  } catch (err) {
+    console.error('Metadata fetch failed:', err)
+  }
   return {
     title: "Samir Anik | Creative Software Engineer & Full-Stack Developer",
     description: "Portfolio of Samir Anik - showcasing dynamic web projects, custom high-end animations, and modern API integrations.",

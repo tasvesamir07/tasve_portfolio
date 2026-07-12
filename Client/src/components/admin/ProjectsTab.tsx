@@ -53,7 +53,7 @@ export default function ProjectsTab({ projects, saving, onAdd, onUpdate, onDelet
             </div>
             
             <button onClick={() => p.id && onDelete(p.id)} className={btnDanger} title="Delete Project">
-              <Trash2 className="w-4.5 h-4.5" />
+              <Trash2 className="w-5 h-5" />
             </button>
           </div>
 
