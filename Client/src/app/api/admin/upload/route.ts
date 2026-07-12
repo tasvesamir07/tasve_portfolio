@@ -14,13 +14,38 @@ const MAX_SIZE = 5 * 1024 * 1024
 export async function POST(req: Request) {
   try {
     const supabaseAdmin = getSupabaseAdmin()
+    
+    // Parse query params to look for an oldUrl to delete
+    const { searchParams } = new URL(req.url)
+    const oldUrl = searchParams.get('oldUrl')
+    
+    if (oldUrl) {
+      try {
+        if (oldUrl.includes('supabase.co/storage/v1/object/public/Media/')) {
+          const oldFileName = oldUrl.split('/').pop()
+          if (oldFileName) {
+            const { error: deleteError } = await supabaseAdmin.storage
+              .from('Media')
+              .remove([oldFileName])
+            if (deleteError) {
+              console.error('Failed to delete old file:', deleteError.message)
+            } else {
+              console.log('Successfully deleted old file:', oldFileName)
+            }
+          }
+        }
+      } catch (err) {
+        console.error('Error deleting old file:', err)
+      }
+    }
+
     const formData = await req.formData()
     const file = formData.get('file') as File | null
     if (!file) return NextResponse.json({ error: 'No file provided' }, { status: 400 })
 
     if (!ALLOWED_TYPES.includes(file.type)) {
       return NextResponse.json(
-        { error: 'Invalid file type. Allowed: JPEG, PNG, GIF, WebP, SVG' },
+        { error: 'Invalid file type. Allowed: JPEG, PNG, GIF, WebP, SVG, PDF' },
         { status: 400 },
       )
     }

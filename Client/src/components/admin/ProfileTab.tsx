@@ -55,7 +55,13 @@ export default function ProfileTab({ profile, saving, onChange, onSave }: Props)
       const compressedFile = await compressAndConvertToWebp(file)
       const fd = new FormData()
       fd.append('file', compressedFile)
-      const res = await fetch('/api/admin/upload', { method: 'POST', body: fd })
+      
+      let uploadUrl = '/api/admin/upload'
+      if (profile.avatar) {
+        uploadUrl += `?oldUrl=${encodeURIComponent(profile.avatar)}`
+      }
+      
+      const res = await fetch(uploadUrl, { method: 'POST', body: fd })
       if (res.ok) {
         const { url } = await res.json()
         onChange({ ...profile, avatar: url })
@@ -191,7 +197,13 @@ export default function ProfileTab({ profile, saving, onChange, onSave }: Props)
                 if (!file) return
                 const fd = new FormData()
                 fd.append('file', file)
-                const res = await fetch('/api/admin/upload', { method: 'POST', body: fd })
+                
+                let uploadUrl = '/api/admin/upload'
+                if (profile.resume_url) {
+                  uploadUrl += `?oldUrl=${encodeURIComponent(profile.resume_url)}`
+                }
+                
+                const res = await fetch(uploadUrl, { method: 'POST', body: fd })
                 const { url } = await res.json()
                 onChange({ ...profile, resume_url: url })
               }}

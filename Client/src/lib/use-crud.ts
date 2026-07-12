@@ -16,11 +16,17 @@ function moveItem<T>(arr: T[], from: number, to: number): T[] {
   return next
 }
 
-export async function uploadImage(file: File): Promise<string> {
+export async function uploadImage(file: File, oldUrl?: string): Promise<string> {
   const compressed = await compressAndConvertToWebp(file)
   const fd = new FormData()
   fd.append('file', compressed)
-  const res = await fetch('/api/admin/upload', { method: 'POST', body: fd })
+  
+  let targetUrl = '/api/admin/upload'
+  if (oldUrl) {
+    targetUrl += `?oldUrl=${encodeURIComponent(oldUrl)}`
+  }
+  
+  const res = await fetch(targetUrl, { method: 'POST', body: fd })
   if (!res.ok) throw new Error('Upload failed')
   const { url } = await res.json()
   return url
@@ -123,7 +129,8 @@ export function useCrud<T extends CrudItem>(
 
   const handleImageUpload = async (idx: number, file: File) => {
     try {
-      const url = await uploadImage(file)
+      const oldUrl = (items[idx] as any)?.image as string | undefined
+      const url = await uploadImage(file, oldUrl)
       setItems((prev) => {
         const updated = [...prev]
         updated[idx] = { ...updated[idx], image: url }
