@@ -108,7 +108,7 @@ export default function AdminPage() {
   }
 
   const addProject = async () => {
-    const newP = { title: 'New Project', category: 'frontend', tag: '', desc: '', tags: '', github: '', live: '', image: '', sort_order: projects.length }
+    const newP = { title: '', category: '', tag: '', desc: '', tags: '', github: '', live: '', image: '', sort_order: projects.length }
     const res = await fetch('/api/admin/projects', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newP) })
     const saved = await res.json()
     setProjects([...projects, saved])
@@ -143,7 +143,7 @@ export default function AdminPage() {
   }
 
   const addSkill = async () => {
-    const newS = { category: 'New Category', name: 'New Skill', value: 50, sort_order: skills.length }
+    const newS = { category: '', name: '', value: 0, sort_order: skills.length }
     const res = await fetch('/api/admin/skills', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newS) })
     const saved = await res.json()
     setSkills([...skills, saved])
@@ -178,7 +178,7 @@ export default function AdminPage() {
   }
 
   const addExperience = async () => {
-    const newE = { date: '2026', title: 'New Role', company: 'Company', desc: 'Description', sort_order: experiences.length }
+    const newE = { date: '', title: '', company: '', desc: '', sort_order: experiences.length }
     const res = await fetch('/api/admin/experiences', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newE) })
     const saved = await res.json()
     setExperiences([...experiences, saved])
