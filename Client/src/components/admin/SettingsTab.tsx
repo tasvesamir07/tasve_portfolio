@@ -191,21 +191,22 @@ export default function SettingsTab({ showToast }: { showToast: (msg: string) =>
           const currentProfRes = await fetch('/api/admin/profile')
           if (currentProfRes.ok) {
             const currentProf = await currentProfRes.json()
-            await fetch('/api/admin/profile', {
+            const updateRes = await fetch('/api/admin/profile', {
               method: 'PUT',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ ...currentProf, avatar: webpUrl })
             })
+            if (!updateRes.ok) throw new Error('Failed to update profile record')
           }
         } else {
-          const currentRes = await fetch(`/api/admin/${item.table}/${item.id}`)
-          if (currentRes.ok) {
-            const currentItem = await currentRes.json()
-            await fetch(`/api/admin/${item.table}/${item.id}`, {
-              method: 'PUT',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ ...currentItem, [item.field]: webpUrl })
-            })
+          const updateRes = await fetch(`/api/admin/${item.table}/${item.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ [item.field]: webpUrl })
+          })
+          if (!updateRes.ok) {
+            const errText = await updateRes.text()
+            throw new Error(`Update failed: ${errText}`)
           }
         }
 
