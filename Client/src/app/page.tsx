@@ -27,10 +27,16 @@ export const revalidate = 600; // Cache and revalidate page content every 10 min
 
 export default async function Home() {
   // Fetch dynamic portfolio data
-  const profile = await fetchProfile();
-  const projects = await fetchProjects();
-  const skills = await fetchSkills();
-  const experiences = await fetchExperience();
+  const [profile, projects, skills, experiences] = await Promise.all([
+    fetchProfile().catch(() => null),
+    fetchProjects().catch(() => []),
+    fetchSkills().catch(() => []),
+    fetchExperience().catch(() => []),
+  ]);
+
+  if (!profile) {
+    return <div className="min-h-screen flex items-center justify-center text-gray-400">No profile data available.</div>;
+  }
 
   // Create clean logo name
   const logoText = profile.name.replace(/\s+/g, '');
