@@ -1,0 +1,120 @@
+@import "tailwindcss";
+
+:root {
+  --background: #07090e;
+  --foreground: #f3f4f6;
+  
+  --bg-primary: #07090e;
+  --bg-secondary: #0f121d;
+  --bg-tertiary: #161b2c;
+  
+  --accent-purple: #8b5cf6;
+  --accent-cyan: #06b6d4;
+  --accent-pink: #ec4899;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-accent-purple: var(--accent-purple);
+  --color-accent-cyan: var(--accent-cyan);
+  --color-accent-pink: var(--accent-pink);
+  
+  --color-glass-bg: rgba(15, 18, 29, 0.6);
+  --color-glass-bg-hover: rgba(22, 27, 44, 0.8);
+  --color-glass-border: rgba(255, 255, 255, 0.08);
+  --color-glass-border-hover: rgba(255, 255, 255, 0.15);
+  
+  --font-sans: var(--font-outfit), sans-serif;
+  --font-mono: var(--font-fira-code), monospace;
+  
+  --animate-blink: blink 0.8s infinite;
+  --animate-scroll-mouse: scrollMouse 1.5s infinite;
+  --animate-fade-in: fadeIn 0.4s ease forwards;
+}
+
+/* --- Base Styles --- */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+}
+
+/* Hide standard cursor on desktop devices supporting hovers */
+@media (hover: hover) and (pointer: fine) {
+  body, a, button, select, input, textarea {
+    cursor: none;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--bg-secondary);
+  border: 1px solid var(--color-glass-border);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-purple);
+}
+
+/* Selection Color */
+::selection {
+  background-color: rgba(6, 182, 212, 0.3);
+  color: var(--foreground);
+}
+
+/* --- 3D tilt Card Glow Sheen --- */
+.project-card-glow, .info-card-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(6, 182, 212, 0.12) 0%, rgba(0,0,0,0) 65%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.info-card-glow {
+  background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(139, 92, 246, 0.08) 0%, rgba(0,0,0,0) 60%);
+}
+
+/* --- Keyframe Animations --- */
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+@keyframes scrollMouse {
+  0% { transform: translate(-50%, 0); opacity: 1; }
+  80% { transform: translate(-50%, 15px); opacity: 0; }
+  100% { transform: translate(-50%, 0); opacity: 0; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Utility Animations */
+.animate-blink {
+  animation: blink 0.8s infinite;
+}
+
+.animate-scroll-mouse {
+  animation: scrollMouse 1.5s infinite;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease forwards;
+}
