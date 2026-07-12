@@ -1,4 +1,4 @@
-import { supabase } from './supabase'
+import { getSupabase } from './supabase'
 
 export interface Project {
   id: string
@@ -100,6 +100,7 @@ function formatExperiences(data: any[]): Experience[] {
 
 export async function fetchProfile(): Promise<Profile> {
   try {
+    const supabase = getSupabase()
     const { data, error } = await supabase.from('profile').select('*').limit(1).single()
     if (error) throw error
     return formatProfile(data)
@@ -111,6 +112,7 @@ export async function fetchProfile(): Promise<Profile> {
 
 export async function fetchProjects(): Promise<Project[]> {
   try {
+    const supabase = getSupabase()
     const { data, error } = await supabase.from('projects').select('*').order('sort_order', { ascending: true })
     if (error) throw error
     return formatProjects(data)
@@ -122,6 +124,7 @@ export async function fetchProjects(): Promise<Project[]> {
 
 export async function fetchSkills(): Promise<Skill[]> {
   try {
+    const supabase = getSupabase()
     const { data, error } = await supabase.from('skills').select('*').order('sort_order', { ascending: true })
     if (error) throw error
     return formatSkills(data)
@@ -133,6 +136,7 @@ export async function fetchSkills(): Promise<Skill[]> {
 
 export async function fetchExperience(): Promise<Experience[]> {
   try {
+    const supabase = getSupabase()
     const { data, error } = await supabase.from('experiences').select('*').order('sort_order', { ascending: true })
     if (error) throw error
     return formatExperiences(data)

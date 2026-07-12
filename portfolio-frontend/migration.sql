@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS projects (
   title TEXT NOT NULL DEFAULT '',
   category TEXT NOT NULL DEFAULT '',
   tag TEXT NOT NULL DEFAULT '',
-  desc TEXT NOT NULL DEFAULT '',
+  "desc" TEXT NOT NULL DEFAULT '',
   tags TEXT NOT NULL DEFAULT '',
   github TEXT NOT NULL DEFAULT '',
   live TEXT NOT NULL DEFAULT '',
@@ -82,11 +82,11 @@ CREATE POLICY "Allow public read" ON contacts FOR SELECT USING (true);
 INSERT INTO profile (id, name, title, intro, description, email, location, github, linkedin, twitter, codepen, bio_paragraphs, tech_list)
 VALUES (
   1,
-  'Samir Anik',
+  'Md. Tasve Al Samir',
   'Full Stack Engineer',
   'Hello World, I''m',
   'I build highly interactive, responsive, and visually stunning digital products.',
-  'samir.anik.dev@gmail.com',
+  'tasvesamir15471@gmail.com',
   'Dhaka, Bangladesh',
   'https://github.com',
   'https://linkedin.com',
