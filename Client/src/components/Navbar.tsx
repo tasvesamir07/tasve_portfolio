@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, ChevronDown } from 'lucide-react';
 
 interface Props {
   logoText: string;
@@ -17,7 +17,7 @@ export default function Navbar({ logoText }: Props) {
       setScrolled(window.scrollY > 50);
 
       // Section tracker
-      const sections = ['home', 'about', 'skills', 'projects', 'experience', 'education', 'contact'];
+      const sections = ['home', 'about', 'skills', 'projects', 'experience', 'education', 'certifications', 'gallery', 'contact'];
       let current = 'home';
       
       // If we are at the bottom of the page, force 'contact' to be active
@@ -63,7 +63,7 @@ export default function Navbar({ logoText }: Props) {
 
         {/* Desktop Nav links */}
         <nav className="hidden md:block">
-          <ul className="flex gap-8">
+          <ul className="flex items-center gap-8">
             {navLinks.map((link) => (
               <li key={link}>
                 <a
@@ -79,6 +79,36 @@ export default function Navbar({ logoText }: Props) {
                 </a>
               </li>
             ))}
+
+            {/* "More" Dropdown Menu */}
+            <li className="relative group/more">
+              <button
+                className="flex items-center gap-1 text-sm font-semibold text-gray-400 hover:text-white transition-colors duration-200 capitalize tracking-wider cursor-pointer bg-transparent border-0 outline-none"
+                aria-label="More sections"
+              >
+                More <ChevronDown className="w-4 h-4 transition-transform duration-200 group-hover/more:rotate-180" />
+              </button>
+              
+              {/* Dropdown Box */}
+              <div className="absolute right-0 top-full mt-2 w-52 bg-[#0a0c14]/95 backdrop-blur-xl border border-white/5 rounded-xl p-2 shadow-2xl transition-all duration-200 opacity-0 translate-y-2 invisible group-hover/more:opacity-100 group-hover/more:translate-y-0 group-hover/more:visible z-50">
+                <a
+                  href="#certifications"
+                  className={`block px-4 py-2.5 text-xs font-semibold uppercase tracking-wider hover:bg-white/5 rounded-lg transition-colors duration-200 hover:text-white ${
+                    activeSection === 'certifications' ? 'text-cyan-400 bg-white/5' : 'text-gray-400'
+                  }`}
+                >
+                  Certifications & Awards
+                </a>
+                <a
+                  href="#gallery"
+                  className={`block px-4 py-2.5 text-xs font-semibold uppercase tracking-wider hover:bg-white/5 rounded-lg transition-colors duration-200 hover:text-white ${
+                    activeSection === 'gallery' ? 'text-cyan-400 bg-white/5' : 'text-gray-400'
+                  }`}
+                >
+                  Gallery
+                </a>
+              </div>
+            </li>
           </ul>
         </nav>
 
@@ -94,12 +124,12 @@ export default function Navbar({ logoText }: Props) {
 
       {/* Mobile Nav menu drawer */}
       <div
-        className={`fixed top-[60px] left-0 w-full h-[calc(100vh-60px)] bg-[#07090e]/95 backdrop-blur-xl border-t border-white/5 p-8 flex flex-col items-center justify-center gap-8 transition-transform duration-300 md:hidden ${
+        className={`fixed top-[60px] left-0 w-full h-[calc(100vh-60px)] bg-[#07090e]/95 backdrop-blur-xl border-t border-white/5 p-8 flex flex-col items-center justify-center gap-6 transition-transform duration-300 md:hidden ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
         <nav>
-          <ul className="flex flex-col items-center gap-8">
+          <ul className="flex flex-col items-center gap-6">
             {navLinks.map((link) => (
               <li key={link}>
                 <a
@@ -113,6 +143,28 @@ export default function Navbar({ logoText }: Props) {
                 </a>
               </li>
             ))}
+            <li>
+              <a
+                href="#certifications"
+                onClick={() => setIsOpen(false)}
+                className={`text-xl font-bold font-heading capitalize tracking-wider transition-colors duration-200 hover:text-cyan-400 ${
+                  activeSection === 'certifications' ? 'text-cyan-400' : 'text-gray-300'
+                }`}
+              >
+                Certifications & Awards
+              </a>
+            </li>
+            <li>
+              <a
+                href="#gallery"
+                onClick={() => setIsOpen(false)}
+                className={`text-xl font-bold font-heading capitalize tracking-wider transition-colors duration-200 hover:text-cyan-400 ${
+                  activeSection === 'gallery' ? 'text-cyan-400' : 'text-gray-300'
+                }`}
+              >
+                Gallery
+              </a>
+            </li>
           </ul>
         </nav>
       </div>

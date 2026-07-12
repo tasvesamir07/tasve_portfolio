@@ -530,7 +530,7 @@ async function CertificationsSection() {
         <div className="flex flex-col gap-2 mb-12">
           <span className="font-mono text-sm text-cyan-400 tracking-wider">06. Credentials</span>
           <h2 className="font-heading font-extrabold text-3xl md:text-4xl text-white flex items-center gap-4">
-            Certifications <span className="h-[1px] flex-grow max-w-[200px] bg-gradient-to-r from-white/10 to-transparent" />
+            Certifications & Awards <span className="h-[1px] flex-grow max-w-[200px] bg-gradient-to-r from-white/10 to-transparent" />
           </h2>
         </div>
         <AnimatedSection
@@ -546,7 +546,9 @@ async function CertificationsSection() {
             >
               <div className="w-20 h-20 rounded-xl overflow-hidden bg-[#0f121d] border border-white/5 p-2 flex items-center justify-center group-hover:border-cyan-500/30 transition-colors shrink-0">
                 {cert.image ? (
-                  <img src={cert.image} alt={cert.title || 'Certification badge'} className="w-full h-full object-contain" />
+                  <a href={cert.image} target="_blank" rel="noopener noreferrer" className="w-full h-full block cursor-zoom-in" title="View full certificate">
+                    <img src={cert.image} alt={cert.title || 'Certification badge'} className="w-full h-full object-contain" />
+                  </a>
                 ) : (
                   <ScrollText className="w-8 h-8 text-gray-600" />
                 )}
@@ -595,8 +597,10 @@ async function GallerySection() {
             >
               <div className="relative h-48 overflow-hidden bg-[#0f121d] flex items-center justify-center">
                 {item.image ? (
-                  <img src={item.image} alt={item.title || 'Gallery image'}
-                    className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-300" />
+                  <a href={item.image} target="_blank" rel="noopener noreferrer" className="w-full h-full block cursor-zoom-in" title="View full image">
+                    <img src={item.image} alt={item.title || 'Gallery image'}
+                      className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-300" />
+                  </a>
                 ) : (
                   <ImageOff className="w-12 h-12 text-gray-600" />
                 )}
