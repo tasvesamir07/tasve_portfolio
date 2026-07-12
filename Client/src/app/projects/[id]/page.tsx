@@ -41,13 +41,13 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
 
       <article className="max-w-4xl mx-auto px-6 pb-24">
         {/* Hero image */}
-        <div className="relative w-full h-64 md:h-80 rounded-xl overflow-hidden mb-8 bg-[#0f121d] border border-white/5">
+        <div className="relative w-full h-64 md:h-[450px] rounded-xl overflow-hidden mb-8 bg-[#0f121d] border border-white/5">
           {project.image ? (
             <Image
               src={project.image}
               alt={project.title}
               fill
-              className="object-cover"
+              className="object-contain p-2"
               sizes="(max-width: 1200px) 100vw, 1200px"
               priority
             />

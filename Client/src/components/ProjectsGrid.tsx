@@ -44,40 +44,57 @@ export default function ProjectsGrid({ projects }: Props) {
       {/* Projects Cards Layout Grid */}
       <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         <AnimatePresence mode="popLayout">
-          {filteredProjects.map((p) => (
-            <motion.div
-              key={p.id}
-              layout
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              transition={{ duration: 0.3 }}
-            >
-              <Card3DTilt className="h-full">
-                <div className="project-card-glow" />
-                <div className="h-full bg-glass-bg border border-white/5 rounded-xl p-6 flex flex-col gap-5 hover:border-white/10 hover:shadow-lg hover:shadow-purple-500/5 transition-colors duration-200">
-                  {/* Card Header Placeholder / Image */}
-                  <div className="relative h-44 bg-[#0f121d]/80 border border-white/5 rounded-lg flex items-center justify-center overflow-hidden">
-                    {p.image ? (
-                      <Image
-                        src={p.image}
-                        alt={p.title}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      />
-                    ) : (
-                      <Code className="w-12 h-12 text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-cyan-500" />
-                    )}
-                    <div className="absolute top-3 right-3 bg-[#07090e] border border-purple-500/30 text-purple-400 font-mono text-[10px] px-2.5 py-1 rounded">
-                      {p.tag || p.category.toUpperCase()}
-                    </div>
-                  </div>
+          {filteredProjects.map((p) => {
+            const hasLive = p.live && p.live !== '#' && p.live.trim() !== ''
+            const projectLink = hasLive ? p.live : `/projects/${p.id}`
+            const isExternal = !!hasLive
 
-                  {/* Info details */}
-                  <div className="flex flex-col gap-3 flex-grow">
-                    <h3 className="font-heading font-bold text-xl text-white">{p.title}</h3>
-                    <p className="text-sm text-gray-400 leading-relaxed">{p.desc}</p>
+            return (
+              <motion.div
+                key={p.id}
+                layout
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{ duration: 0.3 }}
+              >
+                <Card3DTilt className="h-full">
+                  <div className="project-card-glow" />
+                  <div className="h-full bg-glass-bg border border-white/5 rounded-xl p-6 flex flex-col gap-5 hover:border-white/10 hover:shadow-lg hover:shadow-purple-500/5 transition-colors duration-200">
+                    {/* Card Header Placeholder / Image */}
+                    <a
+                      href={projectLink}
+                      target={isExternal ? "_blank" : undefined}
+                      rel={isExternal ? "noopener noreferrer" : undefined}
+                      className="relative h-44 bg-[#0f121d]/80 border border-white/5 rounded-lg flex items-center justify-center overflow-hidden cursor-pointer group/img block"
+                    >
+                      {p.image ? (
+                        <Image
+                          src={p.image}
+                          alt={p.title}
+                          fill
+                          className="object-cover group-hover/img:scale-105 transition-transform duration-300"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        />
+                      ) : (
+                        <Code className="w-12 h-12 text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-cyan-500" />
+                      )}
+                      <div className="absolute top-3 right-3 bg-[#07090e] border border-purple-500/30 text-purple-400 font-mono text-[10px] px-2.5 py-1 rounded">
+                        {p.tag || p.category.toUpperCase()}
+                      </div>
+                    </a>
+
+                    {/* Info details */}
+                    <div className="flex flex-col gap-3 flex-grow">
+                      <a
+                        href={projectLink}
+                        target={isExternal ? "_blank" : undefined}
+                        rel={isExternal ? "noopener noreferrer" : undefined}
+                        className="hover:text-cyan-400 transition-colors cursor-pointer"
+                      >
+                        <h3 className="font-heading font-bold text-xl text-white">{p.title}</h3>
+                      </a>
+                      <p className="text-sm text-gray-400 leading-relaxed">{p.desc}</p>
 
                     {/* Tech Badges */}
                     <ul className="flex flex-wrap gap-2 mt-auto pt-2">
@@ -138,7 +155,7 @@ export default function ProjectsGrid({ projects }: Props) {
                 </div>
               </Card3DTilt>
             </motion.div>
-          ))}
+          )})}
         </AnimatePresence>
       </motion.div>
       {/* Architecture Diagram Modal */}
