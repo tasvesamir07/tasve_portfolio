@@ -60,7 +60,7 @@ export interface Experience {
   desc: string
 }
 
-function formatProfile(data: ProfileRow): Profile {
+export function formatProfile(data: ProfileRow): Profile {
   return {
     name: data.name || '',
     title: data.title || '',
@@ -79,7 +79,7 @@ function formatProfile(data: ProfileRow): Profile {
   }
 }
 
-function formatProjects(data: ProjectRow[]): Project[] {
+export function formatProjects(data: ProjectRow[]): Project[] {
   return data.map((item) => ({
     id: item.id.toString(),
     title: item.title || '',
@@ -94,7 +94,7 @@ function formatProjects(data: ProjectRow[]): Project[] {
   }))
 }
 
-function formatSkills(data: SkillRow[]): Skill[] {
+export function formatSkills(data: SkillRow[]): Skill[] {
   const categories: { [key: string]: { name: string; value: number }[] } = {}
   data.forEach((item) => {
     const cat = item.category || 'General'
@@ -107,7 +107,7 @@ function formatSkills(data: SkillRow[]): Skill[] {
   }))
 }
 
-function formatExperiences(data: ExperienceRow[]): Experience[] {
+export function formatExperiences(data: ExperienceRow[]): Experience[] {
   return data.map((item) => ({
     date: item.date || '',
     title: item.title || '',
