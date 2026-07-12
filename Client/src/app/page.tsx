@@ -503,6 +503,17 @@ async function ExperienceSection() {
 async function EducationSection() {
   const education = await fetchEducation().catch(() => [] as Education[])
   if (education.length === 0) return null
+
+  // Group awards by category (title)
+  const awards = education.filter((e) => e.type === 'award')
+  const groupedAwards: { [title: string]: typeof awards } = {}
+  awards.forEach((item) => {
+    if (!groupedAwards[item.title]) {
+      groupedAwards[item.title] = []
+    }
+    groupedAwards[item.title].push(item)
+  })
+
   return (
     <section id="education" className="py-24 px-6 md:px-12 border-t border-white/5">
       <div className="max-w-5xl mx-auto">
@@ -560,18 +571,29 @@ async function EducationSection() {
               <h3 className="text-xl font-bold font-heading text-white flex items-center gap-2 mb-4">
                 <Award className="w-5 h-5 text-purple-400" /> Honors & Awards
               </h3>
-              <div className="bg-glass-bg border border-white/5 rounded-xl p-5 flex flex-col gap-4">
-                {education
-                  .filter((e) => e.type === 'award')
-                  .map((e) => (
-                    <div key={e.id} className="flex gap-3">
-                      <span className="text-cyan-400 text-sm mt-0.5">🏆</span>
-                      <div>
-                        <h4 className="text-sm font-bold text-white">{e.title}</h4>
-                        <p className="text-xs text-gray-400 mt-0.5">{e.subtitle}</p>
+              <div className="bg-glass-bg border border-white/5 rounded-xl p-5 flex flex-col gap-6">
+                {Object.entries(groupedAwards).map(([title, items]) => (
+                  <div key={title} className="flex gap-3 items-start">
+                    <span className="text-cyan-400 text-sm mt-0.5">🏆</span>
+                    <div className="flex-1">
+                      <h4 className="text-sm font-bold text-white mb-1.5">{title}</h4>
+                      <div className="flex flex-col gap-2 pl-3 border-l border-white/5">
+                        {items.map((item) => (
+                          <div key={item.id} className="text-xs">
+                            <p className="text-gray-300 leading-relaxed">
+                              {item.subtitle}
+                              {item.date && (
+                                <span className="text-cyan-400 font-mono text-[9px] ml-2 bg-cyan-400/5 border border-cyan-400/10 px-1.5 py-0.5 rounded-md">
+                                  {item.date}
+                                </span>
+                              )}
+                            </p>
+                          </div>
+                        ))}
                       </div>
                     </div>
-                  ))}
+                  </div>
+                ))}
               </div>
             </div>
 
