@@ -1,41 +1,16 @@
 {
-  "name": "tmp-backend",
-  "version": "0.1.0",
-  "private": true,
-  "description": "A Strapi application",
+  "name": "portfolio-backend",
+  "version": "1.0.0",
+  "description": "API Server for Tasve Al Samir Portfolio",
+  "main": "server.js",
   "scripts": {
-    "build": "strapi build",
-    "console": "strapi console",
-    "deploy": "strapi deploy",
-    "dev": "strapi develop",
-    "develop": "strapi develop",
-    "start": "strapi start",
-    "strapi": "strapi",
-    "upgrade": "npx @strapi/upgrade latest",
-    "upgrade:dry": "npx @strapi/upgrade latest --dry"
+    "start": "node server.js",
+    "dev": "node --watch server.js"
   },
   "dependencies": {
-    "@strapi/plugin-cloud": "5.50.1",
-    "@strapi/plugin-users-permissions": "5.50.1",
-    "@strapi/strapi": "5.50.1",
-    "pg": "8.20.0",
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0",
-    "react-router-dom": "^6.0.0",
-    "styled-components": "^6.0.0"
-  },
-  "devDependencies": {
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "typescript": "^5"
-  },
-  "engines": {
-    "node": ">=20.0.0 <=26.x.x",
-    "npm": ">=6.0.0"
-  },
-  "strapi": {
-    "uuid": "f2e902c3-78d5-41c2-b848-df1494e66d69",
-    "installId": "4111327a4519941aa50e2596785fc38ebaae8f7f18d2575215dd90585d39b330"
+    "@supabase/supabase-js": "^2.43.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
   }
 }
