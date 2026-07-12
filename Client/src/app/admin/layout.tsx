@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Toaster } from 'sonner'
 import {
@@ -25,7 +25,6 @@ const tabs = [
 ]
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const router = useRouter()
   const searchParams = useSearchParams()
   const [authed, setAuthed] = useState<boolean | null>(null)
   const [sidebarOpen, setSidebarOpen] = useState(false)

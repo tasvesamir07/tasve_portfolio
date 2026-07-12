@@ -9,7 +9,7 @@ import {
   Eye,
   EyeOff,
   Mail,
-  Image,
+  Image as ImageIcon,
   RefreshCw,
   CheckCircle,
 } from 'lucide-react'
@@ -433,7 +433,7 @@ export default function SettingsTab() {
       {/* WebP Image Optimizer */}
       <div className="bg-[#0f121d]/60 border border-white/5 rounded-xl p-6">
         <h3 className="text-sm font-bold text-white flex items-center gap-2 mb-2">
-          <Image className="w-4 h-4 text-emerald-400" /> WebP Image Optimizer
+          <ImageIcon className="w-4 h-4 text-emerald-400" /> WebP Image Optimizer
         </h3>
         <p className="text-xs text-gray-500 mb-6">
           Scan and batch-convert legacy PNG/JPG images in your database to optimized WebP formats.

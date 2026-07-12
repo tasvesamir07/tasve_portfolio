@@ -32,19 +32,21 @@ export function useCrud<T extends CrudItem>(
   options?: { saveMode?: 'batch' | 'individual' },
 ) {
   const [items, setItems] = useState<T[]>([])
+  const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
 
-  const fetchItems = useCallback(async () => {
-    const res = await fetch(`/api/admin/${table}`)
-    if (res.ok) {
-      const data = await res.json()
-      setItems(data || [])
-    }
+  const load = useCallback(() => {
+    fetch(`/api/admin/${table}`)
+      .then((r) => (r.ok ? r.json() : []))
+      .then((data) => {
+        setItems(data || [])
+        setLoading(false)
+      })
   }, [table])
 
   useEffect(() => {
-    fetchItems()
-  }, [fetchItems])
+    load()
+  }, [load])
 
   const addItem = async () => {
     const newItem = { ...defaults, sort_order: items.length } as unknown as T
@@ -83,34 +85,40 @@ export function useCrud<T extends CrudItem>(
     setSaving(true)
     const labeled = items.map((item, i) => ({ ...item, sort_order: i }))
 
-    if (options?.saveMode === 'individual') {
-      await Promise.all(
-        labeled.map(async (item) => {
-          const { id, ...rest } = item
-          if (id) {
-            return fetch(`/api/admin/${table}/${id}`, {
-              method: 'PUT',
+    try {
+      if (options?.saveMode === 'individual') {
+        await Promise.all(
+          labeled.map(async (item) => {
+            const { id, ...rest } = item
+            if (id) {
+              return fetch(`/api/admin/${table}/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(rest),
+              })
+            }
+            return fetch(`/api/admin/${table}`, {
+              method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(rest),
             })
-          }
-          return fetch(`/api/admin/${table}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(rest),
-          })
-        }),
-      )
-    } else {
-      await fetch('/api/admin/batch', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ table, items: labeled.map(({ id, ...rest }) => ({ id, ...rest })) }),
-      })
+          }),
+        )
+        await load()
+      } else {
+        const res = await fetch('/api/admin/batch', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ table, items: labeled.map(({ id, ...rest }) => ({ id, ...rest })) }),
+        })
+        if (!res.ok) throw new Error('Save failed')
+      }
+      toast('Saved')
+    } catch {
+      toast('Failed to save')
     }
 
     setSaving(false)
-    toast('Saved')
   }
 
   const handleImageUpload = async (idx: number, file: File) => {
@@ -129,6 +137,7 @@ export function useCrud<T extends CrudItem>(
   return {
     items,
     setItems,
+    loading,
     saving,
     addItem,
     deleteItem,

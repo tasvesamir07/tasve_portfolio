@@ -5,7 +5,7 @@ import {
   Trash2,
   Save,
   Loader,
-  Image,
+  Image as ImageIcon,
   ChevronUp,
   ChevronDown,
   GripVertical,
@@ -226,7 +226,7 @@ export default function ProjectsTab({
                 Upload Image
               </label>
               <label className="flex items-center justify-center gap-2 px-4 py-2 bg-[#0f121d] border border-white/5 rounded-lg text-sm text-gray-400 cursor-pointer hover:border-cyan-500/50 transition-colors w-full md:w-auto">
-                <Image className="w-4 h-4" /> {p.image ? 'Change Image' : 'Select Image'}
+                <ImageIcon className="w-4 h-4" /> {p.image ? 'Change Image' : 'Select Image'}
                 <input
                   type="file"
                   accept="image/*"
@@ -253,7 +253,7 @@ export default function ProjectsTab({
 
             {p.image && (
               <div className="shrink-0 flex items-center justify-center border border-white/10 rounded-lg overflow-hidden bg-black/20 w-16 h-16">
-                <img src={p.image} alt="Preview" className="w-full h-full object-cover" />
+                <img src={p.image} alt={`Preview of ${p.title || 'project'}`} className="w-full h-full object-cover" />
               </div>
             )}
           </div>

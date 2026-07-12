@@ -2,7 +2,6 @@ import {
   ProfileSchema,
   ProjectSchema,
   SkillSchema,
-  ExperienceSchema,
   EducationSchema,
   CertificationSchema,
   GallerySchema,

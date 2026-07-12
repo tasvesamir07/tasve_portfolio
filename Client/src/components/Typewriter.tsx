@@ -7,12 +7,12 @@ interface Props {
 }
 
 export default function Typewriter({ primaryRole }: Props) {
-  const roles = [primaryRole, 'Creative Web Architect', 'UI/UX Engineer', 'Problem Solver']
   const [roleIndex, setRoleIndex] = useState(0)
   const [text, setText] = useState('')
   const [isDeleting, setIsDeleting] = useState(false)
 
   useEffect(() => {
+    const roles = [primaryRole, 'Creative Web Architect', 'UI/UX Engineer', 'Problem Solver']
     const currentRole = roles[roleIndex]
 
     const tick = () => {
@@ -33,7 +33,7 @@ export default function Typewriter({ primaryRole }: Props) {
     const speed = isDeleting ? 50 : text.length === currentRole.length ? 2000 : 120
     const timer = setTimeout(tick, speed)
     return () => clearTimeout(timer)
-  }, [text, isDeleting, roleIndex])
+  }, [text, isDeleting, roleIndex, primaryRole])
 
   return (
     <div className="font-heading text-2xl md:text-4xl font-bold text-gray-300 min-h-[45px] flex items-center justify-center md:justify-start">

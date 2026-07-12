@@ -1,4 +1,4 @@
-import type { ProfileRow, ProjectRow, SkillRow, ExperienceRow, EducationRow } from '../database.types'
+import type { ProfileRow, ProjectRow, SkillRow, ExperienceRow } from '../database.types'
 import { formatProfile, formatProjects, formatSkills, formatExperiences } from '../api'
 
 describe('api formatters', () => {
