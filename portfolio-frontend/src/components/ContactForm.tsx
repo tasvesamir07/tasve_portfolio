@@ -16,27 +16,20 @@ export default function ContactForm() {
     e.preventDefault();
     setStatus('loading');
 
-    const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
-
     try {
-      // Connect to hosted Strapi contact endpoint if available, else mock post
-      const res = await fetch(`${STRAPI_URL}/api/contacts`, {
+      const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ data: form }) // Strapi expects payload inside a 'data' block
+        body: JSON.stringify(form)
       });
 
-      if (!res.ok) {
-        throw new Error('API submission rejected');
-      }
+      if (!res.ok) throw new Error('API submission rejected');
 
       setStatus('success');
       setForm({ name: '', email: '', subject: '', message: '' });
       setTimeout(() => setStatus('idle'), 5000);
     } catch (err) {
-      console.warn('API Endpoint offline. Submitting via mock fallback...', err);
-      
-      // Dynamic mock delay
+      console.warn('Contact API offline. Submitting via mock fallback...', err);
       setTimeout(() => {
         setStatus('success');
         setForm({ name: '', email: '', subject: '', message: '' });

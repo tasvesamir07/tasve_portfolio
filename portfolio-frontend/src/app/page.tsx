@@ -335,7 +335,7 @@ export default async function Home() {
         <div className="max-w-7xl mx-auto flex flex-col gap-2">
           <p className="text-gray-400 text-sm">&copy; 2026 {profile.name}. All Rights Reserved.</p>
           <p className="text-gray-500 text-xs flex items-center justify-center gap-1">
-            Engineered with <span className="text-cyan-400">♥</span> using Next.js, Framer Motion, and Hosted Strapi CMS.
+            Engineered with <span className="text-cyan-400">♥</span> using Next.js, Framer Motion, and Supabase.
           </p>
         </div>
       </footer>
