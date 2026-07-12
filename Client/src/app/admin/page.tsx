@@ -2,11 +2,14 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import {
-  Save, Plus, Trash2, LogOut, Upload, Image, Loader, GripVertical,
-} from 'lucide-react'
+import { LogOut } from 'lucide-react'
+import ProfileTab from '@/components/admin/ProfileTab'
+import ProjectsTab from '@/components/admin/ProjectsTab'
+import SkillsTab from '@/components/admin/SkillsTab'
+import ExperiencesTab from '@/components/admin/ExperiencesTab'
+import MessagesTab from '@/components/admin/MessagesTab'
 
-type Tab = 'profile' | 'projects' | 'skills' | 'experiences'
+type Tab = 'profile' | 'projects' | 'skills' | 'experiences' | 'messages'
 
 interface ProfileData {
   name: string; title: string; intro: string; description: string
@@ -28,6 +31,13 @@ interface ExperienceData {
   id?: number; date: string; title: string; company: string; desc: string; sort_order: number
 }
 
+function moveItem<T>(arr: T[], from: number, to: number): T[] {
+  const next = [...arr]
+  const [moved] = next.splice(from, 1)
+  next.splice(to, 0, moved)
+  return next
+}
+
 export default function AdminPage() {
   const router = useRouter()
   const [tab, setTab] = useState<Tab>('profile')
@@ -40,7 +50,10 @@ export default function AdminPage() {
   const [skills, setSkills] = useState<SkillData[]>([])
   const [experiences, setExperiences] = useState<ExperienceData[]>([])
 
-  const showToast = (msg: string) => { setToast(msg); setTimeout(() => setToast(null), 3000) }
+  const showToast = useCallback((msg: string) => {
+    setToast(msg)
+    setTimeout(() => setToast(null), 3000)
+  }, [])
 
   useEffect(() => {
     fetch('/api/admin/auth').then(r => r.json()).then(d => {
@@ -63,13 +76,13 @@ export default function AdminPage() {
   }
 
   const saveProfile = async () => {
+    if (!profile) return
     setSaving(true)
     const res = await fetch('/api/admin/profile', {
       method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(profile),
     })
     setSaving(false)
-    if (res.ok) showToast('Profile saved')
-    else showToast('Failed to save profile')
+    showToast(res.ok ? 'Profile saved' : 'Failed to save profile')
   }
 
   const handleProjectImage = async (idx: number, file: File) => {
@@ -81,9 +94,15 @@ export default function AdminPage() {
 
   const saveProjects = async () => {
     setSaving(true)
-    await Promise.all(projects.filter(p => p.id).map(p =>
-      fetch(`/api/admin/projects/${p.id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(p) })
-    ))
+    await Promise.all(
+      projects.map((p, i) => {
+        if (!p.id) return Promise.resolve()
+        return fetch(`/api/admin/projects/${p.id}`, {
+          method: 'PUT', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...p, sort_order: i }),
+        })
+      })
+    )
     setSaving(false)
     showToast('Projects saved')
   }
@@ -102,11 +121,23 @@ export default function AdminPage() {
     showToast('Project deleted')
   }
 
+  const moveProject = (idx: number, dir: 'up' | 'down') => {
+    const to = dir === 'up' ? idx - 1 : idx + 1
+    if (to < 0 || to >= projects.length) return
+    setProjects(moveItem(projects, idx, to))
+  }
+
   const saveSkills = async () => {
     setSaving(true)
-    await Promise.all(skills.filter(s => s.id).map(s =>
-      fetch(`/api/admin/skills/${s.id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(s) })
-    ))
+    await Promise.all(
+      skills.map((s, i) => {
+        if (!s.id) return Promise.resolve()
+        return fetch(`/api/admin/skills/${s.id}`, {
+          method: 'PUT', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...s, sort_order: i }),
+        })
+      })
+    )
     setSaving(false)
     showToast('Skills saved')
   }
@@ -125,11 +156,23 @@ export default function AdminPage() {
     showToast('Skill deleted')
   }
 
+  const moveSkill = (idx: number, dir: 'up' | 'down') => {
+    const to = dir === 'up' ? idx - 1 : idx + 1
+    if (to < 0 || to >= skills.length) return
+    setSkills(moveItem(skills, idx, to))
+  }
+
   const saveExperiences = async () => {
     setSaving(true)
-    await Promise.all(experiences.filter(e => e.id).map(e =>
-      fetch(`/api/admin/experiences/${e.id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(e) })
-    ))
+    await Promise.all(
+      experiences.map((e, i) => {
+        if (!e.id) return Promise.resolve()
+        return fetch(`/api/admin/experiences/${e.id}`, {
+          method: 'PUT', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...e, sort_order: i }),
+        })
+      })
+    )
     setSaving(false)
     showToast('Experiences saved')
   }
@@ -148,13 +191,18 @@ export default function AdminPage() {
     showToast('Experience deleted')
   }
 
+  const moveExperience = (idx: number, dir: 'up' | 'down') => {
+    const to = dir === 'up' ? idx - 1 : idx + 1
+    if (to < 0 || to >= experiences.length) return
+    setExperiences(moveItem(experiences, idx, to))
+  }
+
   if (!authed) return null
 
-  const inputClass = "w-full px-3 py-2 bg-[#0f121d] border border-white/5 rounded-lg text-sm text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500/50 transition-colors"
-  const textareaClass = "w-full px-3 py-2 bg-[#0f121d] border border-white/5 rounded-lg text-sm text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500/50 resize-none transition-colors"
-  const cardClass = "bg-[#0f121d]/60 backdrop-blur border border-white/5 rounded-xl p-4 hover:border-white/10 transition-colors"
-  const btnPrimary = "flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 text-white"
-  const btnDanger = "p-1.5 text-red-400 hover:bg-red-400/10 rounded-lg transition-colors"
+  const tabLabels: Record<Tab, string> = {
+    profile: 'Profile', projects: 'Projects', skills: 'Skills',
+    experiences: 'Experience', messages: 'Messages',
+  }
 
   return (
     <div className="min-h-screen bg-[#07090e]">
@@ -175,163 +223,54 @@ export default function AdminPage() {
         </button>
       </header>
 
-      <div className="flex border-b border-white/5 px-6 bg-[#0f121d]/40">
-        {(['profile', 'projects', 'skills', 'experiences'] as Tab[]).map(t => (
+      <div className="flex border-b border-white/5 px-6 bg-[#0f121d]/40 overflow-x-auto">
+        {(Object.keys(tabLabels) as Tab[]).map(t => (
           <button key={t} onClick={() => setTab(t)}
-            className={`px-4 py-3 text-sm font-medium capitalize border-b-2 transition-colors ${
+            className={`px-4 py-3 text-sm font-medium capitalize border-b-2 transition-colors shrink-0 ${
               tab === t ? 'border-cyan-400 text-cyan-400' : 'border-transparent text-gray-500 hover:text-gray-300'
             }`}
           >
-            {t === 'profile' ? 'Profile' : t === 'projects' ? 'Projects' : t === 'skills' ? 'Skills' : 'Experience'}
+            {tabLabels[t]}
           </button>
         ))}
       </div>
 
       <div className="p-6 max-w-4xl mx-auto">
         {tab === 'profile' && profile && (
-          <div className="flex flex-col gap-4">
-            <div className="grid grid-cols-2 gap-4">
-              {['name', 'title', 'intro', 'description', 'email', 'location', 'github', 'linkedin', 'twitter', 'codepen'].map(f => (
-                <div key={f} className={f === 'description' ? 'col-span-2' : ''}>
-                  <label className="text-xs text-gray-500 uppercase tracking-wider mb-1.5 block font-mono">{f}</label>
-                  {f === 'description' ? (
-                    <textarea value={(profile as any)[f] || ''} onChange={e => setProfile({ ...profile, [f]: e.target.value })}
-                      className={textareaClass} rows={4} />
-                  ) : (
-                    <input value={(profile as any)[f] || ''} onChange={e => setProfile({ ...profile, [f]: e.target.value })}
-                      className={inputClass} />
-                  )}
-                </div>
-              ))}
-            </div>
-            <div className="mt-2">
-              <label className="text-xs text-gray-500 uppercase tracking-wider mb-1.5 block font-mono">Bio Paragraphs (separate with newlines)</label>
-              <textarea value={profile.bio_paragraphs || ''} onChange={e => setProfile({ ...profile, bio_paragraphs: e.target.value })}
-                className={textareaClass} rows={6} />
-            </div>
-            <div>
-              <label className="text-xs text-gray-500 uppercase tracking-wider mb-1.5 block font-mono">Tech List (comma separated)</label>
-              <input value={profile.tech_list || ''} onChange={e => setProfile({ ...profile, tech_list: e.target.value })}
-                className={inputClass} />
-            </div>
-            <button onClick={saveProfile} disabled={saving} className={btnPrimary}>
-              {saving ? <Loader className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />} Save Profile
-            </button>
-          </div>
+          <ProfileTab profile={profile} saving={saving} onChange={setProfile} onSave={saveProfile} />
         )}
-
         {tab === 'projects' && (
-          <div className="flex flex-col gap-6">
-            <button onClick={addProject} className={btnPrimary + " self-start"}>
-              <Plus className="w-4 h-4" /> Add Project
-            </button>
-            {projects.length === 0 && <p className="text-gray-500 text-sm">No projects yet.</p>}
-            {projects.map((p, idx) => (
-              <div key={p.id || idx} className={cardClass + " flex flex-col gap-3"}>
-                <div className="flex items-center gap-2">
-                  <GripVertical className="w-4 h-4 text-gray-600 shrink-0" />
-                  <input value={p.title} onChange={e => { const u = [...projects]; u[idx] = { ...u[idx], title: e.target.value }; setProjects(u) }}
-                    className={inputClass} placeholder="Title" />
-                  <input value={p.category} onChange={e => { const u = [...projects]; u[idx] = { ...u[idx], category: e.target.value }; setProjects(u) }}
-                    className={inputClass + " w-28 shrink-0"} placeholder="Category" />
-                  <input value={p.tag} onChange={e => { const u = [...projects]; u[idx] = { ...u[idx], tag: e.target.value }; setProjects(u) }}
-                    className={inputClass + " w-28 shrink-0"} placeholder="Tag" />
-                  <button onClick={() => p.id && deleteProject(p.id)} className={btnDanger}>
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-                <textarea value={p.desc} onChange={e => { const u = [...projects]; u[idx] = { ...u[idx], desc: e.target.value }; setProjects(u) }}
-                  className={textareaClass} rows={3} placeholder="Description" />
-                <div className="flex gap-2">
-                  <input value={p.tags} onChange={e => { const u = [...projects]; u[idx] = { ...u[idx], tags: e.target.value }; setProjects(u) }}
-                    className={inputClass} placeholder="Tags (comma separated)" />
-                  <input value={p.github} onChange={e => { const u = [...projects]; u[idx] = { ...u[idx], github: e.target.value }; setProjects(u) }}
-                    className={inputClass} placeholder="GitHub URL" />
-                  <input value={p.live} onChange={e => { const u = [...projects]; u[idx] = { ...u[idx], live: e.target.value }; setProjects(u) }}
-                    className={inputClass} placeholder="Live URL" />
-                </div>
-                <div className="flex items-center gap-3">
-                  {p.image && <img src={p.image} alt="" className="w-12 h-12 object-cover rounded-lg border border-white/5" />}
-                  <label className="flex items-center gap-2 px-3 py-1.5 bg-[#0f121d] border border-white/5 rounded-lg text-sm text-gray-400 cursor-pointer hover:border-cyan-500/50 transition-colors">
-                    <Image className="w-4 h-4" /> {p.image ? 'Change' : 'Upload'}
-                    <input type="file" accept="image/*" className="hidden" onChange={e => e.target.files?.[0] && handleProjectImage(idx, e.target.files[0])} />
-                  </label>
-                  {p.image && <input value={p.image} onChange={e => { const u = [...projects]; u[idx] = { ...u[idx], image: e.target.value }; setProjects(u) }}
-                    className={inputClass} placeholder="Or paste image URL" />}
-                </div>
-              </div>
-            ))}
-            {projects.length > 0 && (
-              <button onClick={saveProjects} disabled={saving} className={btnPrimary + " self-start"}>
-                {saving ? <Loader className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />} Save All Projects
-              </button>
-            )}
-          </div>
+          <ProjectsTab
+            projects={projects} saving={saving}
+            onAdd={addProject}
+            onUpdate={(idx, p) => { const u = [...projects]; u[idx] = p; setProjects(u) }}
+            onDelete={deleteProject}
+            onImageUpload={handleProjectImage}
+            onMove={moveProject}
+            onSave={saveProjects}
+          />
         )}
-
         {tab === 'skills' && (
-          <div className="flex flex-col gap-6">
-            <button onClick={addSkill} className={btnPrimary + " self-start"}>
-              <Plus className="w-4 h-4" /> Add Skill
-            </button>
-            {skills.length === 0 && <p className="text-gray-500 text-sm">No skills yet.</p>}
-            {skills.map((s, idx) => (
-              <div key={s.id || idx} className={cardClass + " flex items-center gap-3"}>
-                <GripVertical className="w-4 h-4 text-gray-600 shrink-0" />
-                <input value={s.category} onChange={e => { const u = [...skills]; u[idx] = { ...u[idx], category: e.target.value }; setSkills(u) }}
-                  className={inputClass + " w-44 shrink-0"} placeholder="Category" />
-                <input value={s.name} onChange={e => { const u = [...skills]; u[idx] = { ...u[idx], name: e.target.value }; setSkills(u) }}
-                  className={inputClass} placeholder="Skill name" />
-                <div className="flex items-center gap-2 shrink-0">
-                  <input type="range" min={0} max={100} value={s.value}
-                    onChange={e => { const u = [...skills]; u[idx] = { ...u[idx], value: +e.target.value }; setSkills(u) }}
-                    className="w-24 accent-cyan-500" />
-                  <span className="text-sm text-gray-400 w-8 font-mono">{s.value}%</span>
-                </div>
-                <button onClick={() => s.id && deleteSkill(s.id)} className={btnDanger}>
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              </div>
-            ))}
-            {skills.length > 0 && (
-              <button onClick={saveSkills} disabled={saving} className={btnPrimary + " self-start"}>
-                {saving ? <Loader className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />} Save All Skills
-              </button>
-            )}
-          </div>
+          <SkillsTab
+            skills={skills} saving={saving}
+            onAdd={addSkill}
+            onUpdate={(idx, s) => { const u = [...skills]; u[idx] = s; setSkills(u) }}
+            onDelete={deleteSkill}
+            onMove={moveSkill}
+            onSave={saveSkills}
+          />
         )}
-
         {tab === 'experiences' && (
-          <div className="flex flex-col gap-6">
-            <button onClick={addExperience} className={btnPrimary + " self-start"}>
-              <Plus className="w-4 h-4" /> Add Experience
-            </button>
-            {experiences.length === 0 && <p className="text-gray-500 text-sm">No experiences yet.</p>}
-            {experiences.map((e, idx) => (
-              <div key={e.id || idx} className={cardClass + " flex flex-col gap-3"}>
-                <div className="flex items-center gap-2">
-                  <GripVertical className="w-4 h-4 text-gray-600 shrink-0" />
-                  <input value={e.date} onChange={ev => { const u = [...experiences]; u[idx] = { ...u[idx], date: ev.target.value }; setExperiences(u) }}
-                    className={inputClass + " w-36 shrink-0"} placeholder="Date (e.g. 2024 - Present)" />
-                  <input value={e.title} onChange={ev => { const u = [...experiences]; u[idx] = { ...u[idx], title: ev.target.value }; setExperiences(u) }}
-                    className={inputClass} placeholder="Title" />
-                  <input value={e.company} onChange={ev => { const u = [...experiences]; u[idx] = { ...u[idx], company: ev.target.value }; setExperiences(u) }}
-                    className={inputClass} placeholder="Company" />
-                  <button onClick={() => e.id && deleteExperience(e.id)} className={btnDanger}>
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-                <textarea value={e.desc} onChange={ev => { const u = [...experiences]; u[idx] = { ...u[idx], desc: ev.target.value }; setExperiences(u) }}
-                  className={textareaClass} rows={3} placeholder="Description" />
-              </div>
-            ))}
-            {experiences.length > 0 && (
-              <button onClick={saveExperiences} disabled={saving} className={btnPrimary + " self-start"}>
-                {saving ? <Loader className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />} Save All Experiences
-              </button>
-            )}
-          </div>
+          <ExperiencesTab
+            experiences={experiences} saving={saving}
+            onAdd={addExperience}
+            onUpdate={(idx, e) => { const u = [...experiences]; u[idx] = e; setExperiences(u) }}
+            onDelete={deleteExperience}
+            onMove={moveExperience}
+            onSave={saveExperiences}
+          />
         )}
+        {tab === 'messages' && <MessagesTab showToast={showToast} />}
       </div>
     </div>
   )

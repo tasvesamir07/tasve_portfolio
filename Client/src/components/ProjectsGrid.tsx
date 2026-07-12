@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ExternalLink, Code } from 'lucide-react';
 import Card3DTilt from './Card3DTilt';
@@ -58,7 +59,7 @@ export default function ProjectsGrid({ projects }: Props) {
                   {/* Card Header Placeholder / Image */}
                   <div className="relative h-44 bg-[#0f121d]/80 border border-white/5 rounded-lg flex items-center justify-center overflow-hidden">
                     {p.image ? (
-                      <img src={p.image} alt={p.title} className="w-full h-full object-cover" />
+                      <Image src={p.image} alt={p.title} fill className="object-cover" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />
                     ) : (
                       <Code className="w-12 h-12 text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-cyan-500" />
                     )}

@@ -23,18 +23,18 @@ export default function ContactForm() {
         body: JSON.stringify(form)
       });
 
-      if (!res.ok) throw new Error('API submission rejected');
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}))
+        throw new Error(body.error || 'Failed to send message')
+      }
 
       setStatus('success');
       setForm({ name: '', email: '', subject: '', message: '' });
       setTimeout(() => setStatus('idle'), 5000);
     } catch (err) {
-      console.warn('Contact API offline. Submitting via mock fallback...', err);
-      setTimeout(() => {
-        setStatus('success');
-        setForm({ name: '', email: '', subject: '', message: '' });
-        setTimeout(() => setStatus('idle'), 5000);
-      }, 1000);
+      setErrorMsg(err instanceof Error ? err.message : 'Something went wrong');
+      setStatus('error');
+      setTimeout(() => setStatus('idle'), 5000);
     }
   };
 
@@ -107,6 +107,10 @@ export default function ContactForm() {
       {status === 'success' ? (
         <div className="flex items-center gap-3 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 p-4 rounded-lg text-sm animate-fade-in">
           <CheckCircle className="w-5 h-5" /> Message sent successfully! I will get back to you soon.
+        </div>
+      ) : status === 'error' ? (
+        <div className="flex items-center gap-3 bg-red-500/10 border border-red-500/30 text-red-400 p-4 rounded-lg text-sm animate-fade-in">
+          {errorMsg}
         </div>
       ) : (
         <button
