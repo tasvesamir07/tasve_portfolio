@@ -43,29 +43,20 @@ export default function CustomCursor() {
 
     let mouseX = -100
     let mouseY = -100
-    let lastMouseX = -100
-    let lastMouseY = -100
-    const ripples: Ripple[] = []
+    let ringX = -100
+    let ringY = -100
+    let initialized = false
+    let currentRadius = 10
     let animationFrameId: number
 
     const handleMouseMove = (e: MouseEvent) => {
       mouseX = e.clientX
       mouseY = e.clientY
-
-      // Calculate distance from last ripple to prevent too many overlapping ripples
-      const dist = Math.hypot(mouseX - lastMouseX, mouseY - lastMouseY)
-      if (dist > 8) {
-        ripples.push({
-          x: mouseX,
-          y: mouseY,
-          radius: 1,
-          maxRadius: hovered ? 45 : 30,
-          opacity: 1,
-          color: hovered ? '236, 72, 153' : '6, 182, 212', // Pink if hovered, Cyan if default
-          speed: 1.0,
-        })
-        lastMouseX = mouseX
-        lastMouseY = mouseY
+      
+      if (!initialized) {
+        ringX = mouseX
+        ringY = mouseY
+        initialized = true
       }
     }
 
@@ -75,7 +66,7 @@ export default function CustomCursor() {
     const handleMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement
       const isInteractive = target.closest(
-        'a, button, [role="button"], input, textarea, select, .project-card, .info-card',
+        'a, button, [role="button"], input, textarea, select, .project-card, .info-card, .cursor-zoom-in'
       )
       setHovered(!!isInteractive)
     }
@@ -85,34 +76,31 @@ export default function CustomCursor() {
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-      // Draw and update ripples
-      ripples.forEach((ripple, index) => {
-        ripple.radius += ripple.speed
-        ripple.opacity -= 0.02 // Fades out
+      if (initialized && mouseX >= 0 && mouseY >= 0) {
+        // Smoothly interpolate outer ring position (Lerp)
+        const lerpSpeed = 0.15
+        ringX += (mouseX - ringX) * lerpSpeed
+        ringY += (mouseY - ringY) * lerpSpeed
 
-        if (ripple.opacity <= 0) {
-          ripples.splice(index, 1)
-          return
-        }
+        // Smoothly interpolate outer ring radius
+        const targetRadius = hovered ? 22 : 10
+        currentRadius += (targetRadius - currentRadius) * 0.15
 
+        // Draw outer floating ring
         ctx.beginPath()
-        ctx.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2)
-        ctx.strokeStyle = `rgba(${ripple.color}, ${ripple.opacity})`
-        ctx.lineWidth = 1.5
+        ctx.arc(ringX, ringY, currentRadius, 0, Math.PI * 2)
+        ctx.strokeStyle = hovered ? 'rgba(236, 72, 153, 0.5)' : 'rgba(6, 182, 212, 0.4)'
+        ctx.lineWidth = hovered ? 2.0 : 1.5
         ctx.stroke()
-      })
 
-      // Draw current mouse pointer dot (precise target)
-      if (mouseX >= 0 && mouseY >= 0) {
+        // Draw center dot
         ctx.beginPath()
-        ctx.arc(mouseX, mouseY, hovered ? 5 : 3, 0, Math.PI * 2)
+        ctx.arc(mouseX, mouseY, hovered ? 4 : 3, 0, Math.PI * 2)
         ctx.fillStyle = hovered ? 'rgb(236, 72, 153)' : 'rgb(6, 182, 212)'
-        ctx.shadowBlur = hovered ? 12 : 6
-        ctx.shadowColor = hovered ? 'rgba(236, 72, 153, 0.8)' : 'rgba(6, 182, 212, 0.8)'
+        ctx.shadowBlur = hovered ? 8 : 4
+        ctx.shadowColor = hovered ? 'rgba(236, 72, 153, 0.6)' : 'rgba(6, 182, 212, 0.6)'
         ctx.fill()
-
-        // Reset shadow
-        ctx.shadowBlur = 0
+        ctx.shadowBlur = 0 // reset shadow
       }
 
       animationFrameId = requestAnimationFrame(animate)

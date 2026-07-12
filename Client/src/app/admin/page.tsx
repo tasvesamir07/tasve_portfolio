@@ -1,135 +1,55 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import { toast, Toaster } from 'sonner'
-import {
-  LogOut,
-  Settings,
-  Award,
-  Image as ImageIcon,
-  User,
-  FolderKanban,
-  BarChart3,
-  Briefcase,
-  GraduationCap,
-  Mail,
-  Menu,
-  X,
-  ChevronLeft,
-} from 'lucide-react'
+import { useEffect, useState, Suspense } from 'react'
+import { useSearchParams, useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 import ProfileTab from '@/components/admin/ProfileTab'
 import ProjectsTab from '@/components/admin/ProjectsTab'
 import SkillsTab from '@/components/admin/SkillsTab'
 import ExperiencesTab from '@/components/admin/ExperiencesTab'
 import EducationTab from '@/components/admin/EducationTab'
-import MessagesTab from '@/components/admin/MessagesTab'
-import SettingsTab from '@/components/admin/SettingsTab'
 import CertificationsTab from '@/components/admin/CertificationsTab'
 import GalleryTab from '@/components/admin/GalleryTab'
+import MessagesTab from '@/components/admin/MessagesTab'
+import SettingsTab from '@/components/admin/SettingsTab'
+import DashboardStats from '@/components/admin/DashboardStats'
 import { AdminSkeleton } from '@/components/Skeleton'
 import { compressAndConvertToWebp } from '@/lib/image'
-import ScrollToTop from '@/components/ScrollToTop'
 
-type Tab =
-  | 'profile'
-  | 'projects'
-  | 'skills'
-  | 'experiences'
-  | 'messages'
-  | 'education'
-  | 'certifications'
-  | 'gallery'
-  | 'settings'
+type Tab = 'dashboard' | 'profile' | 'projects' | 'skills' | 'experiences' | 'education' | 'certifications' | 'gallery' | 'messages' | 'settings'
 
 interface ProfileData {
-  name: string
-  title: string
-  intro: string
-  description: string
-  email: string
-  location: string
-  github: string
-  linkedin: string
-  twitter: string
-  codepen: string
-  bio_paragraphs: string
-  tech_list: string
-  avatar: string
-  resume_url: string
+  name: string; title: string; intro: string; description: string; email: string
+  location: string; github: string; linkedin: string; twitter: string; codepen: string
+  bio_paragraphs: string; tech_list: string; avatar: string; resume_url: string
 }
 
-interface ProjectData {
-  id?: number
-  title: string
-  category: string
-  tag: string
-  desc: string
-  tags: string
-  github: string
-  live: string
-  image: string
-  diagram_url: string
-  sort_order: number
-}
+interface ProjectData { id?: number; title: string; category: string; tag: string; desc: string; tags: string; github: string; live: string; image: string; diagram_url: string; sort_order: number }
 
-interface SkillData {
-  id?: number
-  category: string
-  name: string
-  value: number
-  sort_order: number
-}
+interface SkillData { id?: number; category: string; name: string; value: number; sort_order: number }
 
-interface ExperienceData {
-  id?: number
-  date: string
-  title: string
-  company: string
-  desc: string
-  sort_order: number
-}
+interface ExperienceData { id?: number; date: string; title: string; company: string; desc: string; sort_order: number }
 
-interface EducationData {
-  id?: number
-  type: string
-  title: string
-  subtitle: string
-  date: string
-  details: string
-  sort_order: number
-}
+interface EducationData { id?: number; type: string; title: string; subtitle: string; date: string; details: string; sort_order: number }
 
-interface CertificationData {
-  id?: number
-  title: string
-  issuer: string
-  date: string
-  credential_url: string
-  image: string
-  sort_order: number
-}
+interface CertificationData { id?: number; title: string; issuer: string; date: string; credential_url: string; image: string; sort_order: number }
 
-interface GalleryItemData {
-  id?: number
-  title: string
-  image: string
-  description: string
-  sort_order: number
-}
+interface GalleryItemData { id?: number; title: string; image: string; description: string; sort_order: number }
 
 function moveItem<T>(arr: T[], from: number, to: number): T[] {
-  const next = [...arr]
-  const [moved] = next.splice(from, 1)
-  next.splice(to, 0, moved)
-  return next
+  const next = [...arr]; const [moved] = next.splice(from, 1); next.splice(to, 0, moved); return next
 }
 
-export default function AdminPage() {
+function AdminPageInner() {
+  const searchParams = useSearchParams()
   const router = useRouter()
-  const [tab, setTab] = useState<Tab>('profile')
-  const [authed, setAuthed] = useState(false)
+  const validTabs = ['dashboard','profile','projects','skills','experiences','education','certifications','gallery','messages','settings']
+  const tabParam = searchParams.get('tab') as Tab | null
+  const tab: Tab = tabParam && validTabs.includes(tabParam) ? tabParam : 'dashboard'
+
+  const setTab = (t: Tab) => {
+    router.push(`/admin?tab=${t}`, { scroll: false })
+  }
   const [loadingData, setLoadingData] = useState(true)
   const [saving, setSaving] = useState(false)
   const [profile, setProfile] = useState<ProfileData | null>(null)
@@ -141,77 +61,17 @@ export default function AdminPage() {
   const [gallery, setGallery] = useState<GalleryItemData[]>([])
 
   useEffect(() => {
-    fetch('/api/admin/auth')
-      .then((r) => r.json())
-      .then((d) => {
-        if (!d.authenticated) router.push('/admin/login')
-        else setAuthed(true)
-      })
-  }, [router])
-
-  useEffect(() => {
-    if (!authed) return
-    const checkRes = (r: Response) => {
-      if (!r.ok) throw new Error('HTTP error')
-      return r.json()
-    }
+    const checkRes = (r: Response) => { if (!r.ok) throw new Error(); return r.json() }
     Promise.all([
-      fetch('/api/admin/profile')
-        .then(checkRes)
-        .then(setProfile)
-        .catch(() => {
-          toast('Failed to load profile')
-          setProfile(null)
-        }),
-      fetch('/api/admin/projects')
-        .then(checkRes)
-        .then(setProjects)
-        .catch(() => {
-          toast('Failed to load projects')
-          setProjects([])
-        }),
-      fetch('/api/admin/skills')
-        .then(checkRes)
-        .then(setSkills)
-        .catch(() => {
-          toast('Failed to load skills')
-          setSkills([])
-        }),
-      fetch('/api/admin/experiences')
-        .then(checkRes)
-        .then(setExperiences)
-        .catch(() => {
-          toast('Failed to load experiences')
-          setExperiences([])
-        }),
-      fetch('/api/admin/education')
-        .then(checkRes)
-        .then(setEducation)
-        .catch(() => {
-          toast('Failed to load education')
-          setEducation([])
-        }),
-      fetch('/api/admin/certifications')
-        .then(checkRes)
-        .then(setCertifications)
-        .catch(() => {
-          toast('Failed to load certifications')
-          setCertifications([])
-        }),
-      fetch('/api/admin/gallery')
-        .then(checkRes)
-        .then(setGallery)
-        .catch(() => {
-          toast('Failed to load gallery')
-          setGallery([])
-        }),
+      fetch('/api/admin/profile').then(checkRes).then(setProfile).catch(() => { toast('Failed to load profile'); setProfile(null) }),
+      fetch('/api/admin/projects').then(checkRes).then(setProjects).catch(() => { toast('Failed to load projects'); setProjects([]) }),
+      fetch('/api/admin/skills').then(checkRes).then(setSkills).catch(() => { toast('Failed to load skills'); setSkills([]) }),
+      fetch('/api/admin/experiences').then(checkRes).then(setExperiences).catch(() => { toast('Failed to load experiences'); setExperiences([]) }),
+      fetch('/api/admin/education').then(checkRes).then(setEducation).catch(() => { toast('Failed to load education'); setEducation([]) }),
+      fetch('/api/admin/certifications').then(checkRes).then(setCertifications).catch(() => { toast('Failed to load certifications'); setCertifications([]) }),
+      fetch('/api/admin/gallery').then(checkRes).then(setGallery).catch(() => { toast('Failed to load gallery'); setGallery([]) }),
     ]).finally(() => setLoadingData(false))
-  }, [authed])
-
-  const handleLogout = async () => {
-    await fetch('/api/admin/auth', { method: 'DELETE' })
-    window.location.href = '/admin/login'
-  }
+  }, [])
 
   const saveProfile = async () => {
     if (!profile) return
@@ -588,260 +448,94 @@ export default function AdminPage() {
     setGallery(moveItem(gallery, idx, to))
   }
 
-  if (!authed) return null
-
-  const tabLabels: Record<Tab, { label: string; icon: React.ReactNode }> = {
-    profile: { label: 'Profile', icon: <User className="w-4 h-4" /> },
-    projects: { label: 'Projects', icon: <FolderKanban className="w-4 h-4" /> },
-    skills: { label: 'Skills', icon: <BarChart3 className="w-4 h-4" /> },
-    experiences: { label: 'Experience', icon: <Briefcase className="w-4 h-4" /> },
-    education: { label: 'Education', icon: <GraduationCap className="w-4 h-4" /> },
-    certifications: { label: 'Certifications', icon: <Award className="w-4 h-4" /> },
-    gallery: { label: 'Gallery', icon: <ImageIcon className="w-4 h-4" /> },
-    messages: { label: 'Messages', icon: <Mail className="w-4 h-4" /> },
-    settings: { label: 'Settings', icon: <Settings className="w-4 h-4" /> },
-  }
-
-  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const showTabs = ['dashboard', 'profile', 'projects', 'skills', 'experiences', 'education', 'certifications', 'gallery', 'messages', 'settings']
 
   return (
-    <div className="min-h-screen bg-[#07090e] flex">
-      <Toaster
-        position="top-right"
-        toastOptions={{
-          style: {
-            background: '#0f121d',
-            border: '1px solid rgba(255,255,255,0.05)',
-            color: '#e5e7eb',
-            fontSize: '14px',
-          },
-        }}
-      />
-
-      {/* Mobile sidebar overlay */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 z-30 bg-black/50 md:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-
-      {/* Sidebar */}
-      <aside
-        className={`fixed md:sticky top-0 z-40 h-screen w-56 bg-[#0f121d]/95 backdrop-blur-xl border-r border-white/5 flex flex-col transition-transform duration-200 md:translate-x-0 ${
-          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
-      >
-        <div className="flex items-center justify-between px-4 h-14 border-b border-white/5">
-          <div className="flex items-center gap-2">
-            <span className="text-cyan-400 font-bold">&lt;</span>
-            <span className="text-white font-bold">Admin</span>
-            <span className="text-cyan-400 font-bold">/&gt;</span>
-          </div>
+    <>
+      <div className="flex items-center gap-3 mb-6">
+        {showTabs.map((t) => (
           <button
-            onClick={() => setSidebarOpen(false)}
-            className="md:hidden text-gray-400 hover:text-white cursor-pointer"
+            key={t}
+            onClick={() => setTab(t as Tab)}
+            className={`px-3 py-1.5 text-xs font-medium rounded-lg capitalize transition-colors cursor-pointer ${
+              tab === t
+                ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20'
+                : 'text-gray-500 hover:text-white bg-white/5 border border-white/5'
+            }`}
           >
-            <X className="w-5 h-5" />
+            {t}
           </button>
-        </div>
-        <nav className="flex-1 overflow-y-auto p-2 space-y-1">
-          {(Object.keys(tabLabels) as Tab[]).map((t) => (
-            <button
-              key={t}
-              onClick={() => {
-                setTab(t)
-                setSidebarOpen(false)
-              }}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg transition-colors text-left cursor-pointer ${
-                tab === t
-                  ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20'
-                  : 'text-gray-400 hover:text-white hover:bg-white/5 border border-transparent'
-              }`}
-            >
-              {tabLabels[t].icon}
-              <span>{tabLabels[t].label}</span>
-            </button>
-          ))}
-        </nav>
-        <div className="p-2 border-t border-white/5 space-y-1">
-          <Link
-            href="/"
-            className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
-          >
-            <ChevronLeft className="w-4 h-4" /> View Site
-          </Link>
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-gray-400 hover:text-red-400 hover:bg-red-400/5 rounded-lg transition-colors cursor-pointer"
-          >
-            <LogOut className="w-4 h-4" /> Logout
-          </button>
-        </div>
-      </aside>
-
-      {/* Main content area */}
-      <div className="flex-1 flex flex-col min-w-0">
-        {/* Top bar */}
-        <header className="sticky top-0 z-20 bg-[#0f121d]/80 backdrop-blur-xl border-b border-white/5 px-4 md:px-6 h-14 flex items-center justify-between">
-          <button
-            onClick={() => setSidebarOpen(true)}
-            className="md:hidden text-gray-400 hover:text-white cursor-pointer"
-          >
-            <Menu className="w-5 h-5" />
-          </button>
-          <div className="hidden md:flex items-center gap-3">
-            <span className="text-sm text-gray-500 font-mono">{tabLabels[tab].label}</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <Link
-              href="/"
-              className="hidden md:inline-flex text-xs text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-lg border border-white/5 transition-all"
-            >
-              View Portfolio
-            </Link>
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors cursor-pointer"
-            >
-              <LogOut className="w-4 h-4" /> Logout
-            </button>
-          </div>
-        </header>
-
-        <div className="p-4 md:p-6 max-w-4xl mx-auto w-full">
-          {loadingData && !['settings', 'messages', 'certifications', 'gallery'].includes(tab) ? (
-            <AdminSkeleton />
-          ) : (
-            <>
-              {tab === 'profile' && profile && (
-                <div className="flex flex-col gap-6">
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div className="bg-[#0f121d]/60 backdrop-blur border border-white/5 rounded-xl p-4">
-                      <p className="text-2xl font-bold text-cyan-400">{projects.length}</p>
-                      <p className="text-xs text-gray-500 font-mono mt-1">Projects</p>
-                    </div>
-                    <div className="bg-[#0f121d]/60 backdrop-blur border border-white/5 rounded-xl p-4">
-                      <p className="text-2xl font-bold text-purple-400">{skills.length}</p>
-                      <p className="text-xs text-gray-500 font-mono mt-1">Skills</p>
-                    </div>
-                    <div className="bg-[#0f121d]/60 backdrop-blur border border-white/5 rounded-xl p-4">
-                      <p className="text-2xl font-bold text-pink-400">{experiences.length}</p>
-                      <p className="text-xs text-gray-500 font-mono mt-1">Experiences</p>
-                    </div>
-                    <div className="bg-[#0f121d]/60 backdrop-blur border border-white/5 rounded-xl p-4">
-                      <p className="text-2xl font-bold text-emerald-400">{education.length}</p>
-                      <p className="text-xs text-gray-500 font-mono mt-1">Education</p>
-                    </div>
-                  </div>
-                  <ProfileTab
-                    profile={profile}
-                    saving={saving}
-                    onChange={setProfile}
-                    onSave={saveProfile}
-                  />
-                </div>
-              )}
-              {tab === 'projects' && (
-                <ProjectsTab
-                  projects={projects}
-                  saving={saving}
-                  onAdd={addProject}
-                  onUpdate={(idx, p) => {
-                    const u = [...projects]
-                    u[idx] = p
-                    setProjects(u)
-                  }}
-                  onDelete={deleteProject}
-                  onImageUpload={handleProjectImage}
-                  onMove={moveProject}
-                  onSave={saveProjects}
-                />
-              )}
-              {tab === 'skills' && (
-                <SkillsTab
-                  skills={skills}
-                  saving={saving}
-                  onAdd={addSkill}
-                  onUpdate={(idx, s) => {
-                    const u = [...skills]
-                    u[idx] = s
-                    setSkills(u)
-                  }}
-                  onDelete={deleteSkill}
-                  onMove={moveSkill}
-                  onSave={saveSkills}
-                />
-              )}
-              {tab === 'experiences' && (
-                <ExperiencesTab
-                  experiences={experiences}
-                  saving={saving}
-                  onAdd={addExperience}
-                  onUpdate={(idx, e) => {
-                    const u = [...experiences]
-                    u[idx] = e
-                    setExperiences(u)
-                  }}
-                  onDelete={deleteExperience}
-                  onMove={moveExperience}
-                  onSave={saveExperiences}
-                />
-              )}
-              {tab === 'education' && (
-                <EducationTab
-                  education={education}
-                  saving={saving}
-                  onAdd={addEducation}
-                  onUpdate={(idx, e) => {
-                    const u = [...education]
-                    u[idx] = e
-                    setEducation(u)
-                  }}
-                  onDelete={deleteEducation}
-                  onMove={moveEducation}
-                  onSave={saveEducation}
-                />
-              )}
-              {tab === 'certifications' && (
-                <CertificationsTab
-                  certifications={certifications}
-                  saving={saving}
-                  onAdd={addCertification}
-                  onUpdate={(idx, c) => {
-                    const u = [...certifications]
-                    u[idx] = c
-                    setCertifications(u)
-                  }}
-                  onDelete={deleteCertification}
-                  onImageUpload={handleCertImage}
-                  onMove={moveCertification}
-                  onSave={saveCertifications}
-                />
-              )}
-              {tab === 'gallery' && (
-                <GalleryTab
-                  items={gallery}
-                  saving={saving}
-                  onAdd={addGalleryItem}
-                  onUpdate={(idx, g) => {
-                    const u = [...gallery]
-                    u[idx] = g
-                    setGallery(u)
-                  }}
-                  onDelete={deleteGalleryItem}
-                  onImageUpload={handleGalleryImage}
-                  onMove={moveGalleryItem}
-                  onSave={saveGallery}
-                />
-              )}
-              {tab === 'messages' && <MessagesTab />}
-              {tab === 'settings' && <SettingsTab />}
-            </>
-          )}
-        </div>
-        <ScrollToTop />
+        ))}
       </div>
-    </div>
+
+      {loadingData && !['dashboard', 'certifications', 'gallery'].includes(tab) ? (
+        <AdminSkeleton />
+      ) : (
+        <>
+          {tab === 'dashboard' && <DashboardStats />}
+          {tab === 'profile' && profile && (
+            <ProfileTab profile={profile} saving={saving} onChange={setProfile} onSave={saveProfile} />
+          )}
+          {tab === 'projects' && (
+            <ProjectsTab
+              projects={projects} saving={saving}
+              onAdd={addProject}
+              onUpdate={(idx, p) => { const u = [...projects]; u[idx] = p; setProjects(u) }}
+              onDelete={deleteProject} onImageUpload={handleProjectImage} onMove={moveProject} onSave={saveProjects}
+            />
+          )}
+          {tab === 'skills' && (
+            <SkillsTab
+              skills={skills} saving={saving}
+              onAdd={addSkill}
+              onUpdate={(idx, s) => { const u = [...skills]; u[idx] = s; setSkills(u) }}
+              onDelete={deleteSkill} onMove={moveSkill} onSave={saveSkills}
+            />
+          )}
+          {tab === 'experiences' && (
+            <ExperiencesTab
+              experiences={experiences} saving={saving}
+              onAdd={addExperience}
+              onUpdate={(idx, e) => { const u = [...experiences]; u[idx] = e; setExperiences(u) }}
+              onDelete={deleteExperience} onMove={moveExperience} onSave={saveExperiences}
+            />
+          )}
+          {tab === 'education' && (
+            <EducationTab
+              education={education} saving={saving}
+              onAdd={addEducation}
+              onUpdate={(idx, e) => { const u = [...education]; u[idx] = e; setEducation(u) }}
+              onDelete={deleteEducation} onMove={moveEducation} onSave={saveEducation}
+            />
+          )}
+          {tab === 'certifications' && (
+            <CertificationsTab
+              certifications={certifications} saving={saving}
+              onAdd={addCertification}
+              onUpdate={(idx, c) => { const u = [...certifications]; u[idx] = c; setCertifications(u) }}
+              onDelete={deleteCertification} onImageUpload={handleCertImage} onMove={moveCertification} onSave={saveCertifications}
+            />
+          )}
+          {tab === 'gallery' && (
+            <GalleryTab
+              items={gallery} saving={saving}
+              onAdd={addGalleryItem}
+              onUpdate={(idx, g) => { const u = [...gallery]; u[idx] = g; setGallery(u) }}
+              onDelete={deleteGalleryItem} onImageUpload={handleGalleryImage} onMove={moveGalleryItem} onSave={saveGallery}
+            />
+          )}
+          {tab === 'messages' && <MessagesTab />}
+          {tab === 'settings' && <SettingsTab />}
+        </>
+      )}
+    </>
+  )
+}
+
+export default function AdminPage() {
+  return (
+    <Suspense fallback={<AdminSkeleton />}>
+      <AdminPageInner />
+    </Suspense>
   )
 }
