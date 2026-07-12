@@ -1,8 +1,15 @@
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { LoginSchema } from '@/lib/validation'
+import { checkRateLimit } from '@/lib/rate-limit'
 
 export async function POST(req: Request) {
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
+  const { allowed, remaining } = checkRateLimit(`auth:${ip}`, 5, 60_000)
+  if (!allowed) {
+    return NextResponse.json({ error: 'Too many attempts. Try again later.' }, { status: 429 })
+  }
+
   const parsed = LoginSchema.safeParse(await req.json())
   if (!parsed.success) return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
 

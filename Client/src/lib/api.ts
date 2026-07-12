@@ -1,4 +1,5 @@
 import { getSupabase } from './supabase'
+import type { ProfileRow, ProjectRow, SkillRow, ExperienceRow } from './database.types'
 
 export interface Project {
   id: string
@@ -39,7 +40,7 @@ export interface Experience {
   desc: string
 }
 
-function formatProfile(data: any): Profile {
+function formatProfile(data: ProfileRow): Profile {
   return {
     name: data.name || '',
     title: data.title || '',
@@ -56,8 +57,8 @@ function formatProfile(data: any): Profile {
   }
 }
 
-function formatProjects(data: any[]): Project[] {
-  return data.map((item: any) => ({
+function formatProjects(data: ProjectRow[]): Project[] {
+  return data.map((item) => ({
     id: item.id.toString(),
     title: item.title || '',
     category: item.category || '',
@@ -70,9 +71,9 @@ function formatProjects(data: any[]): Project[] {
   }))
 }
 
-function formatSkills(data: any[]): Skill[] {
+function formatSkills(data: SkillRow[]): Skill[] {
   const categories: { [key: string]: { name: string; value: number }[] } = {}
-  data.forEach((item: any) => {
+  data.forEach((item) => {
     const cat = item.category || 'General'
     if (!categories[cat]) categories[cat] = []
     categories[cat].push({ name: item.name || '', value: item.value || 0 })
@@ -83,9 +84,9 @@ function formatSkills(data: any[]): Skill[] {
   }))
 }
 
-function formatExperiences(data: any[]): Experience[] {
+function formatExperiences(data: ExperienceRow[]): Experience[] {
   return data
-    .map((item: any) => ({
+    .map((item) => ({
       date: item.date || '',
       title: item.title || '',
       company: item.company || '',
@@ -98,26 +99,26 @@ export async function fetchProfile(): Promise<Profile> {
   const supabase = getSupabase()
   const { data, error } = await supabase.from('profile').select('*').limit(1).single()
   if (error) throw error
-  return formatProfile(data)
+  return formatProfile(data as ProfileRow)
 }
 
 export async function fetchProjects(): Promise<Project[]> {
   const supabase = getSupabase()
   const { data, error } = await supabase.from('projects').select('*').order('sort_order', { ascending: true })
   if (error) throw error
-  return formatProjects(data)
+  return formatProjects(data as ProjectRow[])
 }
 
 export async function fetchSkills(): Promise<Skill[]> {
   const supabase = getSupabase()
   const { data, error } = await supabase.from('skills').select('*').order('sort_order', { ascending: true })
   if (error) throw error
-  return formatSkills(data)
+  return formatSkills(data as SkillRow[])
 }
 
 export async function fetchExperience(): Promise<Experience[]> {
   const supabase = getSupabase()
   const { data, error } = await supabase.from('experiences').select('*').order('sort_order', { ascending: true })
   if (error) throw error
-  return formatExperiences(data)
+  return formatExperiences(data as ExperienceRow[])
 }
