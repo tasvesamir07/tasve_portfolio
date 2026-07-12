@@ -13,17 +13,43 @@ interface Statement {
 
 function parseMigration(filePath: string): Statement[] {
   const raw = readFileSync(filePath, 'utf8')
-  const parts = raw
-    .split(';')
-    .map((s) => s.trim())
-    .filter((s) => s.length > 0 && !s.startsWith('--') && !s.startsWith('/*'))
+  const parts = raw.split(';')
+  const statements: Statement[] = []
 
-  return parts.map((sql) => ({
-    sql: sql + ';',
-    isSeed: /^\s*INSERT\s+INTO/i.test(sql),
-    isTruncate: /^\s*TRUNCATE\s+/i.test(sql),
-    isDDL: /^\s*(CREATE|ALTER|DROP|CREATE\s+POLICY)/i.test(sql),
-  }))
+  for (const part of parts) {
+    let sql = part.trim()
+    if (!sql) continue
+
+    // Strip leading comment lines
+    while (sql.startsWith('--') || sql.startsWith('/*')) {
+      if (sql.startsWith('--')) {
+        const nextLine = sql.indexOf('\n')
+        if (nextLine === -1) {
+          sql = ''
+        } else {
+          sql = sql.substring(nextLine).trim()
+        }
+      } else if (sql.startsWith('/*')) {
+        const endComment = sql.indexOf('*/')
+        if (endComment === -1) {
+          sql = ''
+        } else {
+          sql = sql.substring(endComment + 2).trim()
+        }
+      }
+    }
+
+    if (sql.length > 0) {
+      statements.push({
+        sql: sql + ';',
+        isSeed: /^\s*INSERT\s+INTO/i.test(sql),
+        isTruncate: /^\s*TRUNCATE\s+/i.test(sql),
+        isDDL: /^\s*(CREATE|ALTER|DROP|CREATE\s+POLICY)/i.test(sql),
+      })
+    }
+  }
+
+  return statements
 }
 
 function getConnectionString(): string | null {

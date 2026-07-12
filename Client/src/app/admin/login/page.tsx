@@ -209,9 +209,9 @@ export default function LoginPage() {
                 {loading ? (
                   <Loader className="w-4 h-4 animate-spin" />
                 ) : (
-                  <Mail className="w-4 h-4" />
+                  <CheckCircle className="w-4 h-4" />
                 )}
-                {loading ? 'Sending...' : 'Send OTP'}
+                {loading ? 'Verifying...' : 'Verify Username'}
               </button>
               <button
                 type="button"
