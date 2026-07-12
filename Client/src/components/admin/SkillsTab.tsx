@@ -25,9 +25,16 @@ const cardClass = "bg-[#0f121d]/60 backdrop-blur border border-white/5 rounded-x
 export default function SkillsTab({ skills, saving, onAdd, onUpdate, onDelete, onMove, onSave }: Props) {
   return (
     <div className="flex flex-col gap-6">
-      <button onClick={onAdd} className={btnPrimary + " self-start"}>
-        <Plus className="w-4 h-4" /> Add Skill
-      </button>
+      <div className="flex flex-wrap items-center gap-3">
+        <button onClick={onAdd} className={btnPrimary}>
+          <Plus className="w-4 h-4" /> Add Skill
+        </button>
+        {skills.length > 0 && (
+          <button onClick={onSave} disabled={saving} className={btnPrimary}>
+            {saving ? <Loader className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />} Save All Skills
+          </button>
+        )}
+      </div>
       {skills.length === 0 && <p className="text-gray-500 text-sm">No skills yet.</p>}
       {skills.map((s, idx) => (
         <div key={s.id || idx} className={cardClass + " flex flex-col md:flex-row items-start md:items-center gap-4 shadow-xl shadow-black/10"}>
@@ -70,21 +77,14 @@ export default function SkillsTab({ skills, saving, onAdd, onUpdate, onDelete, o
               </div>
             </div>
           </div>
-
           {/* Delete Action */}
           <div className="self-end md:self-center shrink-0 pt-2 md:pt-0">
             <button onClick={() => s.id && onDelete(s.id)} className={btnDanger} title="Delete Skill">
               <Trash2 className="w-5 h-5" />
             </button>
           </div>
-
         </div>
       ))}
-      {skills.length > 0 && (
-        <button onClick={onSave} disabled={saving} className={btnPrimary + " self-start mt-2"}>
-          {saving ? <Loader className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />} Save All Skills
-        </button>
-      )}
     </div>
   )
 }

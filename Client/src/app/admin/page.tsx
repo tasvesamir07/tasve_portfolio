@@ -2,15 +2,18 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { LogOut } from 'lucide-react'
+import Link from 'next/link'
+import { LogOut, Settings } from 'lucide-react'
 import ProfileTab from '@/components/admin/ProfileTab'
 import ProjectsTab from '@/components/admin/ProjectsTab'
 import SkillsTab from '@/components/admin/SkillsTab'
 import ExperiencesTab from '@/components/admin/ExperiencesTab'
 import EducationTab from '@/components/admin/EducationTab'
 import MessagesTab from '@/components/admin/MessagesTab'
+import SettingsTab from '@/components/admin/SettingsTab'
+import { AdminSkeleton } from '@/components/Skeleton'
 
-type Tab = 'profile' | 'projects' | 'skills' | 'experiences' | 'messages' | 'education'
+type Tab = 'profile' | 'projects' | 'skills' | 'experiences' | 'messages' | 'education' | 'settings'
 
 interface ProfileData {
   name: string; title: string; intro: string; description: string
@@ -47,6 +50,7 @@ export default function AdminPage() {
   const router = useRouter()
   const [tab, setTab] = useState<Tab>('profile')
   const [authed, setAuthed] = useState(false)
+  const [loadingData, setLoadingData] = useState(true)
   const [saving, setSaving] = useState(false)
   const [toast, setToast] = useState<string | null>(null)
 
@@ -74,11 +78,13 @@ export default function AdminPage() {
       if (!r.ok) throw new Error('HTTP error')
       return r.json()
     }
-    fetch('/api/admin/profile').then(checkRes).then(setProfile).catch(() => { showToast('Failed to load profile'); setProfile(null) })
-    fetch('/api/admin/projects').then(checkRes).then(setProjects).catch(() => { showToast('Failed to load projects'); setProjects([]) })
-    fetch('/api/admin/skills').then(checkRes).then(setSkills).catch(() => { showToast('Failed to load skills'); setSkills([]) })
-    fetch('/api/admin/experiences').then(checkRes).then(setExperiences).catch(() => { showToast('Failed to load experiences'); setExperiences([]) })
-    fetch('/api/admin/education').then(checkRes).then(setEducation).catch(() => { showToast('Failed to load education'); setEducation([]) })
+    Promise.all([
+      fetch('/api/admin/profile').then(checkRes).then(setProfile).catch(() => { showToast('Failed to load profile'); setProfile(null) }),
+      fetch('/api/admin/projects').then(checkRes).then(setProjects).catch(() => { showToast('Failed to load projects'); setProjects([]) }),
+      fetch('/api/admin/skills').then(checkRes).then(setSkills).catch(() => { showToast('Failed to load skills'); setSkills([]) }),
+      fetch('/api/admin/experiences').then(checkRes).then(setExperiences).catch(() => { showToast('Failed to load experiences'); setExperiences([]) }),
+      fetch('/api/admin/education').then(checkRes).then(setEducation).catch(() => { showToast('Failed to load education'); setEducation([]) }),
+    ]).finally(() => setLoadingData(false))
   }, [authed])
 
   const handleLogout = async () => {
@@ -266,7 +272,7 @@ export default function AdminPage() {
 
   const tabLabels: Record<Tab, string> = {
     profile: 'Profile', projects: 'Projects', skills: 'Skills',
-    experiences: 'Experience', messages: 'Messages', education: 'Education',
+    experiences: 'Experience', messages: 'Messages', education: 'Education', settings: 'Settings',
   }
 
   return (
@@ -284,9 +290,9 @@ export default function AdminPage() {
             <h1 className="text-lg font-bold text-white">Admin</h1>
             <span className="text-cyan-400 font-bold text-lg">/&gt;</span>
           </div>
-          <a href="/" className="text-xs text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-lg border border-white/5 transition-all">
+          <Link href="/" className="text-xs text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-lg border border-white/5 transition-all">
             ← View Portfolio
-          </a>
+          </Link>
         </div>
         <button onClick={handleLogout} className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors">
           <LogOut className="w-4 h-4" /> Logout
@@ -296,82 +302,89 @@ export default function AdminPage() {
       <div className="flex border-b border-white/5 px-6 bg-[#0f121d]/40 overflow-x-auto">
         {(Object.keys(tabLabels) as Tab[]).map(t => (
           <button key={t} onClick={() => setTab(t)}
-            className={`px-4 py-3 text-sm font-medium capitalize border-b-2 transition-colors shrink-0 ${
+            className={`px-4 py-3 text-sm font-medium capitalize border-b-2 transition-colors shrink-0 flex items-center gap-1.5 ${
               tab === t ? 'border-cyan-400 text-cyan-400' : 'border-transparent text-gray-500 hover:text-gray-300'
             }`}
           >
+            {t === 'settings' && <Settings className="w-3.5 h-3.5" />}
             {tabLabels[t]}
           </button>
         ))}
       </div>
 
       <div className="p-6 max-w-4xl mx-auto">
-        {tab === 'profile' && profile && (
-          <div className="flex flex-col gap-6">
-            {/* Dashboard Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="bg-[#0f121d]/60 backdrop-blur border border-white/5 rounded-xl p-4">
-                <p className="text-2xl font-bold text-cyan-400">{projects.length}</p>
-                <p className="text-xs text-gray-500 font-mono mt-1">Projects</p>
+        {loadingData && tab !== 'settings' && tab !== 'messages' ? (
+          <AdminSkeleton />
+        ) : (
+          <>
+            {tab === 'profile' && profile && (
+              <div className="flex flex-col gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="bg-[#0f121d]/60 backdrop-blur border border-white/5 rounded-xl p-4">
+                    <p className="text-2xl font-bold text-cyan-400">{projects.length}</p>
+                    <p className="text-xs text-gray-500 font-mono mt-1">Projects</p>
+                  </div>
+                  <div className="bg-[#0f121d]/60 backdrop-blur border border-white/5 rounded-xl p-4">
+                    <p className="text-2xl font-bold text-purple-400">{skills.length}</p>
+                    <p className="text-xs text-gray-500 font-mono mt-1">Skills</p>
+                  </div>
+                  <div className="bg-[#0f121d]/60 backdrop-blur border border-white/5 rounded-xl p-4">
+                    <p className="text-2xl font-bold text-pink-400">{experiences.length}</p>
+                    <p className="text-xs text-gray-500 font-mono mt-1">Experiences</p>
+                  </div>
+                  <div className="bg-[#0f121d]/60 backdrop-blur border border-white/5 rounded-xl p-4">
+                    <p className="text-2xl font-bold text-emerald-400">{education.length}</p>
+                    <p className="text-xs text-gray-500 font-mono mt-1">Education</p>
+                  </div>
+                </div>
+                <ProfileTab profile={profile} saving={saving} onChange={setProfile} onSave={saveProfile} />
               </div>
-              <div className="bg-[#0f121d]/60 backdrop-blur border border-white/5 rounded-xl p-4">
-                <p className="text-2xl font-bold text-purple-400">{skills.length}</p>
-                <p className="text-xs text-gray-500 font-mono mt-1">Skills</p>
-              </div>
-              <div className="bg-[#0f121d]/60 backdrop-blur border border-white/5 rounded-xl p-4">
-                <p className="text-2xl font-bold text-pink-400">{experiences.length}</p>
-                <p className="text-xs text-gray-500 font-mono mt-1">Experiences</p>
-              </div>
-              <div className="bg-[#0f121d]/60 backdrop-blur border border-white/5 rounded-xl p-4">
-                <p className="text-2xl font-bold text-emerald-400">{education.length}</p>
-                <p className="text-xs text-gray-500 font-mono mt-1">Education</p>
-              </div>
-            </div>
-            <ProfileTab profile={profile} saving={saving} onChange={setProfile} onSave={saveProfile} />
-          </div>
+            )}
+            {tab === 'projects' && (
+              <ProjectsTab
+                projects={projects} saving={saving}
+                onAdd={addProject}
+                onUpdate={(idx, p) => { const u = [...projects]; u[idx] = p; setProjects(u) }}
+                onDelete={deleteProject}
+                onImageUpload={handleProjectImage}
+                onMove={moveProject}
+                onSave={saveProjects}
+              />
+            )}
+            {tab === 'skills' && (
+              <SkillsTab
+                skills={skills} saving={saving}
+                onAdd={addSkill}
+                onUpdate={(idx, s) => { const u = [...skills]; u[idx] = s; setSkills(u) }}
+                onDelete={deleteSkill}
+                onMove={moveSkill}
+                onSave={saveSkills}
+              />
+            )}
+            {tab === 'experiences' && (
+              <ExperiencesTab
+                experiences={experiences} saving={saving}
+                onAdd={addExperience}
+                onUpdate={(idx, e) => { const u = [...experiences]; u[idx] = e; setExperiences(u) }}
+                onDelete={deleteExperience}
+                onMove={moveExperience}
+                onSave={saveExperiences}
+              />
+            )}
+            {tab === 'education' && (
+              <EducationTab
+                education={education} saving={saving}
+                onAdd={addEducation}
+                onUpdate={(idx, e) => { const u = [...education]; u[idx] = e; setEducation(u) }}
+                onDelete={deleteEducation}
+                onMove={moveEducation}
+                onSave={saveEducation}
+              />
+            )}
+            {tab === 'messages' && <MessagesTab showToast={showToast} />}
+            {tab === 'settings' && <SettingsTab showToast={showToast} />}
+          </>
         )}
-        {tab === 'projects' && (
-          <ProjectsTab
-            projects={projects} saving={saving}
-            onAdd={addProject}
-            onUpdate={(idx, p) => { const u = [...projects]; u[idx] = p; setProjects(u) }}
-            onDelete={deleteProject}
-            onImageUpload={handleProjectImage}
-            onMove={moveProject}
-            onSave={saveProjects}
-          />
-        )}
-        {tab === 'skills' && (
-          <SkillsTab
-            skills={skills} saving={saving}
-            onAdd={addSkill}
-            onUpdate={(idx, s) => { const u = [...skills]; u[idx] = s; setSkills(u) }}
-            onDelete={deleteSkill}
-            onMove={moveSkill}
-            onSave={saveSkills}
-          />
-        )}
-        {tab === 'experiences' && (
-          <ExperiencesTab
-            experiences={experiences} saving={saving}
-            onAdd={addExperience}
-            onUpdate={(idx, e) => { const u = [...experiences]; u[idx] = e; setExperiences(u) }}
-            onDelete={deleteExperience}
-            onMove={moveExperience}
-            onSave={saveExperiences}
-          />
-        )}
-        {tab === 'education' && (
-          <EducationTab
-            education={education} saving={saving}
-            onAdd={addEducation}
-            onUpdate={(idx, e) => { const u = [...education]; u[idx] = e; setEducation(u) }}
-            onDelete={deleteEducation}
-            onMove={moveEducation}
-            onSave={saveEducation}
-          />
-        )}
-        {tab === 'messages' && <MessagesTab showToast={showToast} />}
       </div>
     </div>
   )

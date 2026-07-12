@@ -1,5 +1,31 @@
 -- Run this in Supabase SQL Editor (Dashboard → SQL Editor)
 
+CREATE TABLE IF NOT EXISTS admins (
+  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  username TEXT NOT NULL UNIQUE,
+  password_hash TEXT NOT NULL,
+  display_name TEXT NOT NULL DEFAULT '',
+  email TEXT NOT NULL DEFAULT '',
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE admins ENABLE ROW LEVEL SECURITY;
+
+-- The default admin account is auto-created on first login attempt.
+-- Username: "admin" (or ADMIN_USERNAME env), Password: from ADMIN_PASSWORD env.
+
+CREATE TABLE IF NOT EXISTS otp_codes (
+  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  admin_id BIGINT NOT NULL REFERENCES admins(id) ON DELETE CASCADE,
+  code TEXT NOT NULL,
+  expires_at TIMESTAMPTZ NOT NULL,
+  used BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE otp_codes ENABLE ROW LEVEL SECURITY;
+
 CREATE TABLE IF NOT EXISTS profile (
   id BIGINT PRIMARY KEY DEFAULT 1,
   name TEXT NOT NULL DEFAULT '',

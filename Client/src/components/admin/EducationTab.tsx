@@ -26,9 +26,16 @@ const btnMove = "p-1.5 text-gray-500 hover:text-cyan-400 hover:bg-cyan-400/5 rou
 export default function EducationTab({ education, saving, onAdd, onUpdate, onDelete, onMove, onSave }: Props) {
   return (
     <div className="flex flex-col gap-6">
-      <button onClick={onAdd} className={btnPrimary + " self-start"}>
-        <Plus className="w-4 h-4" /> Add Entry
-      </button>
+      <div className="flex flex-wrap items-center gap-3">
+        <button onClick={onAdd} className={btnPrimary}>
+          <Plus className="w-4 h-4" /> Add Entry
+        </button>
+        {education.length > 0 && (
+          <button onClick={onSave} disabled={saving} className={btnPrimary}>
+            {saving ? <Loader className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />} Save All Education
+          </button>
+        )}
+      </div>
       {education.length === 0 && <p className="text-gray-500 text-sm">No education entries yet.</p>}
       {education.map((e, idx) => (
         <div key={e.id || idx} className={cardClass + " flex flex-col gap-4 shadow-xl shadow-black/10"}>
@@ -87,20 +94,13 @@ export default function EducationTab({ education, saving, onAdd, onUpdate, onDel
                 className={inputClass} placeholder="e.g. 2023 - Present, Batch 2022" />
             </div>
           </div>
-
           <div>
             <label className="text-[10px] text-gray-500 font-bold uppercase tracking-wider block mb-1.5">Details</label>
             <textarea value={e.details} onChange={ev => { const u = { ...e, details: ev.target.value }; onUpdate(idx, u) }}
               className={textareaClass} rows={3} placeholder="Details (e.g. CGPA, achievements, description)..." />
           </div>
-
         </div>
       ))}
-      {education.length > 0 && (
-        <button onClick={onSave} disabled={saving} className={btnPrimary + " self-start mt-2"}>
-          {saving ? <Loader className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />} Save All Education
-        </button>
-      )}
     </div>
   )
 }

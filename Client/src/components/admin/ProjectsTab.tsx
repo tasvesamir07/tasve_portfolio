@@ -24,13 +24,19 @@ const cardClass = "bg-[#0f121d]/60 backdrop-blur border border-white/5 rounded-x
 const btnPrimary = "flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 text-white"
 const btnDanger = "p-2 text-red-400 hover:bg-red-400/10 rounded-lg transition-colors"
 const btnMove = "p-1.5 text-gray-500 hover:text-cyan-400 hover:bg-cyan-400/5 rounded-lg transition-colors disabled:opacity-30"
-
 export default function ProjectsTab({ projects, saving, onAdd, onUpdate, onDelete, onImageUpload, onMove, onSave }: Props) {
   return (
     <div className="flex flex-col gap-6">
-      <button onClick={onAdd} className={btnPrimary + " self-start"}>
-        <Plus className="w-4 h-4" /> Add Project
-      </button>
+      <div className="flex flex-wrap items-center gap-3">
+        <button onClick={onAdd} className={btnPrimary}>
+          <Plus className="w-4 h-4" /> Add Project
+        </button>
+        {projects.length > 0 && (
+          <button onClick={onSave} disabled={saving} className={btnPrimary}>
+            {saving ? <Loader className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />} Save All Projects
+          </button>
+        )}
+      </div>
       {projects.length === 0 && <p className="text-gray-500 text-sm">No projects yet.</p>}
       {projects.map((p, idx) => (
         <div key={p.id || idx} className={cardClass + " flex flex-col gap-4 shadow-xl shadow-black/10"}>
@@ -121,19 +127,14 @@ export default function ProjectsTab({ projects, saving, onAdd, onUpdate, onDelet
               </div>
             )}
           </div>
+
           <div className="flex items-center gap-3">
             <label className="text-xs text-gray-500 shrink-0 font-mono">Diagram:</label>
             <input value={p.diagram_url || ''} onChange={e => { const u = { ...p, diagram_url: e.target.value }; onUpdate(idx, u) }}
               className={inputClass} placeholder="Architecture diagram URL (SVG/PNG)" />
           </div>
-
         </div>
       ))}
-      {projects.length > 0 && (
-        <button onClick={onSave} disabled={saving} className={btnPrimary + " self-start mt-2"}>
-          {saving ? <Loader className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />} Save All Projects
-        </button>
-      )}
     </div>
   )
 }

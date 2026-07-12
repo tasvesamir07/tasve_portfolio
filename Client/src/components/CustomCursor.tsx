@@ -45,7 +45,7 @@ export default function CustomCursor() {
     let mouseY = -100;
     let lastMouseX = -100;
     let lastMouseY = -100;
-    let ripples: Ripple[] = [];
+    const ripples: Ripple[] = [];
     let animationFrameId: number;
 
     const handleMouseMove = (e: MouseEvent) => {

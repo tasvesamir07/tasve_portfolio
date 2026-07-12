@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { 
   fetchProfile, 
   fetchProjects, 
@@ -16,7 +16,6 @@ import {
   ArrowRight, 
   Mail, 
   MapPin, 
- 
   Cpu, 
   TrendingUp, 
   Smartphone, 
@@ -25,400 +24,513 @@ import {
   Briefcase 
 } from 'lucide-react';
 import AnimatedSection from '@/components/AnimatedSection'
+import ScrollToTop from '@/components/ScrollToTop';
+import { SkeletonBlock, SkeletonLine, SkeletonCard } from '@/components/Skeleton'
 
 export const revalidate = 3600;
 
+function HeroSkeleton() {
+  return (
+    <section className="relative min-h-screen flex items-center justify-center pt-24 px-6 md:px-12 overflow-hidden">
+      <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        <div className="lg:col-span-7 flex flex-col gap-6 text-center lg:text-left">
+          <SkeletonBlock className="w-36 h-36 md:w-44 md:h-44 rounded-full mx-auto lg:mx-0" />
+          <SkeletonLine className="w-48 h-4 mx-auto lg:mx-0" />
+          <SkeletonLine className="w-96 h-12 mx-auto lg:mx-0" />
+          <SkeletonLine className="w-72 h-6 mx-auto lg:mx-0" />
+          <SkeletonLine className="w-full h-4 max-w-xl mx-auto lg:mx-0" />
+          <div className="flex gap-4 mt-4 justify-center lg:justify-start">
+            <SkeletonBlock className="w-32 h-12 rounded-lg" />
+            <SkeletonBlock className="w-32 h-12 rounded-lg" />
+          </div>
+        </div>
+        <div className="lg:col-span-5 flex justify-center">
+          <SkeletonBlock className="w-full max-w-md h-80 rounded-xl" />
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function SkillsSkeleton() {
+  return (
+    <section className="py-24 px-6 md:px-12 border-t border-white/5">
+      <div className="max-w-5xl mx-auto">
+        <SkeletonLine className="w-32 h-4 mb-4" />
+        <SkeletonLine className="w-64 h-8 mb-12" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[...Array(3)].map((_, i) => (
+            <SkeletonCard key={i} />
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function ProjectsSkeleton() {
+  return (
+    <section className="py-24 px-6 md:px-12 border-t border-white/5">
+      <div className="max-w-5xl mx-auto">
+        <SkeletonLine className="w-32 h-4 mb-4" />
+        <SkeletonLine className="w-64 h-8 mb-12" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {[...Array(4)].map((_, i) => (
+            <SkeletonBlock key={i} className="h-64 rounded-xl" />
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function ExperienceSkeleton() {
+  return (
+    <section className="py-24 px-6 md:px-12 border-t border-white/5">
+      <div className="max-w-4xl mx-auto">
+        <SkeletonLine className="w-32 h-4 mb-4" />
+        <SkeletonLine className="w-64 h-8 mb-16" />
+        <div className="flex flex-col gap-12 pl-10">
+          {[...Array(2)].map((_, i) => (
+            <SkeletonCard key={i} />
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function EducationSkeleton() {
+  return (
+    <section className="py-24 px-6 md:px-12 border-t border-white/5">
+      <div className="max-w-5xl mx-auto">
+        <SkeletonLine className="w-32 h-4 mb-4" />
+        <SkeletonLine className="w-64 h-8 mb-16" />
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+          <div className="lg:col-span-7 flex flex-col gap-6">
+            {[...Array(2)].map((_, i) => (
+              <SkeletonCard key={i} />
+            ))}
+          </div>
+          <div className="lg:col-span-5 flex flex-col gap-6">
+            <SkeletonCard />
+            <SkeletonCard />
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+async function HeroSection({ profile }: { profile: NonNullable<Awaited<ReturnType<typeof fetchProfile>>> }) {
+  return (
+    <section id="home" className="relative min-h-screen flex items-center justify-center pt-24 px-6 md:px-12 overflow-hidden">
+      <div className="absolute top-[15%] left-[10%] w-[350px] h-[350px] bg-purple-500/10 rounded-full blur-[80px] pointer-events-none" />
+      <div className="absolute bottom-[15%] right-[10%] w-[450px] h-[450px] bg-cyan-500/10 rounded-full blur-[90px] pointer-events-none" />
+
+      <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        
+        <div className="lg:col-span-7 flex flex-col gap-6 text-center lg:text-left">
+          {profile.avatar && (
+            <div className="w-36 h-36 md:w-44 md:h-44 rounded-full border-2 border-cyan-400/30 p-1 bg-[#0f121d] shadow-2xl shadow-cyan-500/10 mb-4 mx-auto lg:mx-0 relative group overflow-hidden shrink-0">
+              <div className="w-full h-full rounded-full overflow-hidden">
+                <img src={profile.avatar} alt={profile.name} className="w-full h-full object-cover transition-transform group-hover:scale-108 duration-300" />
+              </div>
+              <div className="absolute inset-0 rounded-full border border-cyan-400/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+            </div>
+          )}
+          
+          <div className="font-mono text-sm md:text-base text-cyan-400 tracking-wider flex items-center justify-center lg:justify-start gap-2">
+            <span className="text-cyan-400 font-bold">~</span> {profile.intro}
+          </div>
+          
+          <h1 className="font-heading font-extrabold text-5xl md:text-7xl tracking-tight text-white leading-[1.05]">
+            {profile.name}
+          </h1>
+          
+          <Typewriter primaryRole={profile.title} />
+
+          <p className="text-gray-400 text-base md:text-lg leading-relaxed max-w-xl mx-auto lg:mx-0">
+            {profile.description}
+          </p>
+
+          <div className="flex flex-wrap justify-center lg:justify-start gap-4 mt-4">
+            <a
+              href="#projects"
+              className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-purple-500 to-cyan-500 hover:from-pink-500 hover:to-purple-500 text-white font-semibold rounded-lg shadow-lg hover:shadow-cyan-500/20 transform hover:-translate-y-0.5 transition-all duration-200 cursor-pointer"
+            >
+              View Work <ArrowRight className="w-4 h-4" />
+            </a>
+            <a
+              href="#contact"
+              className="inline-flex items-center gap-3 px-6 py-3 bg-transparent border border-white/10 hover:border-cyan-400 hover:bg-cyan-500/5 text-white font-semibold rounded-lg backdrop-blur-md transform hover:-translate-y-0.5 transition-all duration-200 cursor-pointer"
+            >
+              Let&apos;s Talk
+            </a>
+            {profile.resume_url && (
+              <a
+                href={profile.resume_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-3 px-6 py-3 bg-transparent border border-cyan-400/30 hover:border-cyan-400 hover:bg-cyan-500/10 text-cyan-400 font-semibold rounded-lg backdrop-blur-md transform hover:-translate-y-0.5 transition-all duration-200 cursor-pointer"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Resume
+              </a>
+            )}
+          </div>
+        </div>
+
+        <div className="lg:col-span-5 flex justify-center">
+          <Card3DTilt className="w-full max-w-md h-80">
+            <div className="info-card-glow" />
+            <div className="h-full bg-glass-bg border border-white/5 rounded-xl overflow-hidden shadow-2xl flex flex-col">
+              <div className="bg-[#0f121d]/90 px-4 py-3 flex items-center gap-2 border-b border-white/5">
+                <div className="w-3 h-3 rounded-full bg-rose-500" />
+                <div className="w-3 h-3 rounded-full bg-amber-500" />
+                <div className="w-3 h-3 rounded-full bg-emerald-500" />
+                <span className="font-mono text-xs text-gray-500 ml-auto">developer.json</span>
+              </div>
+              <div className="p-6 font-mono text-xs md:text-sm text-gray-300 leading-relaxed overflow-auto flex-grow bg-slate-950/20">
+                <pre className="text-xs md:text-sm whitespace-pre">{`{`}{'\n'}  <span className="text-pink-500">{'"name"'}</span>: <span className="text-cyan-400">{'"'}{profile.name}{'"'}</span>,{'\n'}  <span className="text-pink-500">{'"role"'}</span>: <span className="text-cyan-400">{'"'}{profile.title}{'"'}</span>,{'\n'}  <span className="text-pink-500">{'"skills"'}</span>: [{'\n'}    {`"${profile.title}"`}{'\n'}  ],{'\n'}  <span className="text-pink-500">{'"passion"'}</span>: <span className="text-cyan-400">{'"Sleek UI Animations"'}</span>,{'\n'}  <span className="text-pink-500">{'"location"'}</span>: <span className="text-cyan-400">{'"'}{profile.location}{'"'}</span>{'\n'}{`}`}</pre>
+              </div>
+            </div>
+          </Card3DTilt>
+        </div>
+
+      </div>
+
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 pointer-events-none z-10">
+        <span className="w-6 h-10 border-2 border-gray-500 rounded-full block relative">
+          <span className="w-1 h-2 bg-cyan-400 rounded-full absolute top-2 left-1/2 -translate-x-1/2 animate-scroll-mouse" />
+        </span>
+      </div>
+    </section>
+  )
+}
+
+async function AboutSection({ profile }: { profile: NonNullable<Awaited<ReturnType<typeof fetchProfile>>> }) {
+  return (
+    <section id="about" className="py-24 px-6 md:px-12 border-t border-white/5">
+      <div className="max-w-5xl mx-auto">
+        <div className="flex flex-col gap-2 mb-12">
+          <span className="font-mono text-sm text-cyan-400 tracking-wider">01. Background</span>
+          <h2 className="font-heading font-extrabold text-3xl md:text-4xl text-white flex items-center gap-4">
+            About Me <span className="h-[1px] flex-grow max-w-[200px] bg-gradient-to-r from-white/10 to-transparent" />
+          </h2>
+        </div>
+
+        <AnimatedSection
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-50px' }}
+          transition={{ duration: 0.6 }}
+          className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start"
+        >
+          <div className="flex flex-col gap-6 text-gray-400 text-base leading-relaxed">
+            {profile.bioParagraphs.map((p, idx) => (
+              <p key={idx}>{p}</p>
+            ))}
+            
+            <p className="text-gray-300">
+              Here are a few technologies I have been working with recently:
+            </p>
+            <ul className="grid grid-cols-2 gap-3 font-mono text-xs text-cyan-400">
+              {profile.techList.map((tech) => (
+                <li key={tech} className="flex items-center gap-2">
+                  <span className="text-cyan-400 text-[10px]">▶</span> {tech}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="flex flex-col gap-6">
+            <Card3DTilt>
+              <div className="info-card-glow" />
+              <div className="bg-glass-bg border border-white/5 rounded-xl p-6 hover:border-white/10 hover:shadow-lg hover:shadow-purple-500/5 transition-colors duration-200 flex gap-4">
+                <div className="text-cyan-400 p-2 bg-cyan-400/5 border border-cyan-400/10 rounded-lg h-fit">
+                  <Cpu className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="font-heading font-bold text-lg text-white mb-2">Clean Coding</h3>
+                  <p className="text-sm text-gray-400">Writing modular, maintainable code focusing on optimization and design patterns.</p>
+                </div>
+              </div>
+            </Card3DTilt>
+
+            <Card3DTilt>
+              <div className="info-card-glow" />
+              <div className="bg-glass-bg border border-white/5 rounded-xl p-6 hover:border-white/10 hover:shadow-lg hover:shadow-purple-500/5 transition-colors duration-200 flex gap-4">
+                <div className="text-cyan-400 p-2 bg-cyan-400/5 border border-cyan-400/10 rounded-lg h-fit">
+                  <TrendingUp className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="font-heading font-bold text-lg text-white mb-2">High Performance</h3>
+                  <p className="text-sm text-gray-400">Optimizing loading assets achieving close to 100 on PageSpeed audits.</p>
+                </div>
+              </div>
+            </Card3DTilt>
+
+            <Card3DTilt>
+              <div className="info-card-glow" />
+              <div className="bg-glass-bg border border-white/5 rounded-xl p-6 hover:border-white/10 hover:shadow-lg hover:shadow-purple-500/5 transition-colors duration-200 flex gap-4">
+                <div className="text-cyan-400 p-2 bg-cyan-400/5 border border-cyan-400/10 rounded-lg h-fit">
+                  <Smartphone className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="font-heading font-bold text-lg text-white mb-2">Pixel Perfect</h3>
+                  <p className="text-sm text-gray-400">Building fully responsive layouts matching pixel designs precisely.</p>
+                </div>
+              </div>
+            </Card3DTilt>
+          </div>
+        </AnimatedSection>
+      </div>
+    </section>
+  )
+}
+
+async function SkillsSection() {
+  const skills = await fetchSkills().catch(() => [])
+  return (
+    <section id="skills" className="py-24 px-6 md:px-12 border-t border-white/5">
+      <div className="max-w-5xl mx-auto">
+        <div className="flex flex-col gap-2 mb-12">
+          <span className="font-mono text-sm text-cyan-400 tracking-wider">02. Stack</span>
+          <h2 className="font-heading font-extrabold text-3xl md:text-4xl text-white flex items-center gap-4">
+            Technical Expertise <span className="h-[1px] flex-grow max-w-[200px] bg-gradient-to-r from-white/10 to-transparent" />
+          </h2>
+        </div>
+
+        <AnimatedSection
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-50px' }}
+          transition={{ duration: 0.6 }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        >
+          {skills.map((cat) => (
+            <div 
+              key={cat.category}
+              className="bg-glass-bg border border-white/5 rounded-xl p-6 hover:border-white/10 hover:shadow-lg hover:shadow-purple-500/5 transition-colors duration-200"
+            >
+              <div className="flex items-center gap-3 mb-6 pb-3 border-b border-white/5">
+                <Layers className="w-6 h-6 text-purple-400" />
+                <h3 className="font-heading font-bold text-lg text-white">{cat.category}</h3>
+              </div>
+              <div className="flex flex-col gap-5">
+                {cat.items.map((item) => (
+                  <div key={item.name} className="flex flex-col gap-1.5">
+                    <div className="flex justify-between text-sm text-gray-400 font-semibold">
+                      <span>{item.name}</span>
+                      <span>{item.value}%</span>
+                    </div>
+                    <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-gradient-to-r from-purple-500 to-cyan-500 rounded-full" 
+                        style={{ width: `${item.value}%` }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </AnimatedSection>
+      </div>
+    </section>
+  )
+}
+
+async function ProjectsSection() {
+  const projects = await fetchProjects().catch(() => [])
+  return (
+    <section id="projects" className="py-24 px-6 md:px-12 border-t border-white/5">
+      <div className="max-w-5xl mx-auto">
+        <div className="flex flex-col gap-2 mb-12">
+          <span className="font-mono text-sm text-cyan-400 tracking-wider">03. Portfolios</span>
+          <h2 className="font-heading font-extrabold text-3xl md:text-4xl text-white flex items-center gap-4">
+            Featured Projects <span className="h-[1px] flex-grow max-w-[200px] bg-gradient-to-r from-white/10 to-transparent" />
+          </h2>
+        </div>
+
+        <AnimatedSection
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-50px' }}
+          transition={{ duration: 0.6 }}
+        >
+          <ProjectsGrid projects={projects} />
+        </AnimatedSection>
+      </div>
+    </section>
+  )
+}
+
+async function ExperienceSection() {
+  const experiences = await fetchExperience().catch(() => [])
+  return (
+    <section id="experience" className="py-24 px-6 md:px-12 border-t border-white/5">
+      <div className="max-w-4xl mx-auto">
+        <div className="flex flex-col gap-2 mb-16">
+          <span className="font-mono text-sm text-cyan-400 tracking-wider">04. Journey</span>
+          <h2 className="font-heading font-extrabold text-3xl md:text-4xl text-white flex items-center gap-4">
+            My Experience <span className="h-[1px] flex-grow max-w-[200px] bg-gradient-to-r from-white/10 to-transparent" />
+          </h2>
+        </div>
+
+        <AnimatedSection
+          initial={{ opacity: 0, x: -30 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, margin: '-50px' }}
+          transition={{ duration: 0.6 }}
+          className="relative pl-10 border-l border-white/10 flex flex-col gap-12"
+        >
+          {experiences.map((exp) => (
+            <div key={exp.company + exp.date} className="relative group">
+              <div className="absolute -left-[49px] top-1.5 w-[18px] h-[18px] rounded-full bg-[#07090e] border-[3px] border-cyan-400 shadow-md shadow-cyan-400/50 group-hover:border-pink-500 group-hover:shadow-pink-500/50 transition-all duration-200" />
+              
+              <span className="font-mono text-xs text-cyan-400 tracking-wider block mb-2">{exp.date}</span>
+              <div className="bg-glass-bg border border-white/5 rounded-xl p-6 group-hover:border-white/10 group-hover:shadow-lg group-hover:shadow-purple-500/5 transition-colors duration-200">
+                <h3 className="font-heading font-bold text-xl text-white flex flex-wrap gap-2 items-center">
+                  {exp.title}
+                </h3>
+                <h4 className="font-heading font-semibold text-purple-400 text-sm mt-1">{exp.company}</h4>
+                <p className="text-sm text-gray-400 leading-relaxed mt-4">{exp.desc}</p>
+              </div>
+            </div>
+          ))}
+        </AnimatedSection>
+      </div>
+    </section>
+  )
+}
+
+async function EducationSection() {
+  const education = await fetchEducation().catch(() => [] as Education[])
+  if (education.length === 0) return null
+  return (
+    <section id="education" className="py-24 px-6 md:px-12 border-t border-white/5">
+      <div className="max-w-5xl mx-auto">
+        <div className="flex flex-col gap-2 mb-16">
+          <span className="font-mono text-sm text-cyan-400 tracking-wider">05. Academy</span>
+          <h2 className="font-heading font-extrabold text-3xl md:text-4xl text-white flex items-center gap-4">
+            Education & Credentials <span className="h-[1px] flex-grow max-w-[200px] bg-gradient-to-r from-white/10 to-transparent" />
+          </h2>
+        </div>
+
+        <AnimatedSection
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-50px' }}
+          transition={{ duration: 0.6 }}
+          className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start"
+        >
+          <div className="lg:col-span-7 flex flex-col gap-6">
+            <h3 className="text-xl font-bold font-heading text-white flex items-center gap-2 mb-2">
+              <Briefcase className="w-5 h-5 text-cyan-400" /> Education History
+            </h3>
+            
+            <div className="flex flex-col gap-6">
+              {education.filter(e => e.type === 'education').map((e) => (
+                <div key={e.id} className="bg-glass-bg border border-white/5 rounded-xl p-5 hover:border-white/10 transition-colors duration-200">
+                  <div className="flex justify-between items-start gap-4">
+                    <div>
+                      <h4 className="font-heading font-bold text-lg text-white">{e.title}</h4>
+                      <p className="text-cyan-400 text-sm mt-0.5">{e.subtitle}</p>
+                    </div>
+                    <span className="font-mono text-[10px] text-cyan-400 bg-cyan-400/5 border border-cyan-400/10 px-2.5 py-0.5 rounded-full shrink-0">
+                      {e.date}
+                    </span>
+                  </div>
+                  {e.details && (
+                    <ul className="list-disc list-inside mt-3 text-gray-400 text-xs flex flex-col gap-1.5">
+                      {e.details.split('\n').map((line, i) => (
+                        <li key={i}>{line}</li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="lg:col-span-5 flex flex-col gap-6">
+            <div>
+              <h3 className="text-xl font-bold font-heading text-white flex items-center gap-2 mb-4">
+                <Award className="w-5 h-5 text-purple-400" /> Honors & Awards
+              </h3>
+              <div className="bg-glass-bg border border-white/5 rounded-xl p-5 flex flex-col gap-4">
+                {education.filter(e => e.type === 'award').map((e) => (
+                  <div key={e.id} className="flex gap-3">
+                    <span className="text-cyan-400 text-sm mt-0.5">🏆</span>
+                    <div>
+                      <h4 className="text-sm font-bold text-white">{e.title}</h4>
+                      <p className="text-xs text-gray-400 mt-0.5">{e.subtitle}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-xl font-bold font-heading text-white flex items-center gap-2 mb-4">
+                <Cpu className="w-5 h-5 text-pink-500" /> Activities & Leadership
+              </h3>
+              <div className="bg-glass-bg border border-white/5 rounded-xl p-5 flex flex-col gap-3">
+                {education.filter(e => e.type === 'activity').map((e) => (
+                  <div key={e.id}>
+                    {e.date && <h4 className="text-xs font-mono text-cyan-400">{e.date}</h4>}
+                    <p className="text-sm font-bold text-white mt-0.5">{e.title}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </AnimatedSection>
+      </div>
+    </section>
+  )
+}
+
 export default async function Home() {
-  // Fetch dynamic portfolio data
-  const [profile, projects, skills, experiences, education] = await Promise.all([
-    fetchProfile().catch(() => null),
-    fetchProjects().catch(() => []),
-    fetchSkills().catch(() => []),
-    fetchExperience().catch(() => []),
-    fetchEducation().catch(() => []),
-  ]);
+  const profile = await fetchProfile().catch(() => null)
 
   if (!profile) {
     return <div className="min-h-screen flex items-center justify-center text-gray-400">No profile data available.</div>;
   }
 
-  // Create clean logo name
   const logoText = profile.name.replace(/\s+/g, '');
 
   return (
     <>
-      {/* Sticky Navigation */}
       <Navbar logoText={logoText} />
 
-      {/* --- HERO SECTION --- */}
-      <section id="home" className="relative min-h-screen flex items-center justify-center pt-24 px-6 md:px-12 overflow-hidden">
-        {/* Neon Glow spots */}
-        <div className="absolute top-[15%] left-[10%] w-[350px] h-[350px] bg-purple-500/10 rounded-full blur-[80px] pointer-events-none" />
-        <div className="absolute bottom-[15%] right-[10%] w-[450px] h-[450px] bg-cyan-500/10 rounded-full blur-[90px] pointer-events-none" />
+      <Suspense fallback={<HeroSkeleton />}>
+        <HeroSection profile={profile} />
+      </Suspense>
 
-        <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          
-          {/* Left Column: Typography Details */}
-          <div className="lg:col-span-7 flex flex-col gap-6 text-center lg:text-left">
-            {profile.avatar && (
-              <div className="w-28 h-28 rounded-full border-2 border-cyan-400/30 p-1 bg-[#0f121d] shadow-2xl shadow-cyan-500/10 mb-2 mx-auto lg:mx-0 relative group overflow-hidden shrink-0">
-                <div className="w-full h-full rounded-full overflow-hidden">
-                  <img src={profile.avatar} alt={profile.name} className="w-full h-full object-cover transition-transform group-hover:scale-108 duration-300" />
-                </div>
-                <div className="absolute inset-0 rounded-full border border-cyan-400/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-              </div>
-            )}
-            
-            <div className="font-mono text-sm md:text-base text-cyan-400 tracking-wider flex items-center justify-center lg:justify-start gap-2">
-              <span className="text-cyan-400 font-bold">~</span> {profile.intro}
-            </div>
-            
-            <h1 className="font-heading font-extrabold text-5xl md:text-7xl tracking-tight text-white leading-[1.05]">
-              {profile.name}
-            </h1>
-            
-            {/* Dynamic Typewriter Role */}
-            <Typewriter primaryRole={profile.title} />
+      <Suspense fallback={null}>
+        <AboutSection profile={profile} />
+      </Suspense>
 
-            <p className="text-gray-400 text-base md:text-lg leading-relaxed max-w-xl mx-auto lg:mx-0">
-              {profile.description}
-            </p>
+      <Suspense fallback={<SkillsSkeleton />}>
+        <SkillsSection />
+      </Suspense>
 
-            <div className="flex flex-wrap justify-center lg:justify-start gap-4 mt-4">
-              <a
-                href="#projects"
-                className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-purple-500 to-cyan-500 hover:from-pink-500 hover:to-purple-500 text-white font-semibold rounded-lg shadow-lg hover:shadow-cyan-500/20 transform hover:-translate-y-0.5 transition-all duration-200 cursor-pointer"
-              >
-                View Work <ArrowRight className="w-4 h-4" />
-              </a>
-              <a
-                href="#contact"
-                className="inline-flex items-center gap-3 px-6 py-3 bg-transparent border border-white/10 hover:border-cyan-400 hover:bg-cyan-500/5 text-white font-semibold rounded-lg backdrop-blur-md transform hover:-translate-y-0.5 transition-all duration-200 cursor-pointer"
-              >
-                Let's Talk
-              </a>
-              {profile.resume_url && (
-                <a
-                  href={profile.resume_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-3 px-6 py-3 bg-transparent border border-cyan-400/30 hover:border-cyan-400 hover:bg-cyan-500/10 text-cyan-400 font-semibold rounded-lg backdrop-blur-md transform hover:-translate-y-0.5 transition-all duration-200 cursor-pointer"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                  Resume
-                </a>
-              )}
-            </div>
-          </div>
+      <Suspense fallback={<ProjectsSkeleton />}>
+        <ProjectsSection />
+      </Suspense>
 
-          {/* Right Column: Code block visual */}
-          <div className="lg:col-span-5 flex justify-center">
-            <Card3DTilt className="w-full max-w-md h-80">
-              <div className="info-card-glow" />
-              <div className="h-full bg-glass-bg border border-white/5 rounded-xl overflow-hidden shadow-2xl flex flex-col">
-                <div className="bg-[#0f121d]/90 px-4 py-3 flex items-center gap-2 border-b border-white/5">
-                  <div className="w-3 h-3 rounded-full bg-rose-500" />
-                  <div className="w-3 h-3 rounded-full bg-amber-500" />
-                  <div className="w-3 h-3 rounded-full bg-emerald-500" />
-                  <span className="font-mono text-xs text-gray-500 ml-auto">developer.json</span>
-                </div>
-                <div className="p-6 font-mono text-xs md:text-sm text-gray-300 leading-relaxed overflow-auto flex-grow bg-slate-950/20">
-                  <pre className="text-xs md:text-sm whitespace-pre">{`{`}
-{"\n"}  <span className="text-pink-500">"name"</span>: <span className="text-cyan-400">"{profile.name}"</span>,
-{"\n"}  <span className="text-pink-500">"role"</span>: <span className="text-cyan-400">"{profile.title}"</span>,
-{"\n"}  <span className="text-pink-500">"skills"</span>: [
-{"\n"}{(skills[0]?.items || []).slice(0, 3).map(s => `    "${s.name}"`).join(',\n')}
-{"\n"}  ],
-{"\n"}  <span className="text-pink-500">"passion"</span>: <span className="text-cyan-400">"Sleek UI Animations"</span>,
-{"\n"}  <span className="text-pink-500">"location"</span>: <span className="text-cyan-400">"{profile.location}"</span>
-{"\n"}{`}`}</pre>
-                </div>
-              </div>
-            </Card3DTilt>
-          </div>
+      <Suspense fallback={<ExperienceSkeleton />}>
+        <ExperienceSection />
+      </Suspense>
 
-        </div>
-
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 pointer-events-none z-10">
-          <span className="w-6 h-10 border-2 border-gray-500 rounded-full block relative">
-            <span className="w-1 h-2 bg-cyan-400 rounded-full absolute top-2 left-1/2 -translate-x-1/2 animate-scroll-mouse" />
-          </span>
-        </div>
-      </section>
-
-      {/* --- ABOUT ME SECTION --- */}
-      <section id="about" className="py-24 px-6 md:px-12 border-t border-white/5">
-        <div className="max-w-5xl mx-auto">
-          <div className="flex flex-col gap-2 mb-12">
-            <span className="font-mono text-sm text-cyan-400 tracking-wider">01. Background</span>
-            <h2 className="font-heading font-extrabold text-3xl md:text-4xl text-white flex items-center gap-4">
-              About Me <span className="h-[1px] flex-grow max-w-[200px] bg-gradient-to-r from-white/10 to-transparent" />
-            </h2>
-          </div>
-
-          <AnimatedSection
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-50px' }}
-            transition={{ duration: 0.6 }}
-            className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start"
-          >
-            {/* Bio Text */}
-            <div className="flex flex-col gap-6 text-gray-400 text-base leading-relaxed">
-              {profile.bioParagraphs.map((p, idx) => (
-                <p key={idx}>{p}</p>
-              ))}
-              
-              <p className="text-gray-300">
-                Here are a few technologies I have been working with recently:
-              </p>
-              <ul className="grid grid-cols-2 gap-3 font-mono text-xs text-cyan-400">
-                {profile.techList.map((tech) => (
-                  <li key={tech} className="flex items-center gap-2">
-                    <span className="text-cyan-400 text-[10px]">▶</span> {tech}
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Core Values Cards */}
-            <div className="flex flex-col gap-6">
-              <Card3DTilt>
-                <div className="info-card-glow" />
-                <div className="bg-glass-bg border border-white/5 rounded-xl p-6 hover:border-white/10 hover:shadow-lg hover:shadow-purple-500/5 transition-colors duration-200 flex gap-4">
-                  <div className="text-cyan-400 p-2 bg-cyan-400/5 border border-cyan-400/10 rounded-lg h-fit">
-                    <Cpu className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <h3 className="font-heading font-bold text-lg text-white mb-2">Clean Coding</h3>
-                    <p className="text-sm text-gray-400">Writing modular, maintainable code focusing on optimization and design patterns.</p>
-                  </div>
-                </div>
-              </Card3DTilt>
-
-              <Card3DTilt>
-                <div className="info-card-glow" />
-                <div className="bg-glass-bg border border-white/5 rounded-xl p-6 hover:border-white/10 hover:shadow-lg hover:shadow-purple-500/5 transition-colors duration-200 flex gap-4">
-                  <div className="text-cyan-400 p-2 bg-cyan-400/5 border border-cyan-400/10 rounded-lg h-fit">
-                    <TrendingUp className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <h3 className="font-heading font-bold text-lg text-white mb-2">High Performance</h3>
-                    <p className="text-sm text-gray-400">Optimizing loading assets achieving close to 100 on PageSpeed audits.</p>
-                  </div>
-                </div>
-              </Card3DTilt>
-
-              <Card3DTilt>
-                <div className="info-card-glow" />
-                <div className="bg-glass-bg border border-white/5 rounded-xl p-6 hover:border-white/10 hover:shadow-lg hover:shadow-purple-500/5 transition-colors duration-200 flex gap-4">
-                  <div className="text-cyan-400 p-2 bg-cyan-400/5 border border-cyan-400/10 rounded-lg h-fit">
-                    <Smartphone className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <h3 className="font-heading font-bold text-lg text-white mb-2">Pixel Perfect</h3>
-                    <p className="text-sm text-gray-400">Building fully responsive layouts matching pixel designs precisely.</p>
-                  </div>
-                </div>
-              </Card3DTilt>
-            </div>
-          </AnimatedSection>
-        </div>
-      </section>
-
-      {/* --- TECHNICAL SKILLS SECTION --- */}
-      <section id="skills" className="py-24 px-6 md:px-12 border-t border-white/5">
-        <div className="max-w-5xl mx-auto">
-          <div className="flex flex-col gap-2 mb-12">
-            <span className="font-mono text-sm text-cyan-400 tracking-wider">02. Stack</span>
-            <h2 className="font-heading font-extrabold text-3xl md:text-4xl text-white flex items-center gap-4">
-              Technical Expertise <span className="h-[1px] flex-grow max-w-[200px] bg-gradient-to-r from-white/10 to-transparent" />
-            </h2>
-          </div>
-
-          <AnimatedSection
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-50px' }}
-            transition={{ duration: 0.6 }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-          >
-            {skills.map((cat) => (
-              <div 
-                key={cat.category}
-                className="bg-glass-bg border border-white/5 rounded-xl p-6 hover:border-white/10 hover:shadow-lg hover:shadow-purple-500/5 transition-colors duration-200"
-              >
-                <div className="flex items-center gap-3 mb-6 pb-3 border-b border-white/5">
-                  <Layers className="w-6 h-6 text-purple-400" />
-                  <h3 className="font-heading font-bold text-lg text-white">{cat.category}</h3>
-                </div>
-                <div className="flex flex-col gap-5">
-                  {cat.items.map((item) => (
-                    <div key={item.name} className="flex flex-col gap-1.5">
-                      <div className="flex justify-between text-sm text-gray-400 font-semibold">
-                        <span>{item.name}</span>
-                        <span>{item.value}%</span>
-                      </div>
-                      <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
-                        <div 
-                          className="h-full bg-gradient-to-r from-purple-500 to-cyan-500 rounded-full" 
-                          style={{ width: `${item.value}%` }}
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </AnimatedSection>
-        </div>
-      </section>
-
-      {/* --- PROJECTS SECTION --- */}
-      <section id="projects" className="py-24 px-6 md:px-12 border-t border-white/5">
-        <div className="max-w-5xl mx-auto">
-          <div className="flex flex-col gap-2 mb-12">
-            <span className="font-mono text-sm text-cyan-400 tracking-wider">03. Portfolios</span>
-            <h2 className="font-heading font-extrabold text-3xl md:text-4xl text-white flex items-center gap-4">
-              Featured Projects <span className="h-[1px] flex-grow max-w-[200px] bg-gradient-to-r from-white/10 to-transparent" />
-            </h2>
-          </div>
-
-          {/* Interactive filterable projects component */}
-          <AnimatedSection
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-50px' }}
-            transition={{ duration: 0.6 }}
-          >
-            <ProjectsGrid projects={projects} />
-          </AnimatedSection>
-        </div>
-      </section>
-
-      {/* --- TIMELINE/EXPERIENCE SECTION --- */}
-      <section id="experience" className="py-24 px-6 md:px-12 border-t border-white/5">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex flex-col gap-2 mb-16">
-            <span className="font-mono text-sm text-cyan-400 tracking-wider">04. Journey</span>
-            <h2 className="font-heading font-extrabold text-3xl md:text-4xl text-white flex items-center gap-4">
-              My Experience <span className="h-[1px] flex-grow max-w-[200px] bg-gradient-to-r from-white/10 to-transparent" />
-            </h2>
-          </div>
-
-          <AnimatedSection
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: '-50px' }}
-            transition={{ duration: 0.6 }}
-            className="relative pl-10 border-l border-white/10 flex flex-col gap-12"
-          >
-            {experiences.map((exp) => (
-              <div key={exp.company + exp.date} className="relative group">
-                {/* Connecting Dot */}
-                <div className="absolute -left-[49px] top-1.5 w-[18px] h-[18px] rounded-full bg-[#07090e] border-[3px] border-cyan-400 shadow-md shadow-cyan-400/50 group-hover:border-pink-500 group-hover:shadow-pink-500/50 transition-all duration-200" />
-                
-                <span className="font-mono text-xs text-cyan-400 tracking-wider block mb-2">{exp.date}</span>
-                <div className="bg-glass-bg border border-white/5 rounded-xl p-6 group-hover:border-white/10 group-hover:shadow-lg group-hover:shadow-purple-500/5 transition-colors duration-200">
-                  <h3 className="font-heading font-bold text-xl text-white flex flex-wrap gap-2 items-center">
-                    {exp.title}
-                  </h3>
-                  <h4 className="font-heading font-semibold text-purple-400 text-sm mt-1">{exp.company}</h4>
-                  <p className="text-sm text-gray-400 leading-relaxed mt-4">{exp.desc}</p>
-                </div>
-              </div>
-            ))}
-          </AnimatedSection>
-        </div>
-      </section>
-
-      {/* --- EDUCATION & CREDENTIALS SECTION --- */}
-      {education.length > 0 && (
-      <section id="education" className="py-24 px-6 md:px-12 border-t border-white/5">
-        <div className="max-w-5xl mx-auto">
-          <div className="flex flex-col gap-2 mb-16">
-            <span className="font-mono text-sm text-cyan-400 tracking-wider">05. Academy</span>
-            <h2 className="font-heading font-extrabold text-3xl md:text-4xl text-white flex items-center gap-4">
-              Education & Credentials <span className="h-[1px] flex-grow max-w-[200px] bg-gradient-to-r from-white/10 to-transparent" />
-            </h2>
-          </div>
-
-          <AnimatedSection
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-50px' }}
-            transition={{ duration: 0.6 }}
-            className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start"
-          >
-            {/* Left: Education Timeline */}
-            <div className="lg:col-span-7 flex flex-col gap-6">
-              <h3 className="text-xl font-bold font-heading text-white flex items-center gap-2 mb-2">
-                <Briefcase className="w-5 h-5 text-cyan-400" /> Education History
-              </h3>
-              
-              <div className="flex flex-col gap-6">
-                {education.filter(e => e.type === 'education').map((e) => (
-                  <div key={e.id} className="bg-glass-bg border border-white/5 rounded-xl p-5 hover:border-white/10 transition-colors duration-200">
-                    <div className="flex justify-between items-start gap-4">
-                      <div>
-                        <h4 className="font-heading font-bold text-lg text-white">{e.title}</h4>
-                        <p className="text-cyan-400 text-sm mt-0.5">{e.subtitle}</p>
-                      </div>
-                      <span className="font-mono text-[10px] text-cyan-400 bg-cyan-400/5 border border-cyan-400/10 px-2.5 py-0.5 rounded-full shrink-0">
-                        {e.date}
-                      </span>
-                    </div>
-                    {e.details && (
-                      <ul className="list-disc list-inside mt-3 text-gray-400 text-xs flex flex-col gap-1.5">
-                        {e.details.split('\n').map((line, i) => (
-                          <li key={i}>{line}</li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Right: Awards & Extra-Curriculars */}
-            <div className="lg:col-span-5 flex flex-col gap-6">
-              <div>
-                <h3 className="text-xl font-bold font-heading text-white flex items-center gap-2 mb-4">
-                  <Award className="w-5 h-5 text-purple-400" /> Honors & Awards
-                </h3>
-                <div className="bg-glass-bg border border-white/5 rounded-xl p-5 flex flex-col gap-4">
-                  {education.filter(e => e.type === 'award').map((e) => (
-                    <div key={e.id} className="flex gap-3">
-                      <span className="text-cyan-400 text-sm mt-0.5">🏆</span>
-                      <div>
-                        <h4 className="text-sm font-bold text-white">{e.title}</h4>
-                        <p className="text-xs text-gray-400 mt-0.5">{e.subtitle}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <h3 className="text-xl font-bold font-heading text-white flex items-center gap-2 mb-4">
-                  <Cpu className="w-5 h-5 text-pink-500" /> Activities & Leadership
-                </h3>
-                <div className="bg-glass-bg border border-white/5 rounded-xl p-5 flex flex-col gap-3">
-                  {education.filter(e => e.type === 'activity').map((e) => (
-                    <div key={e.id}>
-                      {e.date && <h4 className="text-xs font-mono text-cyan-400">{e.date}</h4>}
-                      <p className="text-sm font-bold text-white mt-0.5">{e.title}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </AnimatedSection>
-        </div>
-      </section>
-      )}
+      <Suspense fallback={<EducationSkeleton />}>
+        <EducationSection />
+      </Suspense>
 
       {/* --- CONTACT SECTION --- */}
       <section id="contact" className="py-24 px-6 md:px-12 border-t border-white/5">
@@ -432,9 +544,8 @@ export default async function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             
-            {/* Left side details */}
             <div className="flex flex-col gap-6">
-              <h3 className="font-heading font-bold text-2xl text-white">Let's build something amazing together!</h3>
+              <h3 className="font-heading font-bold text-2xl text-white">              Let&apos;s build something amazing together!</h3>
               <p className="text-gray-400 text-sm md:text-base leading-relaxed">
                 I am currently open to exciting new opportunities, collaborations, and contract work. Whether you have a project idea, a position to fill, or just want to say hi, feel free to drop me a message!
               </p>
@@ -464,7 +575,6 @@ export default async function Home() {
               </div>
             </div>
 
-            {/* Right side contact form */}
             <div className="bg-glass-bg border border-white/5 rounded-xl p-8 shadow-xl">
               <ContactForm />
             </div>
@@ -482,6 +592,7 @@ export default async function Home() {
           </p>
         </div>
       </footer>
+      <ScrollToTop />
     </>
   );
 }

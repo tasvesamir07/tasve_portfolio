@@ -1,6 +1,6 @@
 'use client'
 
-import { Save, Loader, Upload, User, FileText } from 'lucide-react'
+import { Save, Loader, Upload, User } from 'lucide-react'
 
 interface ProfileData {
   name: string; title: string; intro: string; description: string
@@ -50,6 +50,9 @@ export default function ProfileTab({ profile, saving, onChange, onSave }: Props)
 
   return (
     <div className="flex flex-col gap-6">
+      <button onClick={onSave} disabled={saving} className={btnPrimary + " self-start mb-2"}>
+        {saving ? <Loader className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />} Save Profile
+      </button>
       
       {/* Avatar Section */}
       <div className="bg-[#0f121d]/60 border border-white/5 rounded-xl p-5 flex flex-col sm:flex-row items-center gap-6 shadow-xl shadow-black/10">
@@ -123,9 +126,6 @@ export default function ProfileTab({ profile, saving, onChange, onSave }: Props)
           </label>
         </div>
       </div>
-      <button onClick={onSave} disabled={saving} className={btnPrimary + " self-start mt-2"}>
-        {saving ? <Loader className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />} Save Profile
-      </button>
     </div>
   )
 }

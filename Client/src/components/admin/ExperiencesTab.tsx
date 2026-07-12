@@ -26,9 +26,16 @@ const btnMove = "p-1.5 text-gray-500 hover:text-cyan-400 hover:bg-cyan-400/5 rou
 export default function ExperiencesTab({ experiences, saving, onAdd, onUpdate, onDelete, onMove, onSave }: Props) {
   return (
     <div className="flex flex-col gap-6">
-      <button onClick={onAdd} className={btnPrimary + " self-start"}>
-        <Plus className="w-4 h-4" /> Add Experience
-      </button>
+      <div className="flex flex-wrap items-center gap-3">
+        <button onClick={onAdd} className={btnPrimary}>
+          <Plus className="w-4 h-4" /> Add Experience
+        </button>
+        {experiences.length > 0 && (
+          <button onClick={onSave} disabled={saving} className={btnPrimary}>
+            {saving ? <Loader className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />} Save All Experiences
+          </button>
+        )}
+      </div>
       {experiences.length === 0 && <p className="text-gray-500 text-sm">No experiences yet.</p>}
       {experiences.map((e, idx) => (
         <div key={e.id || idx} className={cardClass + " flex flex-col gap-4 shadow-xl shadow-black/10"}>
@@ -82,11 +89,6 @@ export default function ExperiencesTab({ experiences, saving, onAdd, onUpdate, o
 
         </div>
       ))}
-      {experiences.length > 0 && (
-        <button onClick={onSave} disabled={saving} className={btnPrimary + " self-start mt-2"}>
-          {saving ? <Loader className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />} Save All Experiences
-        </button>
-      )}
     </div>
   )
 }

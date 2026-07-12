@@ -66,6 +66,25 @@ export interface EducationRow {
   updated_at: string
 }
 
+export interface AdminRow {
+  id: number
+  username: string
+  password_hash: string
+  display_name: string
+  email: string
+  created_at: string
+  updated_at: string
+}
+
+export interface OTPCodeRow {
+  id: number
+  admin_id: number
+  code: string
+  expires_at: string
+  used: boolean
+  created_at: string
+}
+
 export interface ContactRow {
   id: number
   name: string

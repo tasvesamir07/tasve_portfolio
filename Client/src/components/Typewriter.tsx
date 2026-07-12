@@ -13,7 +13,6 @@ export default function Typewriter({ primaryRole }: Props) {
   const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
-    let timer: NodeJS.Timeout;
     const currentRole = roles[roleIndex];
     
     const tick = () => {
@@ -31,10 +30,8 @@ export default function Typewriter({ primaryRole }: Props) {
       }
     };
 
-    // Calculate dynamic speeds
     const speed = isDeleting ? 50 : text.length === currentRole.length ? 2000 : 120;
-    
-    timer = setTimeout(tick, speed);
+    const timer = setTimeout(tick, speed);
     return () => clearTimeout(timer);
   }, [text, isDeleting, roleIndex]);
 
