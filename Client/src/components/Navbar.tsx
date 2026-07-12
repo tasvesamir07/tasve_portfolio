@@ -43,7 +43,7 @@ export default function Navbar({ logoText }: Props) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const navLinks = ['home', 'about', 'skills', 'projects', 'experience', 'education', 'contact'];
+  const navLinks = ['home', 'about', 'skills', 'projects', 'experience', 'education'];
 
   return (
     <header
@@ -83,7 +83,9 @@ export default function Navbar({ logoText }: Props) {
             {/* "More" Dropdown Menu */}
             <li className="relative group/more">
               <button
-                className="flex items-center gap-1 text-sm font-semibold text-gray-400 hover:text-white transition-colors duration-200 capitalize tracking-wider cursor-pointer bg-transparent border-0 outline-none"
+                className={`flex items-center gap-1 text-sm font-semibold transition-colors duration-200 capitalize tracking-wider cursor-pointer bg-transparent border-0 outline-none hover:text-white ${
+                  activeSection === 'certifications' || activeSection === 'gallery' ? 'text-white' : 'text-gray-400'
+                }`}
                 aria-label="More sections"
               >
                 More <ChevronDown className="w-4 h-4 transition-transform duration-200 group-hover/more:rotate-180" />
@@ -108,6 +110,21 @@ export default function Navbar({ logoText }: Props) {
                   Gallery
                 </a>
               </div>
+            </li>
+
+            {/* Contact link (always last) */}
+            <li>
+              <a
+                href="#contact"
+                className={`relative text-sm font-semibold capitalize tracking-wider transition-colors duration-200 hover:text-white ${
+                  activeSection === 'contact' ? 'text-white' : 'text-gray-400'
+                }`}
+              >
+                contact
+                {activeSection === 'contact' && (
+                  <span className="absolute bottom-[-6px] left-0 w-full h-[2px] bg-gradient-to-r from-purple-500 to-cyan-500" />
+                )}
+              </a>
             </li>
           </ul>
         </nav>
@@ -163,6 +180,17 @@ export default function Navbar({ logoText }: Props) {
                 }`}
               >
                 Gallery
+              </a>
+            </li>
+            <li>
+              <a
+                href="#contact"
+                onClick={() => setIsOpen(false)}
+                className={`text-xl font-bold font-heading capitalize tracking-wider transition-colors duration-200 hover:text-cyan-400 ${
+                  activeSection === 'contact' ? 'text-cyan-400' : 'text-gray-300'
+                }`}
+              >
+                contact
               </a>
             </li>
           </ul>
