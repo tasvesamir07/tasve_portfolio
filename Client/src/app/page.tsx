@@ -24,7 +24,6 @@ import {
   Award,
   Layers,
   Briefcase,
-  ScrollText,
 } from 'lucide-react'
 import AnimatedSection from '@/components/AnimatedSection'
 import ScrollToTop from '@/components/ScrollToTop'

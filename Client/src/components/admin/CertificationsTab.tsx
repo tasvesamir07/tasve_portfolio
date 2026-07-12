@@ -9,7 +9,6 @@ import {
   ChevronDown,
   GripVertical,
   Upload,
-  ExternalLink,
 } from 'lucide-react'
 
 interface CertificationData {

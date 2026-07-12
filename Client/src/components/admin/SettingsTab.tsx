@@ -135,7 +135,7 @@ export default function SettingsTab() {
       const projRes = await fetch('/api/admin/projects')
       if (projRes.ok) {
         const list = await projRes.json()
-        list.forEach((p: any) => {
+        list.forEach((p: { id?: number; title: string; image: string }) => {
           if (p.image && !p.image.endsWith('.webp') && p.image.startsWith('http')) {
             found.push({
               table: 'projects',
@@ -152,7 +152,7 @@ export default function SettingsTab() {
       const certRes = await fetch('/api/admin/certifications')
       if (certRes.ok) {
         const list = await certRes.json()
-        list.forEach((c: any) => {
+        list.forEach((c: { id?: number; title: string; image: string }) => {
           if (c.image && !c.image.endsWith('.webp') && c.image.startsWith('http')) {
             found.push({
               table: 'certifications',
@@ -169,7 +169,7 @@ export default function SettingsTab() {
       const galRes = await fetch('/api/admin/gallery')
       if (galRes.ok) {
         const list = await galRes.json()
-        list.forEach((g: any) => {
+        list.forEach((g: { id?: number; title: string; image: string }) => {
           if (g.image && !g.image.endsWith('.webp') && g.image.startsWith('http')) {
             found.push({
               table: 'gallery',
@@ -259,9 +259,10 @@ export default function SettingsTab() {
 
         successCount++
         setStatus((prev) => prev + `\nSuccess! Updated database link.`)
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error(err)
-        setStatus((prev) => prev + `\nError: Failed to convert: ${err.message}`)
+        const msg = err instanceof Error ? err.message : 'Unknown error'
+        setStatus((prev) => prev + `\nError: Failed to convert: ${msg}`)
       }
     }
 

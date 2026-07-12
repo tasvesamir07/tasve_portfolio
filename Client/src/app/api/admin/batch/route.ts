@@ -25,9 +25,11 @@ export async function POST(req: Request) {
       ) {
         return NextResponse.json({ error: 'Item id must be a number if present' }, { status: 400 })
       }
-      const { id, created_at, updated_at, ...data } = item
+      const { id, ...rest } = item
+      const { created_at, updated_at, ...data } = rest
+      void created_at; void updated_at
       if (id) {
-        const updatePayload: any = { ...data }
+        const updatePayload: Record<string, string | number | boolean | null> = { ...data }
         if (!['skills', 'gallery'].includes(table)) {
           updatePayload.updated_at = new Date().toISOString()
         }

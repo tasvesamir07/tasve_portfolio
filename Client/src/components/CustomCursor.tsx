@@ -2,16 +2,6 @@
 
 import React, { useEffect, useRef, useState } from 'react'
 
-interface Ripple {
-  x: number
-  y: number
-  radius: number
-  maxRadius: number
-  opacity: number
-  color: string
-  speed: number
-}
-
 export default function CustomCursor() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const [hovered, setHovered] = useState(false)

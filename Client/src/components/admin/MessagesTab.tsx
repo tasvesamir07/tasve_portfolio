@@ -50,10 +50,11 @@ export default function MessagesTab() {
   const safePage = Math.min(page, totalPages - 1)
   const paged = filtered.slice(safePage * PAGE_SIZE, (safePage + 1) * PAGE_SIZE)
 
-  useEffect(() => {
+  const onSearchChange = (value: string) => {
+    setSearch(value)
     setPage(0)
     setSelected(new Set())
-  }, [search])
+  }
 
   const toggleSelect = (id: number) => {
     const next = new Set(selected)
@@ -115,11 +116,11 @@ export default function MessagesTab() {
             type="text"
             placeholder="Search by name, email, or subject..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => onSearchChange(e.target.value)}
             className={inputClass + ' pl-9'}
           />
           {search && (
-            <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white cursor-pointer">
+            <button onClick={() => onSearchChange('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white cursor-pointer">
               <X className="w-4 h-4" />
             </button>
           )}

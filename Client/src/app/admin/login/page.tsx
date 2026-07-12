@@ -12,7 +12,6 @@ import {
   Eye,
   EyeOff,
   Loader,
-  Mail,
   KeyRound,
   CheckCircle,
 } from 'lucide-react'

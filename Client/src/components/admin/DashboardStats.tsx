@@ -150,7 +150,7 @@ export default function DashboardStats() {
                   cx="50%"
                   cy="50%"
                   outerRadius={70}
-                  label={(props: any) => `${props.category}: ${props.count}`}
+                  label={(props: { category?: string; count?: number }) => `${props.category}: ${props.count}`}
                   labelLine={false}
                 >
                   {data.projectsByCategory.map((_, i) => (
