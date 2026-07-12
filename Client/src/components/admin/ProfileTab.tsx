@@ -18,6 +18,7 @@ interface ProfileData {
   tech_list: string
   avatar: string
   resume_url: string
+  passion: string
 }
 
 interface Props {
@@ -45,6 +46,7 @@ const fieldLabels: Record<string, string> = {
   linkedin: 'LinkedIn URL',
   twitter: 'Twitter URL',
   codepen: 'CodePen URL',
+  passion: 'Passion (for developer.json)',
 }
 
 export default function ProfileTab({ profile, saving, onChange, onSave }: Props) {
@@ -82,6 +84,7 @@ export default function ProfileTab({ profile, saving, onChange, onSave }: Props)
     'linkedin',
     'twitter',
     'codepen',
+    'passion',
   ]
 
   return (

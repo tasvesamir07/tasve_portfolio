@@ -265,11 +265,20 @@ async function HeroSection({
                     {profile.title}
                     {'"'}
                   </span>
-                  ,{'\n'} <span className="text-pink-500">{'"skills"'}</span>: [{'\n'}{' '}
-                  {`"${profile.title}"`}
-                  {'\n'} ],{'\n'} <span className="text-pink-500">{'"passion"'}</span>:{' '}
-                  <span className="text-cyan-400">{'"Sleek UI Animations"'}</span>,{'\n'}{' '}
-                  <span className="text-pink-500">{'"location"'}</span>:{' '}
+                  ,{'\n'} <span className="text-pink-500">{'"skills"'}</span>: [
+                  {profile.techList.slice(0, 4).map((tech, idx, arr) => (
+                    <React.Fragment key={tech}>
+                      {'\n'}   <span className="text-cyan-400">"{tech}"</span>
+                      {idx < arr.length - 1 ? ',' : ''}
+                    </React.Fragment>
+                  ))}
+                  {'\n'}  ],{'\n'} <span className="text-pink-500">{'"passion"'}</span>:{' '}
+                  <span className="text-cyan-400">
+                    {'"'}
+                    {profile.passion || 'Sleek UI Animations'}
+                    {'"'}
+                  </span>
+                  ,{'\n'} <span className="text-pink-500">{'"location"'}</span>:{' '}
                   <span className="text-cyan-400">
                     {'"'}
                     {profile.location}

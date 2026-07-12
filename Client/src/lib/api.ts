@@ -37,6 +37,7 @@ export interface Profile {
   techList: string[]
   avatar: string
   resume_url: string
+  passion: string
 }
 
 export interface Skill {
@@ -76,6 +77,7 @@ export function formatProfile(data: ProfileRow): Profile {
     techList: data.tech_list ? data.tech_list.split(',').map((t: string) => t.trim()) : [],
     avatar: data.avatar || '',
     resume_url: data.resume_url || '',
+    passion: data.passion || '',
   }
 }
 

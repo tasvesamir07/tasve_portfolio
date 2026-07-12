@@ -14,6 +14,7 @@ export interface ProfileRow {
   tech_list: string
   avatar: string
   resume_url: string
+  passion: string
   created_at: string
   updated_at: string
 }
