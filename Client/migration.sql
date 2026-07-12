@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS projects (
   github TEXT NOT NULL DEFAULT '',
   live TEXT NOT NULL DEFAULT '',
   image TEXT NOT NULL DEFAULT '',
+  diagram_url TEXT NOT NULL DEFAULT '',
   sort_order INT DEFAULT 0,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()

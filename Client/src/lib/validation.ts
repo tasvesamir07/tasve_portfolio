@@ -26,6 +26,7 @@ export const ProjectSchema = z.object({
   github: z.string().max(500).default(''),
   live: z.string().max(500).default(''),
   image: z.string().max(1000).default(''),
+  diagram_url: z.string().max(1000).default(''),
   sort_order: z.number().int().optional(),
 })
 

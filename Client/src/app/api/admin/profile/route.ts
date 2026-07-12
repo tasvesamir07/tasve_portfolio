@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getSupabaseAdmin } from '@/lib/supabase-admin'
 import { ProfileSchema } from '@/lib/validation'
+import { revalidateHome } from '@/lib/revalidate'
 
 export async function GET() {
   try {
@@ -22,6 +23,7 @@ export async function PUT(req: Request) {
     const supabaseAdmin = getSupabaseAdmin()
     const { error } = await supabaseAdmin.from('profile').update({ ...parsed.data, updated_at: new Date().toISOString() }).eq('id', 1)
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+    revalidateHome()
     return NextResponse.json({ success: true })
   } catch (err) {
     console.error('Profile PUT error:', err)

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getSupabaseAdmin } from '@/lib/supabase-admin'
 import { ProjectSchema } from '@/lib/validation'
+import { revalidateHome } from '@/lib/revalidate'
 
 export async function GET() {
   try {
@@ -22,6 +23,7 @@ export async function POST(req: Request) {
     const supabaseAdmin = getSupabaseAdmin()
     const { data, error } = await supabaseAdmin.from('projects').insert(parsed.data).select().single()
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+    revalidateHome()
     return NextResponse.json(data)
   } catch (err) {
     console.error('Projects POST error:', err)

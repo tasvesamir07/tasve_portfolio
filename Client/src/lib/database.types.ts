@@ -28,6 +28,7 @@ export interface ProjectRow {
   github: string
   live: string
   image: string
+  diagram_url: string
   sort_order: number
   created_at: string
   updated_at: string

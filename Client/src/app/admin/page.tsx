@@ -21,7 +21,7 @@ interface ProfileData {
 
 interface ProjectData {
   id?: number; title: string; category: string; tag: string; desc: string
-  tags: string; github: string; live: string; image: string; sort_order: number
+  tags: string; github: string; live: string; image: string; diagram_url: string; sort_order: number
 }
 
 interface SkillData {

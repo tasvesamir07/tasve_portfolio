@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getSupabaseAdmin } from '@/lib/supabase-admin'
+import { revalidateHome } from '@/lib/revalidate'
 
 const ALLOWED_TABLES = ['projects', 'skills', 'experiences'] as const
 
@@ -29,6 +30,7 @@ export async function POST(req: Request) {
       }
     }
 
+    revalidateHome()
     return NextResponse.json({ success: true })
   } catch (err) {
     console.error('Batch error:', err)

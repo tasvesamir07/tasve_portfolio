@@ -4,7 +4,7 @@ import { Plus, Trash2, Save, Loader, Image, ChevronUp, ChevronDown, GripVertical
 
 interface ProjectData {
   id?: number; title: string; category: string; tag: string; desc: string
-  tags: string; github: string; live: string; image: string; sort_order: number
+  tags: string; github: string; live: string; image: string; diagram_url: string; sort_order: number
 }
 
 interface Props {
@@ -120,6 +120,11 @@ export default function ProjectsTab({ projects, saving, onAdd, onUpdate, onDelet
                 <img src={p.image} alt="Preview" className="w-full h-full object-cover" />
               </div>
             )}
+          </div>
+          <div className="flex items-center gap-3">
+            <label className="text-xs text-gray-500 shrink-0 font-mono">Diagram:</label>
+            <input value={p.diagram_url || ''} onChange={e => { const u = { ...p, diagram_url: e.target.value }; onUpdate(idx, u) }}
+              className={inputClass} placeholder="Architecture diagram URL (SVG/PNG)" />
           </div>
 
         </div>

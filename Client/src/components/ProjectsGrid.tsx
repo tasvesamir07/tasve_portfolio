@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ExternalLink, Code } from 'lucide-react';
+import { X, ExternalLink, Code, FileImage } from 'lucide-react';
 import Card3DTilt from './Card3DTilt';
 import { Project } from '@/lib/api';
 
@@ -13,6 +13,7 @@ interface Props {
 
 export default function ProjectsGrid({ projects }: Props) {
   const [filter, setFilter] = useState('all');
+  const [diagramUrl, setDiagramUrl] = useState<string | null>(null)
 
   // Extract unique categories
   const categories = ['all', ...Array.from(new Set(projects.map((p) => p.category.toLowerCase())))];
@@ -109,6 +110,16 @@ export default function ProjectsGrid({ projects }: Props) {
                         <ExternalLink className="w-5 h-5" />
                       </a>
                     )}
+                    {p.diagram_url && (
+                      <button
+                        onClick={() => setDiagramUrl(p.diagram_url)}
+                        className="text-gray-400 hover:text-cyan-400 hover:-translate-y-0.5 transition-all duration-200 cursor-pointer"
+                        aria-label="View System Architecture"
+                        title="System Architecture"
+                      >
+                        <FileImage className="w-5 h-5" />
+                      </button>
+                    )}
                   </div>
 
                 </div>
@@ -117,6 +128,35 @@ export default function ProjectsGrid({ projects }: Props) {
           ))}
         </AnimatePresence>
       </motion.div>
+      {/* Architecture Diagram Modal */}
+      {diagramUrl && (
+        <div
+          className="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+          onClick={() => setDiagramUrl(null)}
+        >
+          <div
+            className="relative max-w-5xl w-full max-h-[90vh] bg-[#0f121d] border border-white/10 rounded-xl overflow-hidden shadow-2xl"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between px-5 py-3 border-b border-white/5">
+              <h3 className="text-sm font-bold text-white font-heading">System Architecture</h3>
+              <button
+                onClick={() => setDiagramUrl(null)}
+                className="text-gray-400 hover:text-white transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-4 flex items-center justify-center">
+              <img
+                src={diagramUrl}
+                alt="System Architecture Diagram"
+                className="max-w-full max-h-[75vh] object-contain rounded-lg"
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

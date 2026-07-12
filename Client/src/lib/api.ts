@@ -11,6 +11,7 @@ export interface Project {
   github: string
   live: string
   image: string
+  diagram_url: string
 }
 
 export interface Profile {
@@ -81,6 +82,7 @@ function formatProjects(data: ProjectRow[]): Project[] {
     github: item.github || '',
     live: item.live || '',
     image: item.image || '',
+    diagram_url: item.diagram_url || '',
   }))
 }
 
