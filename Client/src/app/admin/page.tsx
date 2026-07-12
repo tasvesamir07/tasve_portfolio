@@ -70,11 +70,15 @@ export default function AdminPage() {
 
   useEffect(() => {
     if (!authed) return
-    fetch('/api/admin/profile').then(r => r.json()).then(setProfile).catch(() => { showToast('Failed to load data'); setProfile(null) })
-    fetch('/api/admin/projects').then(r => r.json()).then(setProjects).catch(() => { showToast('Failed to load data'); setProjects([]) })
-    fetch('/api/admin/skills').then(r => r.json()).then(setSkills).catch(() => { showToast('Failed to load data'); setSkills([]) })
-    fetch('/api/admin/experiences').then(r => r.json()).then(setExperiences).catch(() => { showToast('Failed to load data'); setExperiences([]) })
-    fetch('/api/admin/education').then(r => r.json()).then(setEducation).catch(() => { showToast('Failed to load data'); setEducation([]) })
+    const checkRes = (r: Response) => {
+      if (!r.ok) throw new Error('HTTP error')
+      return r.json()
+    }
+    fetch('/api/admin/profile').then(checkRes).then(setProfile).catch(() => { showToast('Failed to load profile'); setProfile(null) })
+    fetch('/api/admin/projects').then(checkRes).then(setProjects).catch(() => { showToast('Failed to load projects'); setProjects([]) })
+    fetch('/api/admin/skills').then(checkRes).then(setSkills).catch(() => { showToast('Failed to load skills'); setSkills([]) })
+    fetch('/api/admin/experiences').then(checkRes).then(setExperiences).catch(() => { showToast('Failed to load experiences'); setExperiences([]) })
+    fetch('/api/admin/education').then(checkRes).then(setEducation).catch(() => { showToast('Failed to load education'); setEducation([]) })
   }, [authed])
 
   const handleLogout = async () => {
@@ -217,6 +221,7 @@ export default function AdminPage() {
         const payload = { ...e, sort_order: i }
         if (!e.id) {
           const res = await fetch('/api/admin/education', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
+          if (!res.ok) return
           const saved = await res.json()
           setEducation(prev => { const next = [...prev]; next[i] = { ...next[i], id: saved.id }; return next })
           return
@@ -232,7 +237,7 @@ export default function AdminPage() {
   }
 
   const addEducation = async () => {
-    const newE = { type: 'education', title: 'New Entry', subtitle: '', date: '', details: '', sort_order: education.length }
+    const newE = { type: 'education', title: '', subtitle: '', date: '', details: '', sort_order: education.length }
     const res = await fetch('/api/admin/education', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newE) })
     if (!res.ok) { showToast('Failed to add'); return }
     const saved = await res.json()

@@ -34,8 +34,8 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: "Samir Anik | Creative Software Engineer & Full-Stack Developer",
     description: "Portfolio of Samir Anik - showcasing dynamic web projects, custom high-end animations, and modern API integrations.",
-    keywords: ["Samir Anik", "Web Developer", "Software Engineer", "React", "Next.js", "Framer Motion", "Tailwind CSS"],
-    authors: [{ name: "Samir Anik" }],
+    keywords: ["Md. Tasve Al Samir", "Web Developer", "Software Engineer", "React", "Next.js", "Framer Motion", "Tailwind CSS"],
+    authors: [{ name: "Md. Tasve Al Samir" }],
   }
 }
 

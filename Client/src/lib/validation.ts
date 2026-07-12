@@ -43,6 +43,15 @@ export const ExperienceSchema = z.object({
   sort_order: z.number().int().optional(),
 })
 
+export const EducationSchema = z.object({
+  type: z.enum(['education', 'award', 'activity']).default('education'),
+  title: z.string().max(300).default(''),
+  subtitle: z.string().max(500).default(''),
+  date: z.string().max(100).default(''),
+  details: z.string().max(10000).default(''),
+  sort_order: z.number().int().optional(),
+})
+
 export const ContactSchema = z.object({
   name: z.string().min(1).max(200),
   email: z.string().email().max(200),
@@ -58,4 +67,5 @@ export type ProfileInput = z.infer<typeof ProfileSchema>
 export type ProjectInput = z.infer<typeof ProjectSchema>
 export type SkillInput = z.infer<typeof SkillSchema>
 export type ExperienceInput = z.infer<typeof ExperienceSchema>
+export type EducationInput = z.infer<typeof EducationSchema>
 export type ContactInput = z.infer<typeof ContactSchema>

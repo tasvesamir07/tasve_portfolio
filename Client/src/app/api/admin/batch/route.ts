@@ -13,9 +13,18 @@ export async function POST(req: Request) {
     const supabaseAdmin = getSupabaseAdmin()
 
     for (const item of items) {
+      if (!item || typeof item !== 'object') {
+        return NextResponse.json({ error: 'Each item must be an object' }, { status: 400 })
+      }
+      if ('id' in item && item.id !== null && item.id !== undefined && typeof item.id !== 'number') {
+        return NextResponse.json({ error: 'Item id must be a number if present' }, { status: 400 })
+      }
       const { id, ...data } = item
       if (id) {
         const { error } = await supabaseAdmin.from(table).update({ ...data, updated_at: new Date().toISOString() }).eq('id', id)
+        if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+      } else {
+        const { error } = await supabaseAdmin.from(table).insert(data)
         if (error) return NextResponse.json({ error: error.message }, { status: 500 })
       }
     }

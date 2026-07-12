@@ -94,14 +94,12 @@ function formatSkills(data: SkillRow[]): Skill[] {
 }
 
 function formatExperiences(data: ExperienceRow[]): Experience[] {
-  return data
-    .map((item) => ({
-      date: item.date || '',
-      title: item.title || '',
-      company: item.company || '',
-      desc: item.desc || '',
-    }))
-    .sort((a, b) => b.date.localeCompare(a.date))
+  return data.map((item) => ({
+    date: item.date || '',
+    title: item.title || '',
+    company: item.company || '',
+    desc: item.desc || '',
+  }))
 }
 
 export async function fetchProfile(): Promise<Profile> {

@@ -16,7 +16,7 @@ import {
   ArrowRight, 
   Mail, 
   MapPin, 
-  Terminal, 
+ 
   Cpu, 
   TrendingUp, 
   Smartphone, 
@@ -287,7 +287,7 @@ export default async function Home() {
       </section>
 
       {/* --- EDUCATION & CREDENTIALS SECTION --- */}
-      {(education as Education[]).length > 0 && (
+      {education.length > 0 && (
       <section id="education" className="py-24 px-6 md:px-12 border-t border-white/5">
         <div className="max-w-5xl mx-auto">
           <div className="flex flex-col gap-2 mb-16">
@@ -305,7 +305,7 @@ export default async function Home() {
               </h3>
               
               <div className="flex flex-col gap-6">
-                {(education as Education[]).filter(e => e.type === 'education').map((e) => (
+                {education.filter(e => e.type === 'education').map((e) => (
                   <div key={e.id} className="bg-glass-bg border border-white/5 rounded-xl p-5 hover:border-white/10 transition-colors duration-200">
                     <div className="flex justify-between items-start gap-4">
                       <div>
@@ -335,7 +335,7 @@ export default async function Home() {
                   <Award className="w-5 h-5 text-purple-400" /> Honors & Awards
                 </h3>
                 <div className="bg-glass-bg border border-white/5 rounded-xl p-5 flex flex-col gap-4">
-                  {(education as Education[]).filter(e => e.type === 'award').map((e) => (
+                  {education.filter(e => e.type === 'award').map((e) => (
                     <div key={e.id} className="flex gap-3">
                       <span className="text-cyan-400 text-sm mt-0.5">🏆</span>
                       <div>
@@ -352,7 +352,7 @@ export default async function Home() {
                   <Cpu className="w-5 h-5 text-pink-500" /> Activities & Leadership
                 </h3>
                 <div className="bg-glass-bg border border-white/5 rounded-xl p-5 flex flex-col gap-3">
-                  {(education as Education[]).filter(e => e.type === 'activity').map((e) => (
+                  {education.filter(e => e.type === 'activity').map((e) => (
                     <div key={e.id}>
                       {e.date && <h4 className="text-xs font-mono text-cyan-400">{e.date}</h4>}
                       <p className="text-sm font-bold text-white mt-0.5">{e.title}</p>
