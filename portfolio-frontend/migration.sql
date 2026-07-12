@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS experiences (
   date TEXT NOT NULL DEFAULT '',
   title TEXT NOT NULL DEFAULT '',
   company TEXT NOT NULL DEFAULT '',
-  desc TEXT NOT NULL DEFAULT '',
+  "desc" TEXT NOT NULL DEFAULT '',
   sort_order INT DEFAULT 0,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
