@@ -99,15 +99,15 @@ export default async function Home() {
                   <span className="font-mono text-xs text-gray-500 ml-auto">developer.json</span>
                 </div>
                 <div className="p-6 font-mono text-xs md:text-sm text-gray-300 leading-relaxed overflow-auto flex-grow bg-slate-950/20">
-                  <pre>{`{
-  `}<span className="text-pink-500">"name"</span>: <span className="text-cyan-400">"${profile.name}"</span>,
-  <span className="text-pink-500">"role"</span>: <span className="text-cyan-400">"${profile.title}"</span>,
-  <span className="text-pink-500">"skills"</span>: [
-{skills[0]?.items.slice(0, 3).map(s => `    "${s.name}"`).join(',\n')}
-  ],
-  <span className="text-pink-500">"passion"</span>: <span className="text-cyan-400">"Sleek UI Animations"</span>,
-  <span className="text-pink-500">"location"</span>: <span className="text-cyan-400">"${profile.location}"</span>
-{`}`}</pre>
+                  <pre className="text-xs md:text-sm whitespace-pre">{`{`}
+{"\n"}  <span className="text-pink-500">"name"</span>: <span className="text-cyan-400">"{profile.name}"</span>,
+{"\n"}  <span className="text-pink-500">"role"</span>: <span className="text-cyan-400">"{profile.title}"</span>,
+{"\n"}  <span className="text-pink-500">"skills"</span>: [
+{"\n"}{(skills[0]?.items || []).slice(0, 3).map(s => `    "${s.name}"`).join(',\n')}
+{"\n"}  ],
+{"\n"}  <span className="text-pink-500">"passion"</span>: <span className="text-cyan-400">"Sleek UI Animations"</span>,
+{"\n"}  <span className="text-pink-500">"location"</span>: <span className="text-cyan-400">"{profile.location}"</span>
+{"\n"}{`}`}</pre>
                 </div>
               </div>
             </Card3DTilt>
