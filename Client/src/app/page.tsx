@@ -23,7 +23,9 @@ import {
   Smartphone, 
   Award, 
   Layers, 
-  Briefcase 
+  Briefcase,
+  ScrollText,
+  ImageOff 
 } from 'lucide-react';
 import AnimatedSection from '@/components/AnimatedSection'
 import ScrollToTop from '@/components/ScrollToTop';
@@ -552,14 +554,16 @@ async function CertificationsSection() {
             <div key={cert.id}
               className="bg-glass-bg border border-white/5 rounded-xl p-5 hover:border-white/10 hover:shadow-lg hover:shadow-purple-500/5 transition-all duration-200 flex flex-col items-center text-center gap-3 group"
             >
-              {cert.image && (
-                <div className="w-20 h-20 rounded-xl overflow-hidden bg-[#0f121d] border border-white/5 p-2 flex items-center justify-center group-hover:border-cyan-500/30 transition-colors">
-                  <img src={cert.image} alt={cert.title} className="w-full h-full object-contain" />
-                </div>
-              )}
+              <div className="w-20 h-20 rounded-xl overflow-hidden bg-[#0f121d] border border-white/5 p-2 flex items-center justify-center group-hover:border-cyan-500/30 transition-colors shrink-0">
+                {cert.image ? (
+                  <img src={cert.image} alt={cert.title || 'Certification badge'} className="w-full h-full object-contain" />
+                ) : (
+                  <ScrollText className="w-8 h-8 text-gray-600" />
+                )}
+              </div>
               <div>
-                <h3 className="font-heading font-bold text-sm text-white">{cert.title}</h3>
-                <p className="text-xs text-cyan-400 mt-0.5">{cert.issuer}</p>
+                <h3 className="font-heading font-bold text-sm text-white">{cert.title || 'Untitled Certification'}</h3>
+                {cert.issuer && <p className="text-xs text-cyan-400 mt-0.5">{cert.issuer}</p>}
                 {cert.date && <p className="text-[10px] text-gray-500 font-mono mt-1">{cert.date}</p>}
               </div>
               {cert.credential_url && (
@@ -599,12 +603,16 @@ async function GallerySection() {
             <div key={item.id}
               className="bg-glass-bg border border-white/5 rounded-xl overflow-hidden hover:border-white/10 hover:shadow-lg hover:shadow-purple-500/5 transition-all duration-200 group"
             >
-              <div className="relative h-48 overflow-hidden bg-[#0f121d]">
-                <img src={item.image} alt={item.title}
-                  className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-300" />
+              <div className="relative h-48 overflow-hidden bg-[#0f121d] flex items-center justify-center">
+                {item.image ? (
+                  <img src={item.image} alt={item.title || 'Gallery image'}
+                    className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-300" />
+                ) : (
+                  <ImageOff className="w-12 h-12 text-gray-600" />
+                )}
               </div>
               <div className="p-4">
-                <h3 className="font-heading font-bold text-sm text-white">{item.title}</h3>
+                <h3 className="font-heading font-bold text-sm text-white">{item.title || 'Untitled'}</h3>
                 {item.description && (
                   <p className="text-xs text-gray-400 mt-1">{item.description}</p>
                 )}
