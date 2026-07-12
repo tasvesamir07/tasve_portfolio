@@ -19,12 +19,20 @@ export default function Navbar({ logoText }: Props) {
       // Section tracker
       const sections = ['home', 'about', 'skills', 'projects', 'experience', 'contact'];
       let current = 'home';
-      for (const sectionId of sections) {
-        const el = document.getElementById(sectionId);
-        if (el) {
-          const rect = el.getBoundingClientRect();
-          if (rect.top <= 150) {
-            current = sectionId;
+      
+      // If we are at the bottom of the page, force 'contact' to be active
+      const isAtBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 50;
+      
+      if (isAtBottom) {
+        current = 'contact';
+      } else {
+        for (const sectionId of sections) {
+          const el = document.getElementById(sectionId);
+          if (el) {
+            const rect = el.getBoundingClientRect();
+            if (rect.top <= 150) {
+              current = sectionId;
+            }
           }
         }
       }

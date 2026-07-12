@@ -2,12 +2,19 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 
+interface Ripple {
+  x: number;
+  y: number;
+  radius: number;
+  maxRadius: number;
+  opacity: number;
+  color: string;
+  speed: number;
+}
+
 export default function CustomCursor() {
-  const dotRef = useRef<HTMLDivElement | null>(null);
-  const ringRef = useRef<HTMLDivElement | null>(null);
-  
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [hovered, setHovered] = useState(false);
-  const [hidden, setHidden] = useState(true);
   const [isMobile, setIsMobile] = useState(true);
 
   useEffect(() => {
@@ -21,36 +28,50 @@ export default function CustomCursor() {
 
     if (isMobile) return;
 
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Resize canvas
+    const resizeCanvas = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
     let mouseX = -100;
     let mouseY = -100;
-    let dotX = -100;
-    let dotY = -100;
-    let ringX = -100;
-    let ringY = -100;
+    let lastMouseX = -100;
+    let lastMouseY = -100;
+    let ripples: Ripple[] = [];
     let animationFrameId: number;
-
-    const dotLerp = 0.25;
-    const ringLerp = 0.08;
 
     const handleMouseMove = (e: MouseEvent) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
-      if (hidden) setHidden(false);
-    };
 
-    const handleMouseLeave = () => {
-      setHidden(true);
-    };
-
-    const handleMouseEnter = () => {
-      setHidden(false);
+      // Calculate distance from last ripple to prevent too many overlapping ripples
+      const dist = Math.hypot(mouseX - lastMouseX, mouseY - lastMouseY);
+      if (dist > 8) {
+        ripples.push({
+          x: mouseX,
+          y: mouseY,
+          radius: 1,
+          maxRadius: hovered ? 45 : 30,
+          opacity: 1,
+          color: hovered ? '236, 72, 153' : '6, 182, 212', // Pink if hovered, Cyan if default
+          speed: 1.0,
+        });
+        lastMouseX = mouseX;
+        lastMouseY = mouseY;
+      }
     };
 
     window.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseleave', handleMouseLeave);
-    document.addEventListener('mouseenter', handleMouseEnter);
 
-    // Bind hover states for interactive tags
+    // Track interactive hovers
     const handleMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       const isInteractive = target.closest('a, button, [role="button"], input, textarea, select, .project-card, .info-card');
@@ -58,52 +79,60 @@ export default function CustomCursor() {
     };
     document.addEventListener('mouseover', handleMouseOver);
 
-    const updateCursor = () => {
-      dotX += (mouseX - dotX) * dotLerp;
-      dotY += (mouseY - dotY) * dotLerp;
-      ringX += (mouseX - ringX) * ringLerp;
-      ringY += (mouseY - ringY) * ringLerp;
+    // Animation Loop
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      if (dotRef.current) {
-        dotRef.current.style.left = `${dotX}px`;
-        dotRef.current.style.top = `${dotY}px`;
-      }
-      if (ringRef.current) {
-        ringRef.current.style.left = `${ringX}px`;
-        ringRef.current.style.top = `${ringY}px`;
+      // Draw and update ripples
+      ripples.forEach((ripple, index) => {
+        ripple.radius += ripple.speed;
+        ripple.opacity -= 0.02; // Fades out
+
+        if (ripple.opacity <= 0) {
+          ripples.splice(index, 1);
+          return;
+        }
+
+        ctx.beginPath();
+        ctx.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(${ripple.color}, ${ripple.opacity})`;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      });
+
+      // Draw current mouse pointer dot (precise target)
+      if (mouseX >= 0 && mouseY >= 0) {
+        ctx.beginPath();
+        ctx.arc(mouseX, mouseY, hovered ? 5 : 3, 0, Math.PI * 2);
+        ctx.fillStyle = hovered ? 'rgb(236, 72, 153)' : 'rgb(6, 182, 212)';
+        ctx.shadowBlur = hovered ? 12 : 6;
+        ctx.shadowColor = hovered ? 'rgba(236, 72, 153, 0.8)' : 'rgba(6, 182, 212, 0.8)';
+        ctx.fill();
+        
+        // Reset shadow
+        ctx.shadowBlur = 0;
       }
 
-      animationFrameId = requestAnimationFrame(updateCursor);
+      animationFrameId = requestAnimationFrame(animate);
     };
-    updateCursor();
+    animate();
 
     return () => {
       window.removeEventListener('resize', checkDevice);
+      window.removeEventListener('resize', resizeCanvas);
       window.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseleave', handleMouseLeave);
-      document.removeEventListener('mouseenter', handleMouseEnter);
       document.removeEventListener('mouseover', handleMouseOver);
       cancelAnimationFrame(animationFrameId);
     };
-  }, [isMobile]);
+  }, [isMobile, hovered]);
 
   if (isMobile) return null;
 
   return (
-    <>
-      <div
-        ref={dotRef}
-        className={`fixed pointer-events-none rounded-full bg-cyan-400 z-[9999] mix-blend-difference -translate-x-1/2 -translate-y-1/2 transition-[width,height,background-color] duration-200 ${
-          hidden ? 'opacity-0' : 'opacity-100'
-        } ${hovered ? 'w-3 h-3 bg-pink-500' : 'w-2 h-2'}`}
-      />
-      <div
-        ref={ringRef}
-        className={`fixed pointer-events-none rounded-full border-2 border-purple-500 z-[9998] -translate-x-1/2 -translate-y-1/2 transition-[width,height,background-color,border-color] duration-300 ${
-          hidden ? 'opacity-0' : 'opacity-100'
-        } ${hovered ? 'w-[60px] h-[60px] bg-purple-500/10 border-pink-500' : 'w-10 h-10'}`}
-        style={{ transitionProperty: 'width, height, background-color, border-color, opacity' }}
-      />
-    </>
+    <canvas
+      ref={canvasRef}
+      className="fixed top-0 left-0 w-full h-full pointer-events-none z-[9999]"
+      style={{ mixBlendMode: 'screen' }}
+    />
   );
 }
