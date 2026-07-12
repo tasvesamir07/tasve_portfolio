@@ -16,7 +16,7 @@ interface ProfileData {
   name: string; title: string; intro: string; description: string
   email: string; location: string; github: string; linkedin: string
   twitter: string; codepen: string; bio_paragraphs: string; tech_list: string
-  avatar: string
+  avatar: string; resume_url: string
 }
 
 interface ProjectData {

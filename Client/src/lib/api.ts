@@ -26,6 +26,8 @@ export interface Profile {
   codepen: string
   bioParagraphs: string[]
   techList: string[]
+  avatar: string
+  resume_url: string
 }
 
 export interface Skill {
@@ -63,6 +65,8 @@ function formatProfile(data: ProfileRow): Profile {
     codepen: data.codepen || '',
     bioParagraphs: data.bio_paragraphs ? data.bio_paragraphs.split('\n') : [],
     techList: data.tech_list ? data.tech_list.split(',').map((t: string) => t.trim()) : [],
+    avatar: data.avatar || '',
+    resume_url: data.resume_url || '',
   }
 }
 

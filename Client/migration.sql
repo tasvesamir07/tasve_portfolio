@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS profile (
   bio_paragraphs TEXT NOT NULL DEFAULT '',
   tech_list TEXT NOT NULL DEFAULT '',
   avatar TEXT NOT NULL DEFAULT '',
+  resume_url TEXT NOT NULL DEFAULT '',
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW(),
   CONSTRAINT single_row CHECK (id = 1)

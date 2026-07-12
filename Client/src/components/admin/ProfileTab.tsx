@@ -1,12 +1,12 @@
 'use client'
 
-import { Save, Loader } from 'lucide-react'
+import { Save, Loader, Upload, User, FileText } from 'lucide-react'
 
 interface ProfileData {
   name: string; title: string; intro: string; description: string
   email: string; location: string; github: string; linkedin: string
   twitter: string; codepen: string; bio_paragraphs: string; tech_list: string
-  avatar: string
+  avatar: string; resume_url: string
 }
 
 interface Props {
@@ -34,12 +34,48 @@ const fieldLabels: Record<string, string> = {
 }
 
 export default function ProfileTab({ profile, saving, onChange, onSave }: Props) {
-  const set = (field: string, value: string) => onChange({ ...profile, [field]: value })
+  const set = (field: keyof ProfileData, value: string) => onChange({ ...profile, [field]: value })
+
+  const handleAvatarUpload = async (file: File) => {
+    const fd = new FormData()
+    fd.append('file', file)
+    const res = await fetch('/api/admin/upload', { method: 'POST', body: fd })
+    if (res.ok) {
+      const { url } = await res.json()
+      onChange({ ...profile, avatar: url })
+    }
+  }
 
   const fields: (keyof ProfileData)[] = ['name', 'title', 'intro', 'description', 'email', 'location', 'github', 'linkedin', 'twitter', 'codepen']
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-6">
+      
+      {/* Avatar Section */}
+      <div className="bg-[#0f121d]/60 border border-white/5 rounded-xl p-5 flex flex-col sm:flex-row items-center gap-6 shadow-xl shadow-black/10">
+        <div className="relative w-24 h-24 rounded-full border-2 border-white/10 overflow-hidden bg-black/30 shrink-0 flex items-center justify-center shadow-lg shadow-black/20">
+          {profile.avatar ? (
+            <img src={profile.avatar} alt="Avatar" className="w-full h-full object-cover" />
+          ) : (
+            <User className="w-10 h-10 text-gray-600" />
+          )}
+        </div>
+        <div className="flex-grow w-full flex flex-col gap-3">
+          <div>
+            <h3 className="text-sm font-bold text-white">Profile Photo</h3>
+            <p className="text-xs text-gray-500">Upload a professional headshot or paste an image URL.</p>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <label className="flex items-center justify-center gap-2 px-4 py-2 bg-[#0f121d] border border-white/5 rounded-lg text-sm text-gray-400 cursor-pointer hover:border-cyan-500/50 transition-colors shrink-0">
+              <Upload className="w-4 h-4" /> Upload Photo
+              <input type="file" accept="image/*" className="hidden" onChange={e => e.target.files?.[0] && handleAvatarUpload(e.target.files[0])} />
+            </label>
+            <input value={profile.avatar || ''} onChange={e => set('avatar', e.target.value)}
+              className={inputClass} placeholder="Or paste image URL https://..." />
+          </div>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {fields.map(f => (
           <div key={f} className={f === 'description' ? 'md:col-span-2' : ''}>
@@ -47,10 +83,10 @@ export default function ProfileTab({ profile, saving, onChange, onSave }: Props)
               {fieldLabels[f] || f}
             </label>
             {f === 'description' ? (
-              <textarea value={profile[f as keyof ProfileData] || ''} onChange={e => set(f, e.target.value)}
+              <textarea value={profile[f] || ''} onChange={e => set(f, e.target.value)}
                 className={textareaClass} rows={4} placeholder="Describe yourself in one short sentence..." />
             ) : (
-              <input value={profile[f as keyof ProfileData] || ''} onChange={e => set(f, e.target.value)}
+              <input value={profile[f] || ''} onChange={e => set(f, e.target.value)}
                 className={inputClass} placeholder={`Enter ${fieldLabels[f] || f}`} />
             )}
           </div>
@@ -65,6 +101,27 @@ export default function ProfileTab({ profile, saving, onChange, onSave }: Props)
         <label className="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-1.5 block font-mono">Tech List (comma separated)</label>
         <input value={profile.tech_list || ''} onChange={e => set('tech_list', e.target.value)}
           className={inputClass} placeholder="e.g. React, Next.js, Node.js, Python" />
+      </div>
+      <div>
+        <label className="text-xs text-gray-500 uppercase tracking-wider mb-1.5 block font-mono">Resume PDF</label>
+        <div className="flex items-center gap-3">
+          <input value={profile.resume_url || ''} onChange={e => onChange({ ...profile, resume_url: e.target.value })}
+            className={inputClass} placeholder="Or paste resume PDF URL" />
+          <label className="flex items-center gap-2 px-3 py-2 bg-[#0f121d] border border-white/5 rounded-lg text-sm text-gray-400 cursor-pointer hover:border-cyan-500/50 transition-colors shrink-0">
+            <Upload className="w-4 h-4" /> Upload PDF
+            <input type="file" accept="application/pdf" className="hidden"
+              onChange={async (e) => {
+                const file = e.target.files?.[0]
+                if (!file) return
+                const fd = new FormData()
+                fd.append('file', file)
+                const res = await fetch('/api/admin/upload', { method: 'POST', body: fd })
+                const { url } = await res.json()
+                onChange({ ...profile, resume_url: url })
+              }}
+            />
+          </label>
+        </div>
       </div>
       <button onClick={onSave} disabled={saving} className={btnPrimary + " self-start mt-2"}>
         {saving ? <Loader className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />} Save Profile

@@ -13,6 +13,7 @@ export interface ProfileRow {
   bio_paragraphs: string
   tech_list: string
   avatar: string
+  resume_url: string
   created_at: string
   updated_at: string
 }

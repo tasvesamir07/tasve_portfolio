@@ -59,6 +59,15 @@ export default async function Home() {
           
           {/* Left Column: Typography Details */}
           <div className="lg:col-span-7 flex flex-col gap-6 text-center lg:text-left">
+            {profile.avatar && (
+              <div className="w-28 h-28 rounded-full border-2 border-cyan-400/30 p-1 bg-[#0f121d] shadow-2xl shadow-cyan-500/10 mb-2 mx-auto lg:mx-0 relative group overflow-hidden shrink-0">
+                <div className="w-full h-full rounded-full overflow-hidden">
+                  <img src={profile.avatar} alt={profile.name} className="w-full h-full object-cover transition-transform group-hover:scale-108 duration-300" />
+                </div>
+                <div className="absolute inset-0 rounded-full border border-cyan-400/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+              </div>
+            )}
+            
             <div className="font-mono text-sm md:text-base text-cyan-400 tracking-wider flex items-center justify-center lg:justify-start gap-2">
               <span className="text-cyan-400 font-bold">~</span> {profile.intro}
             </div>
@@ -87,6 +96,19 @@ export default async function Home() {
               >
                 Let's Talk
               </a>
+              {profile.resume_url && (
+                <a
+                  href={profile.resume_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-3 px-6 py-3 bg-transparent border border-cyan-400/30 hover:border-cyan-400 hover:bg-cyan-500/10 text-cyan-400 font-semibold rounded-lg backdrop-blur-md transform hover:-translate-y-0.5 transition-all duration-200 cursor-pointer"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  Resume
+                </a>
+              )}
             </div>
           </div>
 
