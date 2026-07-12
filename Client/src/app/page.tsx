@@ -3,8 +3,10 @@ import {
   fetchProfile, 
   fetchProjects, 
   fetchSkills, 
-  fetchExperience 
+  fetchExperience, 
+  fetchEducation 
 } from '@/lib/api';
+import type { Education } from '@/lib/api';
 import Navbar from '@/components/Navbar';
 import Typewriter from '@/components/Typewriter';
 import ProjectsGrid from '@/components/ProjectsGrid';
@@ -27,11 +29,12 @@ export const dynamic = 'force-dynamic';
 
 export default async function Home() {
   // Fetch dynamic portfolio data
-  const [profile, projects, skills, experiences] = await Promise.all([
+  const [profile, projects, skills, experiences, education] = await Promise.all([
     fetchProfile().catch(() => null),
     fetchProjects().catch(() => []),
     fetchSkills().catch(() => []),
     fetchExperience().catch(() => []),
+    fetchEducation().catch(() => []),
   ]);
 
   if (!profile) {
@@ -284,6 +287,7 @@ export default async function Home() {
       </section>
 
       {/* --- EDUCATION & CREDENTIALS SECTION --- */}
+      {(education as Education[]).length > 0 && (
       <section id="education" className="py-24 px-6 md:px-12 border-t border-white/5">
         <div className="max-w-5xl mx-auto">
           <div className="flex flex-col gap-2 mb-16">
@@ -301,47 +305,26 @@ export default async function Home() {
               </h3>
               
               <div className="flex flex-col gap-6">
-                <div className="bg-glass-bg border border-white/5 rounded-xl p-5 hover:border-white/10 transition-colors duration-200">
-                  <div className="flex justify-between items-start gap-4">
-                    <div>
-                      <h4 className="font-heading font-bold text-lg text-white">B.Sc. in Software Engineering</h4>
-                      <p className="text-cyan-400 text-sm mt-0.5">Daffodil International University</p>
+                {(education as Education[]).filter(e => e.type === 'education').map((e) => (
+                  <div key={e.id} className="bg-glass-bg border border-white/5 rounded-xl p-5 hover:border-white/10 transition-colors duration-200">
+                    <div className="flex justify-between items-start gap-4">
+                      <div>
+                        <h4 className="font-heading font-bold text-lg text-white">{e.title}</h4>
+                        <p className="text-cyan-400 text-sm mt-0.5">{e.subtitle}</p>
+                      </div>
+                      <span className="font-mono text-[10px] text-cyan-400 bg-cyan-400/5 border border-cyan-400/10 px-2.5 py-0.5 rounded-full shrink-0">
+                        {e.date}
+                      </span>
                     </div>
-                    <span className="font-mono text-[10px] text-cyan-400 bg-cyan-400/5 border border-cyan-400/10 px-2.5 py-0.5 rounded-full shrink-0">
-                      2023 - Present
-                    </span>
+                    {e.details && (
+                      <ul className="list-disc list-inside mt-3 text-gray-400 text-xs flex flex-col gap-1.5">
+                        {e.details.split('\n').map((line, i) => (
+                          <li key={i}>{line}</li>
+                        ))}
+                      </ul>
+                    )}
                   </div>
-                  <ul className="list-disc list-inside mt-3 text-gray-400 text-xs flex flex-col gap-1.5">
-                    <li>CGPA: <strong className="text-white">4.00 / 4.00</strong> (7th semester)</li>
-                    <li>Dean’s List Award (Spring 2025, Fall 2024)</li>
-                  </ul>
-                </div>
-
-                <div className="bg-glass-bg border border-white/5 rounded-xl p-5 hover:border-white/10 transition-colors duration-200">
-                  <div className="flex justify-between items-start gap-4">
-                    <div>
-                      <h4 className="font-heading font-bold text-lg text-white">Higher Secondary Certificate (HSC)</h4>
-                      <p className="text-cyan-400 text-sm mt-0.5">Mirpur Cantonment Public School and College</p>
-                    </div>
-                    <span className="font-mono text-[10px] text-purple-400 bg-purple-400/5 border border-purple-400/10 px-2.5 py-0.5 rounded-full shrink-0">
-                      Batch 2022
-                    </span>
-                  </div>
-                  <p className="text-gray-400 text-xs mt-3">GPA: <strong className="text-white">5.00 / 5.00</strong></p>
-                </div>
-
-                <div className="bg-glass-bg border border-white/5 rounded-xl p-5 hover:border-white/10 transition-colors duration-200">
-                  <div className="flex justify-between items-start gap-4">
-                    <div>
-                      <h4 className="font-heading font-bold text-lg text-white">Secondary School Certificate (SSC)</h4>
-                      <p className="text-cyan-400 text-sm mt-0.5">Adamjee Cantonment Public School</p>
-                    </div>
-                    <span className="font-mono text-[10px] text-purple-400 bg-purple-400/5 border border-purple-400/10 px-2.5 py-0.5 rounded-full shrink-0">
-                      Batch 2020
-                    </span>
-                  </div>
-                  <p className="text-gray-400 text-xs mt-3">GPA: <strong className="text-white">5.00 / 5.00</strong></p>
-                </div>
+                ))}
               </div>
             </div>
 
@@ -352,27 +335,15 @@ export default async function Home() {
                   <Award className="w-5 h-5 text-purple-400" /> Honors & Awards
                 </h3>
                 <div className="bg-glass-bg border border-white/5 rounded-xl p-5 flex flex-col gap-4">
-                  <div className="flex gap-3">
-                    <span className="text-cyan-400 text-sm mt-0.5">🏆</span>
-                    <div>
-                      <h4 className="text-sm font-bold text-white">Champion</h4>
-                      <p className="text-xs text-gray-400 mt-0.5">Robotics and IoT Device Competition, 2025</p>
+                  {(education as Education[]).filter(e => e.type === 'award').map((e) => (
+                    <div key={e.id} className="flex gap-3">
+                      <span className="text-cyan-400 text-sm mt-0.5">🏆</span>
+                      <div>
+                        <h4 className="text-sm font-bold text-white">{e.title}</h4>
+                        <p className="text-xs text-gray-400 mt-0.5">{e.subtitle}</p>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex gap-3">
-                    <span className="text-purple-400 text-sm mt-0.5">🥈</span>
-                    <div>
-                      <h4 className="text-sm font-bold text-white">Finalist</h4>
-                      <p className="text-xs text-gray-400 mt-0.5">AI Competition (2026), 2nd National Social Business Case Competition (2025)</p>
-                    </div>
-                  </div>
-                  <div className="flex gap-3">
-                    <span className="text-cyan-400 text-sm mt-0.5">⚡</span>
-                    <div>
-                      <h4 className="text-sm font-bold text-white">Technical Training</h4>
-                      <p className="text-xs text-gray-400 mt-0.5">PKI Training By CCA (2026), Introduction to Statistical Thinking (2025)</p>
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </div>
 
@@ -381,20 +352,19 @@ export default async function Home() {
                   <Cpu className="w-5 h-5 text-pink-500" /> Activities & Leadership
                 </h3>
                 <div className="bg-glass-bg border border-white/5 rounded-xl p-5 flex flex-col gap-3">
-                  <div>
-                    <h4 className="text-xs font-mono text-cyan-400">December 2024 - Jan 2026</h4>
-                    <p className="text-sm font-bold text-white mt-0.5">Department Representative | ORIYET</p>
-                  </div>
-                  <div className="border-t border-white/5 pt-3">
-                    <h4 className="text-xs font-mono text-cyan-400">December 2023 - Present</h4>
-                    <p className="text-sm font-bold text-white mt-0.5">Member | DIU Data Science & Software Engineering Clubs</p>
-                  </div>
+                  {(education as Education[]).filter(e => e.type === 'activity').map((e) => (
+                    <div key={e.id}>
+                      {e.date && <h4 className="text-xs font-mono text-cyan-400">{e.date}</h4>}
+                      <p className="text-sm font-bold text-white mt-0.5">{e.title}</p>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
           </div>
         </div>
       </section>
+      )}
 
       {/* --- CONTACT SECTION --- */}
       <section id="contact" className="py-24 px-6 md:px-12 border-t border-white/5">

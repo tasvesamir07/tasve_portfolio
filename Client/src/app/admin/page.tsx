@@ -7,9 +7,10 @@ import ProfileTab from '@/components/admin/ProfileTab'
 import ProjectsTab from '@/components/admin/ProjectsTab'
 import SkillsTab from '@/components/admin/SkillsTab'
 import ExperiencesTab from '@/components/admin/ExperiencesTab'
+import EducationTab from '@/components/admin/EducationTab'
 import MessagesTab from '@/components/admin/MessagesTab'
 
-type Tab = 'profile' | 'projects' | 'skills' | 'experiences' | 'messages'
+type Tab = 'profile' | 'projects' | 'skills' | 'experiences' | 'messages' | 'education'
 
 interface ProfileData {
   name: string; title: string; intro: string; description: string
@@ -31,6 +32,10 @@ interface ExperienceData {
   id?: number; date: string; title: string; company: string; desc: string; sort_order: number
 }
 
+interface EducationData {
+  id?: number; type: string; title: string; subtitle: string; date: string; details: string; sort_order: number
+}
+
 function moveItem<T>(arr: T[], from: number, to: number): T[] {
   const next = [...arr]
   const [moved] = next.splice(from, 1)
@@ -49,6 +54,7 @@ export default function AdminPage() {
   const [projects, setProjects] = useState<ProjectData[]>([])
   const [skills, setSkills] = useState<SkillData[]>([])
   const [experiences, setExperiences] = useState<ExperienceData[]>([])
+  const [education, setEducation] = useState<EducationData[]>([])
 
   const showToast = useCallback((msg: string) => {
     setToast(msg)
@@ -68,6 +74,7 @@ export default function AdminPage() {
     fetch('/api/admin/projects').then(r => r.json()).then(setProjects).catch(() => { showToast('Failed to load data'); setProjects([]) })
     fetch('/api/admin/skills').then(r => r.json()).then(setSkills).catch(() => { showToast('Failed to load data'); setSkills([]) })
     fetch('/api/admin/experiences').then(r => r.json()).then(setExperiences).catch(() => { showToast('Failed to load data'); setExperiences([]) })
+    fetch('/api/admin/education').then(r => r.json()).then(setEducation).catch(() => { showToast('Failed to load data'); setEducation([]) })
   }, [authed])
 
   const handleLogout = async () => {
@@ -94,23 +101,13 @@ export default function AdminPage() {
 
   const saveProjects = async () => {
     setSaving(true)
-    await Promise.all(
-      projects.map(async (p, i) => {
-        const payload = { ...p, sort_order: i }
-        if (!p.id) {
-          const res = await fetch('/api/admin/projects', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
-          const saved = await res.json()
-          setProjects(prev => { const next = [...prev]; next[i] = { ...next[i], id: saved.id }; return next })
-          return
-        }
-        return fetch(`/api/admin/projects/${p.id}`, {
-          method: 'PUT', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        })
-      })
-    )
+    const items = projects.map((p, i) => ({ ...p, sort_order: i }))
+    const res = await fetch('/api/admin/batch', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ table: 'projects', items }),
+    })
     setSaving(false)
-    showToast('Projects saved')
+    showToast(res.ok ? 'Projects saved' : 'Failed to save')
   }
 
   const addProject = async () => {
@@ -141,23 +138,13 @@ export default function AdminPage() {
 
   const saveSkills = async () => {
     setSaving(true)
-    await Promise.all(
-      skills.map(async (s, i) => {
-        const payload = { ...s, sort_order: i }
-        if (!s.id) {
-          const res = await fetch('/api/admin/skills', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
-          const saved = await res.json()
-          setSkills(prev => { const next = [...prev]; next[i] = { ...next[i], id: saved.id }; return next })
-          return
-        }
-        return fetch(`/api/admin/skills/${s.id}`, {
-          method: 'PUT', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        })
-      })
-    )
+    const items = skills.map((s, i) => ({ ...s, sort_order: i }))
+    const res = await fetch('/api/admin/batch', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ table: 'skills', items }),
+    })
     setSaving(false)
-    showToast('Skills saved')
+    showToast(res.ok ? 'Skills saved' : 'Failed to save')
   }
 
   const addSkill = async () => {
@@ -188,23 +175,13 @@ export default function AdminPage() {
 
   const saveExperiences = async () => {
     setSaving(true)
-    await Promise.all(
-      experiences.map(async (e, i) => {
-        const payload = { ...e, sort_order: i }
-        if (!e.id) {
-          const res = await fetch('/api/admin/experiences', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
-          const saved = await res.json()
-          setExperiences(prev => { const next = [...prev]; next[i] = { ...next[i], id: saved.id }; return next })
-          return
-        }
-        return fetch(`/api/admin/experiences/${e.id}`, {
-          method: 'PUT', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        })
-      })
-    )
+    const items = experiences.map((e, i) => ({ ...e, sort_order: i }))
+    const res = await fetch('/api/admin/batch', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ table: 'experiences', items }),
+    })
     setSaving(false)
-    showToast('Experiences saved')
+    showToast(res.ok ? 'Experiences saved' : 'Failed to save')
   }
 
   const addExperience = async () => {
@@ -233,11 +210,58 @@ export default function AdminPage() {
     setExperiences(moveItem(experiences, idx, to))
   }
 
+  const saveEducation = async () => {
+    setSaving(true)
+    await Promise.all(
+      education.map(async (e, i) => {
+        const payload = { ...e, sort_order: i }
+        if (!e.id) {
+          const res = await fetch('/api/admin/education', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
+          const saved = await res.json()
+          setEducation(prev => { const next = [...prev]; next[i] = { ...next[i], id: saved.id }; return next })
+          return
+        }
+        return fetch(`/api/admin/education/${e.id}`, {
+          method: 'PUT', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        })
+      })
+    )
+    setSaving(false)
+    showToast('Education saved')
+  }
+
+  const addEducation = async () => {
+    const newE = { type: 'education', title: 'New Entry', subtitle: '', date: '', details: '', sort_order: education.length }
+    const res = await fetch('/api/admin/education', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newE) })
+    if (!res.ok) { showToast('Failed to add'); return }
+    const saved = await res.json()
+    setEducation([...education, saved])
+    showToast('Entry added')
+  }
+
+  const deleteEducation = async (id: number) => {
+    try {
+      const res = await fetch(`/api/admin/education/${id}`, { method: 'DELETE' })
+      if (!res.ok) throw new Error('Failed to delete')
+      setEducation(education.filter(e => e.id !== id))
+      showToast('Entry deleted')
+    } catch {
+      showToast('Failed to delete')
+    }
+  }
+
+  const moveEducation = (idx: number, dir: 'up' | 'down') => {
+    const to = dir === 'up' ? idx - 1 : idx + 1
+    if (to < 0 || to >= education.length) return
+    setEducation(moveItem(education, idx, to))
+  }
+
   if (!authed) return null
 
   const tabLabels: Record<Tab, string> = {
     profile: 'Profile', projects: 'Projects', skills: 'Skills',
-    experiences: 'Experience', messages: 'Messages',
+    experiences: 'Experience', messages: 'Messages', education: 'Education',
   }
 
   return (
@@ -309,6 +333,16 @@ export default function AdminPage() {
             onDelete={deleteExperience}
             onMove={moveExperience}
             onSave={saveExperiences}
+          />
+        )}
+        {tab === 'education' && (
+          <EducationTab
+            education={education} saving={saving}
+            onAdd={addEducation}
+            onUpdate={(idx, e) => { const u = [...education]; u[idx] = e; setEducation(u) }}
+            onDelete={deleteEducation}
+            onMove={moveEducation}
+            onSave={saveEducation}
           />
         )}
         {tab === 'messages' && <MessagesTab showToast={showToast} />}

@@ -1,5 +1,5 @@
 import { getSupabase } from './supabase'
-import type { ProfileRow, ProjectRow, SkillRow, ExperienceRow } from './database.types'
+import type { ProfileRow, ProjectRow, SkillRow, ExperienceRow, EducationRow } from './database.types'
 
 export interface Project {
   id: string
@@ -31,6 +31,15 @@ export interface Profile {
 export interface Skill {
   category: string
   items: { name: string; value: number }[]
+}
+
+export interface Education {
+  id: number
+  type: string
+  title: string
+  subtitle: string
+  date: string
+  details: string
 }
 
 export interface Experience {
@@ -114,6 +123,20 @@ export async function fetchSkills(): Promise<Skill[]> {
   const { data, error } = await supabase.from('skills').select('*').order('sort_order', { ascending: true })
   if (error) throw error
   return formatSkills(data as SkillRow[])
+}
+
+export async function fetchEducation(): Promise<Education[]> {
+  const supabase = getSupabase()
+  const { data, error } = await supabase.from('education').select('*').order('sort_order', { ascending: true })
+  if (error) throw error
+  return (data as EducationRow[]).map(item => ({
+    id: item.id,
+    type: item.type,
+    title: item.title || '',
+    subtitle: item.subtitle || '',
+    date: item.date || '',
+    details: item.details || '',
+  }))
 }
 
 export async function fetchExperience(): Promise<Experience[]> {

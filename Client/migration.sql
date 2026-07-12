@@ -128,6 +128,32 @@ INSERT INTO skills (category, name, value, sort_order) VALUES
 ('Design & Documentation', 'Canva', 90, 15),
 ('Design & Documentation', 'Microsoft Office Suite', 85, 16);
 
+CREATE TABLE IF NOT EXISTS education (
+  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  type TEXT NOT NULL DEFAULT 'education',
+  title TEXT NOT NULL DEFAULT '',
+  subtitle TEXT NOT NULL DEFAULT '',
+  date TEXT NOT NULL DEFAULT '',
+  details TEXT NOT NULL DEFAULT '',
+  sort_order INT DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE education ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow public read" ON education FOR SELECT USING (true);
+
+INSERT INTO education (type, title, subtitle, date, details, sort_order) VALUES
+('education', 'B.Sc. in Software Engineering', 'Daffodil International University', '2023 - Present', 'CGPA: 4.00 / 4.00 (7th semester)\nDean''s List Award (Spring 2025, Fall 2024)', 0),
+('education', 'Higher Secondary Certificate (HSC)', 'Mirpur Cantonment Public School and College', 'Batch 2022', 'GPA: 5.00 / 5.00', 1),
+('education', 'Secondary School Certificate (SSC)', 'Adamjee Cantonment Public School', 'Batch 2020', 'GPA: 5.00 / 5.00', 2),
+('award', 'Champion', 'Robotics and IoT Device Competition, 2025', '', '', 3),
+('award', 'Finalist', 'AI Competition (2026), 2nd National Social Business Case Competition (2025)', '', '', 4),
+('award', 'Technical Training', 'PKI Training By CCA (2026), Introduction to Statistical Thinking (2025)', '', '', 5),
+('activity', 'Department Representative | ORIYET', '', 'December 2024 - Jan 2026', '', 6),
+('activity', 'Member | DIU Data Science & Software Engineering Clubs', '', 'December 2023 - Present', '', 7)
+ON CONFLICT DO NOTHING;
+
 -- Seed projects
 INSERT INTO projects (title, category, tag, "desc", tags, github, live, image, sort_order) VALUES
 ('Certificate Studio', 'fullstack', 'Featured', 'Engineered a dynamic web application that automates bulk certificate generation and secure, high-volume email distribution. Designed a responsive, intuitive frontend user interface paired with a robust backend service to streamline administrative academic workflows.', 'JavaScript, Node.js, React, TailwindCSS', 'https://github.com/tasvesamir07', '#', '', 1),

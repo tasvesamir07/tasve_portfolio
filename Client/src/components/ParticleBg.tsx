@@ -130,14 +130,19 @@ export default function ParticleBg() {
       }
     }
 
+    let frameCount = 0
+
     function animateParticles() {
       if (!ctx || !canvas) return;
+      frameCount++
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       for (let i = 0; i < particlesArray.length; i++) {
         particlesArray[i].update();
         particlesArray[i].draw();
       }
-      connectParticles();
+      if (frameCount % 2 === 0) {
+        connectParticles();
+      }
       animationFrameId = requestAnimationFrame(animateParticles);
     }
 

@@ -52,6 +52,18 @@ export interface ExperienceRow {
   updated_at: string
 }
 
+export interface EducationRow {
+  id: number
+  type: string
+  title: string
+  subtitle: string
+  date: string
+  details: string
+  sort_order: number
+  created_at: string
+  updated_at: string
+}
+
 export interface ContactRow {
   id: number
   name: string
