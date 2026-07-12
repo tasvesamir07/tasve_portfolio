@@ -5,7 +5,8 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
   const supabaseAdmin = getSupabaseAdmin()
   const { id } = await params
   const body = await req.json()
-  const { error } = await supabaseAdmin.from('experiences').update({ ...body, updated_at: new Date().toISOString() }).eq('id', id)
+  const { id: _, created_at: __, ...updateData } = body
+  const { error } = await supabaseAdmin.from('experiences').update({ ...updateData, updated_at: new Date().toISOString() }).eq('id', id)
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json({ success: true })
 }
