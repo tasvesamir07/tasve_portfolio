@@ -17,38 +17,91 @@ import { AdminSkeleton } from '@/components/Skeleton'
 import { compressAndConvertToWebp } from '@/lib/image'
 import ScrollToTop from '@/components/ScrollToTop'
 
-type Tab = 'profile' | 'projects' | 'skills' | 'experiences' | 'messages' | 'education' | 'certifications' | 'gallery' | 'settings'
+type Tab =
+  | 'profile'
+  | 'projects'
+  | 'skills'
+  | 'experiences'
+  | 'messages'
+  | 'education'
+  | 'certifications'
+  | 'gallery'
+  | 'settings'
 
 interface ProfileData {
-  name: string; title: string; intro: string; description: string
-  email: string; location: string; github: string; linkedin: string
-  twitter: string; codepen: string; bio_paragraphs: string; tech_list: string
-  avatar: string; resume_url: string
+  name: string
+  title: string
+  intro: string
+  description: string
+  email: string
+  location: string
+  github: string
+  linkedin: string
+  twitter: string
+  codepen: string
+  bio_paragraphs: string
+  tech_list: string
+  avatar: string
+  resume_url: string
 }
 
 interface ProjectData {
-  id?: number; title: string; category: string; tag: string; desc: string
-  tags: string; github: string; live: string; image: string; diagram_url: string; sort_order: number
+  id?: number
+  title: string
+  category: string
+  tag: string
+  desc: string
+  tags: string
+  github: string
+  live: string
+  image: string
+  diagram_url: string
+  sort_order: number
 }
 
 interface SkillData {
-  id?: number; category: string; name: string; value: number; sort_order: number
+  id?: number
+  category: string
+  name: string
+  value: number
+  sort_order: number
 }
 
 interface ExperienceData {
-  id?: number; date: string; title: string; company: string; desc: string; sort_order: number
+  id?: number
+  date: string
+  title: string
+  company: string
+  desc: string
+  sort_order: number
 }
 
 interface EducationData {
-  id?: number; type: string; title: string; subtitle: string; date: string; details: string; sort_order: number
+  id?: number
+  type: string
+  title: string
+  subtitle: string
+  date: string
+  details: string
+  sort_order: number
 }
 
 interface CertificationData {
-  id?: number; title: string; issuer: string; date: string; credential_url: string; image: string; sort_order: number
+  id?: number
+  title: string
+  issuer: string
+  date: string
+  credential_url: string
+  image: string
+  sort_order: number
 }
 
 interface GalleryItemData {
-  id?: number; title: string; image: string; description: string; sort_order: number
+  id?: number
+  title: string
+  image: string
+  description: string
+  sort_order: number
 }
 
 function moveItem<T>(arr: T[], from: number, to: number): T[] {
@@ -57,8 +110,6 @@ function moveItem<T>(arr: T[], from: number, to: number): T[] {
   next.splice(to, 0, moved)
   return next
 }
-
-type CollectionKey = 'certifications' | 'gallery'
 
 export default function AdminPage() {
   const router = useRouter()
@@ -82,10 +133,12 @@ export default function AdminPage() {
   }, [])
 
   useEffect(() => {
-    fetch('/api/admin/auth').then(r => r.json()).then(d => {
-      if (!d.authenticated) router.push('/admin/login')
-      else setAuthed(true)
-    })
+    fetch('/api/admin/auth')
+      .then((r) => r.json())
+      .then((d) => {
+        if (!d.authenticated) router.push('/admin/login')
+        else setAuthed(true)
+      })
   }, [router])
 
   useEffect(() => {
@@ -95,13 +148,55 @@ export default function AdminPage() {
       return r.json()
     }
     Promise.all([
-      fetch('/api/admin/profile').then(checkRes).then(setProfile).catch(() => { showToast('Failed to load profile'); setProfile(null) }),
-      fetch('/api/admin/projects').then(checkRes).then(setProjects).catch(() => { showToast('Failed to load projects'); setProjects([]) }),
-      fetch('/api/admin/skills').then(checkRes).then(setSkills).catch(() => { showToast('Failed to load skills'); setSkills([]) }),
-      fetch('/api/admin/experiences').then(checkRes).then(setExperiences).catch(() => { showToast('Failed to load experiences'); setExperiences([]) }),
-      fetch('/api/admin/education').then(checkRes).then(setEducation).catch(() => { showToast('Failed to load education'); setEducation([]) }),
-      fetch('/api/admin/certifications').then(checkRes).then(setCertifications).catch(() => { showToast('Failed to load certifications'); setCertifications([]) }),
-      fetch('/api/admin/gallery').then(checkRes).then(setGallery).catch(() => { showToast('Failed to load gallery'); setGallery([]) }),
+      fetch('/api/admin/profile')
+        .then(checkRes)
+        .then(setProfile)
+        .catch(() => {
+          showToast('Failed to load profile')
+          setProfile(null)
+        }),
+      fetch('/api/admin/projects')
+        .then(checkRes)
+        .then(setProjects)
+        .catch(() => {
+          showToast('Failed to load projects')
+          setProjects([])
+        }),
+      fetch('/api/admin/skills')
+        .then(checkRes)
+        .then(setSkills)
+        .catch(() => {
+          showToast('Failed to load skills')
+          setSkills([])
+        }),
+      fetch('/api/admin/experiences')
+        .then(checkRes)
+        .then(setExperiences)
+        .catch(() => {
+          showToast('Failed to load experiences')
+          setExperiences([])
+        }),
+      fetch('/api/admin/education')
+        .then(checkRes)
+        .then(setEducation)
+        .catch(() => {
+          showToast('Failed to load education')
+          setEducation([])
+        }),
+      fetch('/api/admin/certifications')
+        .then(checkRes)
+        .then(setCertifications)
+        .catch(() => {
+          showToast('Failed to load certifications')
+          setCertifications([])
+        }),
+      fetch('/api/admin/gallery')
+        .then(checkRes)
+        .then(setGallery)
+        .catch(() => {
+          showToast('Failed to load gallery')
+          setGallery([])
+        }),
     ]).finally(() => setLoadingData(false))
   }, [authed])
 
@@ -114,7 +209,9 @@ export default function AdminPage() {
     if (!profile) return
     setSaving(true)
     const res = await fetch('/api/admin/profile', {
-      method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(profile),
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(profile),
     })
     setSaving(false)
     showToast(res.ok ? 'Profile saved' : 'Failed to save profile')
@@ -123,10 +220,13 @@ export default function AdminPage() {
   const handleProjectImage = async (idx: number, file: File) => {
     try {
       const compressed = await compressAndConvertToWebp(file)
-      const fd = new FormData(); fd.append('file', compressed)
+      const fd = new FormData()
+      fd.append('file', compressed)
       const res = await fetch('/api/admin/upload', { method: 'POST', body: fd })
       const { url } = await res.json()
-      const updated = [...projects]; updated[idx] = { ...updated[idx], image: url }; setProjects(updated)
+      const updated = [...projects]
+      updated[idx] = { ...updated[idx], image: url }
+      setProjects(updated)
     } catch (err) {
       console.error('Project image upload failed:', err)
       showToast('Image compression failed')
@@ -137,7 +237,8 @@ export default function AdminPage() {
     setSaving(true)
     const items = projects.map((p, i) => ({ ...p, sort_order: i }))
     const res = await fetch('/api/admin/batch', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ table: 'projects', items }),
     })
     setSaving(false)
@@ -145,9 +246,26 @@ export default function AdminPage() {
   }
 
   const addProject = async () => {
-    const newP = { title: '', category: '', tag: '', desc: '', tags: '', github: '', live: '', image: '', sort_order: projects.length }
-    const res = await fetch('/api/admin/projects', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newP) })
-    if (!res.ok) { showToast('Failed to add'); return }
+    const newP = {
+      title: '',
+      category: '',
+      tag: '',
+      desc: '',
+      tags: '',
+      github: '',
+      live: '',
+      image: '',
+      sort_order: projects.length,
+    }
+    const res = await fetch('/api/admin/projects', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newP),
+    })
+    if (!res.ok) {
+      showToast('Failed to add')
+      return
+    }
     const saved = await res.json()
     setProjects([...projects, saved])
     showToast('Project added')
@@ -157,7 +275,7 @@ export default function AdminPage() {
     try {
       const res = await fetch(`/api/admin/projects/${id}`, { method: 'DELETE' })
       if (!res.ok) throw new Error('Failed to delete')
-      setProjects(projects.filter(p => p.id !== id))
+      setProjects(projects.filter((p) => p.id !== id))
       showToast('Project deleted')
     } catch {
       showToast('Failed to delete project')
@@ -174,7 +292,8 @@ export default function AdminPage() {
     setSaving(true)
     const items = skills.map((s, i) => ({ ...s, sort_order: i }))
     const res = await fetch('/api/admin/batch', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ table: 'skills', items }),
     })
     setSaving(false)
@@ -183,8 +302,15 @@ export default function AdminPage() {
 
   const addSkill = async () => {
     const newS = { category: '', name: '', value: 0, sort_order: skills.length }
-    const res = await fetch('/api/admin/skills', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newS) })
-    if (!res.ok) { showToast('Failed to add'); return }
+    const res = await fetch('/api/admin/skills', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newS),
+    })
+    if (!res.ok) {
+      showToast('Failed to add')
+      return
+    }
     const saved = await res.json()
     setSkills([...skills, saved])
     showToast('Skill added')
@@ -194,7 +320,7 @@ export default function AdminPage() {
     try {
       const res = await fetch(`/api/admin/skills/${id}`, { method: 'DELETE' })
       if (!res.ok) throw new Error('Failed to delete')
-      setSkills(skills.filter(s => s.id !== id))
+      setSkills(skills.filter((s) => s.id !== id))
       showToast('Skill deleted')
     } catch {
       showToast('Failed to delete skill')
@@ -211,7 +337,8 @@ export default function AdminPage() {
     setSaving(true)
     const items = experiences.map((e, i) => ({ ...e, sort_order: i }))
     const res = await fetch('/api/admin/batch', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ table: 'experiences', items }),
     })
     setSaving(false)
@@ -220,8 +347,15 @@ export default function AdminPage() {
 
   const addExperience = async () => {
     const newE = { date: '', title: '', company: '', desc: '', sort_order: experiences.length }
-    const res = await fetch('/api/admin/experiences', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newE) })
-    if (!res.ok) { showToast('Failed to add'); return }
+    const res = await fetch('/api/admin/experiences', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newE),
+    })
+    if (!res.ok) {
+      showToast('Failed to add')
+      return
+    }
     const saved = await res.json()
     setExperiences([...experiences, saved])
     showToast('Experience added')
@@ -231,7 +365,7 @@ export default function AdminPage() {
     try {
       const res = await fetch(`/api/admin/experiences/${id}`, { method: 'DELETE' })
       if (!res.ok) throw new Error('Failed to delete')
-      setExperiences(experiences.filter(e => e.id !== id))
+      setExperiences(experiences.filter((e) => e.id !== id))
       showToast('Experience deleted')
     } catch {
       showToast('Failed to delete experience')
@@ -250,26 +384,49 @@ export default function AdminPage() {
       education.map(async (e, i) => {
         const payload = { ...e, sort_order: i }
         if (!e.id) {
-          const res = await fetch('/api/admin/education', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
+          const res = await fetch('/api/admin/education', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          })
           if (!res.ok) return
           const saved = await res.json()
-          setEducation(prev => { const next = [...prev]; next[i] = { ...next[i], id: saved.id }; return next })
+          setEducation((prev) => {
+            const next = [...prev]
+            next[i] = { ...next[i], id: saved.id }
+            return next
+          })
           return
         }
         return fetch(`/api/admin/education/${e.id}`, {
-          method: 'PUT', headers: { 'Content-Type': 'application/json' },
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
         })
-      })
+      }),
     )
     setSaving(false)
     showToast('Education saved')
   }
 
   const addEducation = async () => {
-    const newE = { type: 'education', title: '', subtitle: '', date: '', details: '', sort_order: education.length }
-    const res = await fetch('/api/admin/education', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newE) })
-    if (!res.ok) { showToast('Failed to add'); return }
+    const newE = {
+      type: 'education',
+      title: '',
+      subtitle: '',
+      date: '',
+      details: '',
+      sort_order: education.length,
+    }
+    const res = await fetch('/api/admin/education', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newE),
+    })
+    if (!res.ok) {
+      showToast('Failed to add')
+      return
+    }
     const saved = await res.json()
     setEducation([...education, saved])
     showToast('Entry added')
@@ -279,7 +436,7 @@ export default function AdminPage() {
     try {
       const res = await fetch(`/api/admin/education/${id}`, { method: 'DELETE' })
       if (!res.ok) throw new Error('Failed to delete')
-      setEducation(education.filter(e => e.id !== id))
+      setEducation(education.filter((e) => e.id !== id))
       showToast('Entry deleted')
     } catch {
       showToast('Failed to delete')
@@ -296,10 +453,13 @@ export default function AdminPage() {
   const handleCertImage = async (idx: number, file: File) => {
     try {
       const compressed = await compressAndConvertToWebp(file)
-      const fd = new FormData(); fd.append('file', compressed)
+      const fd = new FormData()
+      fd.append('file', compressed)
       const res = await fetch('/api/admin/upload', { method: 'POST', body: fd })
       const { url } = await res.json()
-      const updated = [...certifications]; updated[idx] = { ...updated[idx], image: url }; setCertifications(updated)
+      const updated = [...certifications]
+      updated[idx] = { ...updated[idx], image: url }
+      setCertifications(updated)
     } catch (err) {
       console.error('Certification image upload failed:', err)
       showToast('Image compression failed')
@@ -310,7 +470,8 @@ export default function AdminPage() {
     setSaving(true)
     const items = certifications.map((c, i) => ({ ...c, sort_order: i }))
     const res = await fetch('/api/admin/batch', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ table: 'certifications', items }),
     })
     setSaving(false)
@@ -318,9 +479,23 @@ export default function AdminPage() {
   }
 
   const addCertification = async () => {
-    const newC = { title: '', issuer: '', date: '', credential_url: '', image: '', sort_order: certifications.length }
-    const res = await fetch('/api/admin/certifications', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newC) })
-    if (!res.ok) { showToast('Failed to add'); return }
+    const newC = {
+      title: '',
+      issuer: '',
+      date: '',
+      credential_url: '',
+      image: '',
+      sort_order: certifications.length,
+    }
+    const res = await fetch('/api/admin/certifications', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newC),
+    })
+    if (!res.ok) {
+      showToast('Failed to add')
+      return
+    }
     const saved = await res.json()
     setCertifications([...certifications, saved])
     showToast('Certification added')
@@ -330,7 +505,7 @@ export default function AdminPage() {
     try {
       const res = await fetch(`/api/admin/certifications/${id}`, { method: 'DELETE' })
       if (!res.ok) throw new Error('Failed to delete')
-      setCertifications(certifications.filter(c => c.id !== id))
+      setCertifications(certifications.filter((c) => c.id !== id))
       showToast('Certification deleted')
     } catch {
       showToast('Failed to delete')
@@ -347,10 +522,13 @@ export default function AdminPage() {
   const handleGalleryImage = async (idx: number, file: File) => {
     try {
       const compressed = await compressAndConvertToWebp(file)
-      const fd = new FormData(); fd.append('file', compressed)
+      const fd = new FormData()
+      fd.append('file', compressed)
       const res = await fetch('/api/admin/upload', { method: 'POST', body: fd })
       const { url } = await res.json()
-      const updated = [...gallery]; updated[idx] = { ...updated[idx], image: url }; setGallery(updated)
+      const updated = [...gallery]
+      updated[idx] = { ...updated[idx], image: url }
+      setGallery(updated)
     } catch (err) {
       console.error('Gallery image upload failed:', err)
       showToast('Image compression failed')
@@ -361,7 +539,8 @@ export default function AdminPage() {
     setSaving(true)
     const items = gallery.map((g, i) => ({ ...g, sort_order: i }))
     const res = await fetch('/api/admin/batch', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ table: 'gallery', items }),
     })
     setSaving(false)
@@ -370,8 +549,15 @@ export default function AdminPage() {
 
   const addGalleryItem = async () => {
     const newG = { title: '', image: '', description: '', sort_order: gallery.length }
-    const res = await fetch('/api/admin/gallery', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newG) })
-    if (!res.ok) { showToast('Failed to add'); return }
+    const res = await fetch('/api/admin/gallery', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newG),
+    })
+    if (!res.ok) {
+      showToast('Failed to add')
+      return
+    }
     const saved = await res.json()
     setGallery([...gallery, saved])
     showToast('Image added')
@@ -381,7 +567,7 @@ export default function AdminPage() {
     try {
       const res = await fetch(`/api/admin/gallery/${id}`, { method: 'DELETE' })
       if (!res.ok) throw new Error('Failed to delete')
-      setGallery(gallery.filter(g => g.id !== id))
+      setGallery(gallery.filter((g) => g.id !== id))
       showToast('Image deleted')
     } catch {
       showToast('Failed to delete')
@@ -397,9 +583,15 @@ export default function AdminPage() {
   if (!authed) return null
 
   const tabLabels: Record<Tab, string> = {
-    profile: 'Profile', projects: 'Projects', skills: 'Skills',
-    experiences: 'Experience', messages: 'Messages', education: 'Education',
-    certifications: 'Certifications', gallery: 'Gallery', settings: 'Settings',
+    profile: 'Profile',
+    projects: 'Projects',
+    skills: 'Skills',
+    experiences: 'Experience',
+    messages: 'Messages',
+    education: 'Education',
+    certifications: 'Certifications',
+    gallery: 'Gallery',
+    settings: 'Settings',
   }
 
   return (
@@ -417,20 +609,30 @@ export default function AdminPage() {
             <h1 className="text-lg font-bold text-white">Admin</h1>
             <span className="text-cyan-400 font-bold text-lg">/&gt;</span>
           </div>
-          <Link href="/" className="text-xs text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-lg border border-white/5 transition-all">
+          <Link
+            href="/"
+            className="text-xs text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-lg border border-white/5 transition-all"
+          >
             ← View Portfolio
           </Link>
         </div>
-        <button onClick={handleLogout} className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors">
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"
+        >
           <LogOut className="w-4 h-4" /> Logout
         </button>
       </header>
 
       <div className="flex border-b border-white/5 px-6 bg-[#0f121d]/40 overflow-x-auto">
-        {(Object.keys(tabLabels) as Tab[]).map(t => (
-          <button key={t} onClick={() => setTab(t)}
+        {(Object.keys(tabLabels) as Tab[]).map((t) => (
+          <button
+            key={t}
+            onClick={() => setTab(t)}
             className={`px-4 py-3 text-sm font-medium capitalize border-b-2 transition-colors shrink-0 flex items-center gap-1.5 ${
-              tab === t ? 'border-cyan-400 text-cyan-400' : 'border-transparent text-gray-500 hover:text-gray-300'
+              tab === t
+                ? 'border-cyan-400 text-cyan-400'
+                : 'border-transparent text-gray-500 hover:text-gray-300'
             }`}
           >
             {t === 'settings' && <Settings className="w-3.5 h-3.5" />}
@@ -466,14 +668,24 @@ export default function AdminPage() {
                     <p className="text-xs text-gray-500 font-mono mt-1">Education</p>
                   </div>
                 </div>
-                <ProfileTab profile={profile} saving={saving} onChange={setProfile} onSave={saveProfile} />
+                <ProfileTab
+                  profile={profile}
+                  saving={saving}
+                  onChange={setProfile}
+                  onSave={saveProfile}
+                />
               </div>
             )}
             {tab === 'projects' && (
               <ProjectsTab
-                projects={projects} saving={saving}
+                projects={projects}
+                saving={saving}
                 onAdd={addProject}
-                onUpdate={(idx, p) => { const u = [...projects]; u[idx] = p; setProjects(u) }}
+                onUpdate={(idx, p) => {
+                  const u = [...projects]
+                  u[idx] = p
+                  setProjects(u)
+                }}
                 onDelete={deleteProject}
                 onImageUpload={handleProjectImage}
                 onMove={moveProject}
@@ -482,9 +694,14 @@ export default function AdminPage() {
             )}
             {tab === 'skills' && (
               <SkillsTab
-                skills={skills} saving={saving}
+                skills={skills}
+                saving={saving}
                 onAdd={addSkill}
-                onUpdate={(idx, s) => { const u = [...skills]; u[idx] = s; setSkills(u) }}
+                onUpdate={(idx, s) => {
+                  const u = [...skills]
+                  u[idx] = s
+                  setSkills(u)
+                }}
                 onDelete={deleteSkill}
                 onMove={moveSkill}
                 onSave={saveSkills}
@@ -492,9 +709,14 @@ export default function AdminPage() {
             )}
             {tab === 'experiences' && (
               <ExperiencesTab
-                experiences={experiences} saving={saving}
+                experiences={experiences}
+                saving={saving}
                 onAdd={addExperience}
-                onUpdate={(idx, e) => { const u = [...experiences]; u[idx] = e; setExperiences(u) }}
+                onUpdate={(idx, e) => {
+                  const u = [...experiences]
+                  u[idx] = e
+                  setExperiences(u)
+                }}
                 onDelete={deleteExperience}
                 onMove={moveExperience}
                 onSave={saveExperiences}
@@ -502,9 +724,14 @@ export default function AdminPage() {
             )}
             {tab === 'education' && (
               <EducationTab
-                education={education} saving={saving}
+                education={education}
+                saving={saving}
                 onAdd={addEducation}
-                onUpdate={(idx, e) => { const u = [...education]; u[idx] = e; setEducation(u) }}
+                onUpdate={(idx, e) => {
+                  const u = [...education]
+                  u[idx] = e
+                  setEducation(u)
+                }}
                 onDelete={deleteEducation}
                 onMove={moveEducation}
                 onSave={saveEducation}
@@ -512,9 +739,14 @@ export default function AdminPage() {
             )}
             {tab === 'certifications' && (
               <CertificationsTab
-                certifications={certifications} saving={saving}
+                certifications={certifications}
+                saving={saving}
                 onAdd={addCertification}
-                onUpdate={(idx, c) => { const u = [...certifications]; u[idx] = c; setCertifications(u) }}
+                onUpdate={(idx, c) => {
+                  const u = [...certifications]
+                  u[idx] = c
+                  setCertifications(u)
+                }}
                 onDelete={deleteCertification}
                 onImageUpload={handleCertImage}
                 onMove={moveCertification}
@@ -523,9 +755,14 @@ export default function AdminPage() {
             )}
             {tab === 'gallery' && (
               <GalleryTab
-                items={gallery} saving={saving}
+                items={gallery}
+                saving={saving}
                 onAdd={addGalleryItem}
-                onUpdate={(idx, g) => { const u = [...gallery]; u[idx] = g; setGallery(u) }}
+                onUpdate={(idx, g) => {
+                  const u = [...gallery]
+                  u[idx] = g
+                  setGallery(u)
+                }}
                 onDelete={deleteGalleryItem}
                 onImageUpload={handleGalleryImage}
                 onMove={moveGalleryItem}

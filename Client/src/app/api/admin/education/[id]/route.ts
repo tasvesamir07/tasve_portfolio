@@ -12,7 +12,10 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
       return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
     }
     const supabaseAdmin = getSupabaseAdmin()
-    const { error } = await supabaseAdmin.from('education').update({ ...parsed.data, updated_at: new Date().toISOString() }).eq('id', id)
+    const { error } = await supabaseAdmin
+      .from('education')
+      .update({ ...parsed.data, updated_at: new Date().toISOString() })
+      .eq('id', id)
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
     revalidateHome()
     return NextResponse.json({ success: true })

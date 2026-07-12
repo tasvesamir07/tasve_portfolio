@@ -6,7 +6,8 @@ import { revalidateHome } from '@/lib/revalidate'
 export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const parsed = SkillSchema.partial().safeParse(await req.json())
-    if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
+    if (!parsed.success)
+      return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
 
     const supabaseAdmin = getSupabaseAdmin()
     const { id } = await params

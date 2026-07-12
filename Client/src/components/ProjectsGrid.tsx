@@ -1,27 +1,26 @@
-'use client';
+'use client'
 
-import React, { useState } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X, ExternalLink, Code, FileImage } from 'lucide-react';
-import Card3DTilt from './Card3DTilt';
-import { Project } from '@/lib/api';
+import React, { useState } from 'react'
+import Image from 'next/image'
+import Link from 'next/link'
+import { motion, AnimatePresence } from 'framer-motion'
+import { X, ExternalLink, Code, FileImage } from 'lucide-react'
+import Card3DTilt from './Card3DTilt'
+import { Project } from '@/lib/api'
 
 interface Props {
-  projects: Project[];
+  projects: Project[]
 }
 
 export default function ProjectsGrid({ projects }: Props) {
-  const [filter, setFilter] = useState('all');
+  const [filter, setFilter] = useState('all')
   const [diagramUrl, setDiagramUrl] = useState<string | null>(null)
 
   // Extract unique categories
-  const categories = ['all', ...Array.from(new Set(projects.map((p) => p.category.toLowerCase())))];
+  const categories = ['all', ...Array.from(new Set(projects.map((p) => p.category.toLowerCase())))]
 
-  const filteredProjects = filter === 'all'
-    ? projects
-    : projects.filter((p) => p.category.toLowerCase() === filter);
+  const filteredProjects =
+    filter === 'all' ? projects : projects.filter((p) => p.category.toLowerCase() === filter)
 
   return (
     <div>
@@ -57,11 +56,16 @@ export default function ProjectsGrid({ projects }: Props) {
               <Card3DTilt className="h-full">
                 <div className="project-card-glow" />
                 <div className="h-full bg-glass-bg border border-white/5 rounded-xl p-6 flex flex-col gap-5 hover:border-white/10 hover:shadow-lg hover:shadow-purple-500/5 transition-colors duration-200">
-                  
                   {/* Card Header Placeholder / Image */}
                   <div className="relative h-44 bg-[#0f121d]/80 border border-white/5 rounded-lg flex items-center justify-center overflow-hidden">
                     {p.image ? (
-                      <Image src={p.image} alt={p.title} fill className="object-cover" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />
+                      <Image
+                        src={p.image}
+                        alt={p.title}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      />
                     ) : (
                       <Code className="w-12 h-12 text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-cyan-500" />
                     )}
@@ -74,11 +78,14 @@ export default function ProjectsGrid({ projects }: Props) {
                   <div className="flex flex-col gap-3 flex-grow">
                     <h3 className="font-heading font-bold text-xl text-white">{p.title}</h3>
                     <p className="text-sm text-gray-400 leading-relaxed">{p.desc}</p>
-                    
+
                     {/* Tech Badges */}
                     <ul className="flex flex-wrap gap-2 mt-auto pt-2">
                       {p.tags.map((t) => (
-                        <li key={t} className="font-mono text-[10px] bg-white/5 border border-white/5 text-gray-400 px-2 py-0.5 rounded">
+                        <li
+                          key={t}
+                          className="font-mono text-[10px] bg-white/5 border border-white/5 text-gray-400 px-2 py-0.5 rounded"
+                        >
                           {t}
                         </li>
                       ))}
@@ -128,7 +135,6 @@ export default function ProjectsGrid({ projects }: Props) {
                       </button>
                     )}
                   </div>
-
                 </div>
               </Card3DTilt>
             </motion.div>
@@ -143,7 +149,7 @@ export default function ProjectsGrid({ projects }: Props) {
         >
           <div
             className="relative max-w-5xl w-full max-h-[90vh] bg-[#0f121d] border border-white/10 rounded-xl overflow-hidden shadow-2xl"
-            onClick={e => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between px-5 py-3 border-b border-white/5">
               <h3 className="text-sm font-bold text-white font-heading">System Architecture</h3>
@@ -165,5 +171,5 @@ export default function ProjectsGrid({ projects }: Props) {
         </div>
       )}
     </div>
-  );
+  )
 }

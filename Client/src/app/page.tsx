@@ -1,40 +1,39 @@
-import React, { Suspense } from 'react';
-import { 
-  fetchProfile, 
-  fetchProjects, 
-  fetchSkills, 
-  fetchExperience, 
+import React, { Suspense } from 'react'
+import {
+  fetchProfile,
+  fetchProjects,
+  fetchSkills,
+  fetchExperience,
   fetchEducation,
   fetchCertifications,
   fetchGallery,
-} from '@/lib/api';
-import type { Education, Certification, GalleryItem } from '@/lib/api';
-import Navbar from '@/components/Navbar';
-import Typewriter from '@/components/Typewriter';
-import ProjectsGrid from '@/components/ProjectsGrid';
-import ContactForm from '@/components/ContactForm';
-import Card3DTilt from '@/components/Card3DTilt';
-import { 
-  ArrowRight, 
-  Mail, 
-  MapPin, 
-  Cpu, 
-  TrendingUp, 
-  Smartphone, 
-  Award, 
-  Layers, 
+} from '@/lib/api'
+import type { Education, Certification, GalleryItem } from '@/lib/api'
+import Navbar from '@/components/Navbar'
+import Typewriter from '@/components/Typewriter'
+import ProjectsGrid from '@/components/ProjectsGrid'
+import ContactForm from '@/components/ContactForm'
+import Card3DTilt from '@/components/Card3DTilt'
+import {
+  ArrowRight,
+  Mail,
+  MapPin,
+  Cpu,
+  TrendingUp,
+  Smartphone,
+  Award,
+  Layers,
   Briefcase,
   ScrollText,
-  ImageOff 
-} from 'lucide-react';
+} from 'lucide-react'
 import AnimatedSection from '@/components/AnimatedSection'
-import ScrollToTop from '@/components/ScrollToTop';
-import SkillBar from '@/components/SkillBar';
-import CertificationsGrid from '@/components/CertificationsGrid';
-import GalleryGrid from '@/components/GalleryGrid';
+import ScrollToTop from '@/components/ScrollToTop'
+import SkillBar from '@/components/SkillBar'
+import CertificationsGrid from '@/components/CertificationsGrid'
+import GalleryGrid from '@/components/GalleryGrid'
 import { SkeletonBlock, SkeletonLine, SkeletonCard } from '@/components/Skeleton'
 
-export const revalidate = 3600;
+export const revalidate = 3600
 
 function HeroSkeleton() {
   return (
@@ -161,32 +160,42 @@ function EducationSkeleton() {
   )
 }
 
-async function HeroSection({ profile }: { profile: NonNullable<Awaited<ReturnType<typeof fetchProfile>>> }) {
+async function HeroSection({
+  profile,
+}: {
+  profile: NonNullable<Awaited<ReturnType<typeof fetchProfile>>>
+}) {
   return (
-    <section id="home" className="relative min-h-screen flex items-center justify-center pt-24 px-6 md:px-12 overflow-hidden">
+    <section
+      id="home"
+      className="relative min-h-screen flex items-center justify-center pt-24 px-6 md:px-12 overflow-hidden"
+    >
       <div className="absolute top-[15%] left-[10%] w-[350px] h-[350px] bg-purple-500/10 rounded-full blur-[80px] pointer-events-none" />
       <div className="absolute bottom-[15%] right-[10%] w-[450px] h-[450px] bg-cyan-500/10 rounded-full blur-[90px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-        
         <div className="lg:col-span-7 flex flex-col gap-6 text-center lg:text-left">
           {profile.avatar && (
             <div className="w-36 h-36 md:w-44 md:h-44 rounded-full border-2 border-cyan-400/30 p-1 bg-[#0f121d] shadow-2xl shadow-cyan-500/10 mb-4 mx-auto lg:mx-0 relative group overflow-hidden shrink-0">
               <div className="w-full h-full rounded-full overflow-hidden">
-                <img src={profile.avatar} alt={profile.name} className="w-full h-full object-cover transition-transform group-hover:scale-108 duration-300" />
+                <img
+                  src={profile.avatar}
+                  alt={profile.name}
+                  className="w-full h-full object-cover transition-transform group-hover:scale-108 duration-300"
+                />
               </div>
               <div className="absolute inset-0 rounded-full border border-cyan-400/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
             </div>
           )}
-          
+
           <div className="font-mono text-sm md:text-base text-cyan-400 tracking-wider flex items-center justify-center lg:justify-start gap-2">
             <span className="text-cyan-400 font-bold">~</span> {profile.intro}
           </div>
-          
+
           <h1 className="font-heading font-extrabold text-5xl md:text-7xl tracking-tight text-white leading-[1.05]">
             {profile.name}
           </h1>
-          
+
           <Typewriter primaryRole={profile.title} />
 
           <p className="text-gray-400 text-base md:text-lg leading-relaxed max-w-xl mx-auto lg:mx-0">
@@ -213,8 +222,18 @@ async function HeroSection({ profile }: { profile: NonNullable<Awaited<ReturnTyp
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-3 px-6 py-3 bg-transparent border border-cyan-400/30 hover:border-cyan-400 hover:bg-cyan-500/10 text-cyan-400 font-semibold rounded-lg backdrop-blur-md transform hover:-translate-y-0.5 transition-all duration-200 cursor-pointer"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  />
                 </svg>
                 Resume
               </a>
@@ -233,12 +252,37 @@ async function HeroSection({ profile }: { profile: NonNullable<Awaited<ReturnTyp
                 <span className="font-mono text-xs text-gray-500 ml-auto">developer.json</span>
               </div>
               <div className="p-6 font-mono text-xs md:text-sm text-gray-300 leading-relaxed overflow-auto flex-grow bg-slate-950/20">
-                <pre className="text-xs md:text-sm whitespace-pre">{`{`}{'\n'}  <span className="text-pink-500">{'"name"'}</span>: <span className="text-cyan-400">{'"'}{profile.name}{'"'}</span>,{'\n'}  <span className="text-pink-500">{'"role"'}</span>: <span className="text-cyan-400">{'"'}{profile.title}{'"'}</span>,{'\n'}  <span className="text-pink-500">{'"skills"'}</span>: [{'\n'}    {`"${profile.title}"`}{'\n'}  ],{'\n'}  <span className="text-pink-500">{'"passion"'}</span>: <span className="text-cyan-400">{'"Sleek UI Animations"'}</span>,{'\n'}  <span className="text-pink-500">{'"location"'}</span>: <span className="text-cyan-400">{'"'}{profile.location}{'"'}</span>{'\n'}{`}`}</pre>
+                <pre className="text-xs md:text-sm whitespace-pre">
+                  {`{`}
+                  {'\n'} <span className="text-pink-500">{'"name"'}</span>:{' '}
+                  <span className="text-cyan-400">
+                    {'"'}
+                    {profile.name}
+                    {'"'}
+                  </span>
+                  ,{'\n'} <span className="text-pink-500">{'"role"'}</span>:{' '}
+                  <span className="text-cyan-400">
+                    {'"'}
+                    {profile.title}
+                    {'"'}
+                  </span>
+                  ,{'\n'} <span className="text-pink-500">{'"skills"'}</span>: [{'\n'}{' '}
+                  {`"${profile.title}"`}
+                  {'\n'} ],{'\n'} <span className="text-pink-500">{'"passion"'}</span>:{' '}
+                  <span className="text-cyan-400">{'"Sleek UI Animations"'}</span>,{'\n'}{' '}
+                  <span className="text-pink-500">{'"location"'}</span>:{' '}
+                  <span className="text-cyan-400">
+                    {'"'}
+                    {profile.location}
+                    {'"'}
+                  </span>
+                  {'\n'}
+                  {`}`}
+                </pre>
               </div>
             </div>
           </Card3DTilt>
         </div>
-
       </div>
 
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 pointer-events-none z-10">
@@ -250,14 +294,19 @@ async function HeroSection({ profile }: { profile: NonNullable<Awaited<ReturnTyp
   )
 }
 
-async function AboutSection({ profile }: { profile: NonNullable<Awaited<ReturnType<typeof fetchProfile>>> }) {
+async function AboutSection({
+  profile,
+}: {
+  profile: NonNullable<Awaited<ReturnType<typeof fetchProfile>>>
+}) {
   return (
     <section id="about" className="py-24 px-6 md:px-12 border-t border-white/5">
       <div className="max-w-5xl mx-auto">
         <div className="flex flex-col gap-2 mb-12">
           <span className="font-mono text-sm text-cyan-400 tracking-wider">01. Background</span>
           <h2 className="font-heading font-extrabold text-3xl md:text-4xl text-white flex items-center gap-4">
-            About Me <span className="h-[1px] flex-grow max-w-[200px] bg-gradient-to-r from-white/10 to-transparent" />
+            About Me{' '}
+            <span className="h-[1px] flex-grow max-w-[200px] bg-gradient-to-r from-white/10 to-transparent" />
           </h2>
         </div>
 
@@ -272,7 +321,7 @@ async function AboutSection({ profile }: { profile: NonNullable<Awaited<ReturnTy
             {profile.bioParagraphs.map((p, idx) => (
               <p key={idx}>{p}</p>
             ))}
-            
+
             <p className="text-gray-300">
               Here are a few technologies I have been working with recently:
             </p>
@@ -294,7 +343,9 @@ async function AboutSection({ profile }: { profile: NonNullable<Awaited<ReturnTy
                 </div>
                 <div>
                   <h3 className="font-heading font-bold text-lg text-white mb-2">Clean Coding</h3>
-                  <p className="text-sm text-gray-400">Writing modular, maintainable code focusing on optimization and design patterns.</p>
+                  <p className="text-sm text-gray-400">
+                    Writing modular, maintainable code focusing on optimization and design patterns.
+                  </p>
                 </div>
               </div>
             </Card3DTilt>
@@ -306,8 +357,12 @@ async function AboutSection({ profile }: { profile: NonNullable<Awaited<ReturnTy
                   <TrendingUp className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="font-heading font-bold text-lg text-white mb-2">High Performance</h3>
-                  <p className="text-sm text-gray-400">Optimizing loading assets achieving close to 100 on PageSpeed audits.</p>
+                  <h3 className="font-heading font-bold text-lg text-white mb-2">
+                    High Performance
+                  </h3>
+                  <p className="text-sm text-gray-400">
+                    Optimizing loading assets achieving close to 100 on PageSpeed audits.
+                  </p>
                 </div>
               </div>
             </Card3DTilt>
@@ -320,7 +375,9 @@ async function AboutSection({ profile }: { profile: NonNullable<Awaited<ReturnTy
                 </div>
                 <div>
                   <h3 className="font-heading font-bold text-lg text-white mb-2">Pixel Perfect</h3>
-                  <p className="text-sm text-gray-400">Building fully responsive layouts matching pixel designs precisely.</p>
+                  <p className="text-sm text-gray-400">
+                    Building fully responsive layouts matching pixel designs precisely.
+                  </p>
                 </div>
               </div>
             </Card3DTilt>
@@ -339,7 +396,8 @@ async function SkillsSection() {
         <div className="flex flex-col gap-2 mb-12">
           <span className="font-mono text-sm text-cyan-400 tracking-wider">02. Stack</span>
           <h2 className="font-heading font-extrabold text-3xl md:text-4xl text-white flex items-center gap-4">
-            Technical Expertise <span className="h-[1px] flex-grow max-w-[200px] bg-gradient-to-r from-white/10 to-transparent" />
+            Technical Expertise{' '}
+            <span className="h-[1px] flex-grow max-w-[200px] bg-gradient-to-r from-white/10 to-transparent" />
           </h2>
         </div>
 
@@ -351,7 +409,7 @@ async function SkillsSection() {
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
           {skills.map((cat) => (
-            <div 
+            <div
               key={cat.category}
               className="bg-glass-bg border border-white/5 rounded-xl p-6 hover:border-white/10 hover:shadow-lg hover:shadow-purple-500/5 transition-colors duration-200"
             >
@@ -380,7 +438,8 @@ async function ProjectsSection() {
         <div className="flex flex-col gap-2 mb-12">
           <span className="font-mono text-sm text-cyan-400 tracking-wider">03. Portfolios</span>
           <h2 className="font-heading font-extrabold text-3xl md:text-4xl text-white flex items-center gap-4">
-            Featured Projects <span className="h-[1px] flex-grow max-w-[200px] bg-gradient-to-r from-white/10 to-transparent" />
+            Featured Projects{' '}
+            <span className="h-[1px] flex-grow max-w-[200px] bg-gradient-to-r from-white/10 to-transparent" />
           </h2>
         </div>
 
@@ -405,7 +464,8 @@ async function ExperienceSection() {
         <div className="flex flex-col gap-2 mb-16">
           <span className="font-mono text-sm text-cyan-400 tracking-wider">04. Journey</span>
           <h2 className="font-heading font-extrabold text-3xl md:text-4xl text-white flex items-center gap-4">
-            My Experience <span className="h-[1px] flex-grow max-w-[200px] bg-gradient-to-r from-white/10 to-transparent" />
+            My Experience{' '}
+            <span className="h-[1px] flex-grow max-w-[200px] bg-gradient-to-r from-white/10 to-transparent" />
           </h2>
         </div>
 
@@ -419,13 +479,17 @@ async function ExperienceSection() {
           {experiences.map((exp) => (
             <div key={exp.company + exp.date} className="relative group">
               <div className="absolute -left-[49px] top-1.5 w-[18px] h-[18px] rounded-full bg-[#07090e] border-[3px] border-cyan-400 shadow-md shadow-cyan-400/50 group-hover:border-pink-500 group-hover:shadow-pink-500/50 transition-all duration-200" />
-              
-              <span className="font-mono text-xs text-cyan-400 tracking-wider block mb-2">{exp.date}</span>
+
+              <span className="font-mono text-xs text-cyan-400 tracking-wider block mb-2">
+                {exp.date}
+              </span>
               <div className="bg-glass-bg border border-white/5 rounded-xl p-6 group-hover:border-white/10 group-hover:shadow-lg group-hover:shadow-purple-500/5 transition-colors duration-200">
                 <h3 className="font-heading font-bold text-xl text-white flex flex-wrap gap-2 items-center">
                   {exp.title}
                 </h3>
-                <h4 className="font-heading font-semibold text-purple-400 text-sm mt-1">{exp.company}</h4>
+                <h4 className="font-heading font-semibold text-purple-400 text-sm mt-1">
+                  {exp.company}
+                </h4>
                 <p className="text-sm text-gray-400 leading-relaxed mt-4">{exp.desc}</p>
               </div>
             </div>
@@ -445,7 +509,8 @@ async function EducationSection() {
         <div className="flex flex-col gap-2 mb-16">
           <span className="font-mono text-sm text-cyan-400 tracking-wider">05. Academy</span>
           <h2 className="font-heading font-extrabold text-3xl md:text-4xl text-white flex items-center gap-4">
-            Education & Credentials <span className="h-[1px] flex-grow max-w-[200px] bg-gradient-to-r from-white/10 to-transparent" />
+            Education & Credentials{' '}
+            <span className="h-[1px] flex-grow max-w-[200px] bg-gradient-to-r from-white/10 to-transparent" />
           </h2>
         </div>
 
@@ -460,28 +525,33 @@ async function EducationSection() {
             <h3 className="text-xl font-bold font-heading text-white flex items-center gap-2 mb-2">
               <Briefcase className="w-5 h-5 text-cyan-400" /> Education History
             </h3>
-            
+
             <div className="flex flex-col gap-6">
-              {education.filter(e => e.type === 'education').map((e) => (
-                <div key={e.id} className="bg-glass-bg border border-white/5 rounded-xl p-5 hover:border-white/10 transition-colors duration-200">
-                  <div className="flex justify-between items-start gap-4">
-                    <div>
-                      <h4 className="font-heading font-bold text-lg text-white">{e.title}</h4>
-                      <p className="text-cyan-400 text-sm mt-0.5">{e.subtitle}</p>
+              {education
+                .filter((e) => e.type === 'education')
+                .map((e) => (
+                  <div
+                    key={e.id}
+                    className="bg-glass-bg border border-white/5 rounded-xl p-5 hover:border-white/10 transition-colors duration-200"
+                  >
+                    <div className="flex justify-between items-start gap-4">
+                      <div>
+                        <h4 className="font-heading font-bold text-lg text-white">{e.title}</h4>
+                        <p className="text-cyan-400 text-sm mt-0.5">{e.subtitle}</p>
+                      </div>
+                      <span className="font-mono text-[10px] text-cyan-400 bg-cyan-400/5 border border-cyan-400/10 px-2.5 py-0.5 rounded-full shrink-0">
+                        {e.date}
+                      </span>
                     </div>
-                    <span className="font-mono text-[10px] text-cyan-400 bg-cyan-400/5 border border-cyan-400/10 px-2.5 py-0.5 rounded-full shrink-0">
-                      {e.date}
-                    </span>
+                    {e.details && (
+                      <ul className="list-disc list-inside mt-3 text-gray-400 text-xs flex flex-col gap-1.5">
+                        {e.details.split('\n').map((line, i) => (
+                          <li key={i}>{line}</li>
+                        ))}
+                      </ul>
+                    )}
                   </div>
-                  {e.details && (
-                    <ul className="list-disc list-inside mt-3 text-gray-400 text-xs flex flex-col gap-1.5">
-                      {e.details.split('\n').map((line, i) => (
-                        <li key={i}>{line}</li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              ))}
+                ))}
             </div>
           </div>
 
@@ -491,15 +561,17 @@ async function EducationSection() {
                 <Award className="w-5 h-5 text-purple-400" /> Honors & Awards
               </h3>
               <div className="bg-glass-bg border border-white/5 rounded-xl p-5 flex flex-col gap-4">
-                {education.filter(e => e.type === 'award').map((e) => (
-                  <div key={e.id} className="flex gap-3">
-                    <span className="text-cyan-400 text-sm mt-0.5">🏆</span>
-                    <div>
-                      <h4 className="text-sm font-bold text-white">{e.title}</h4>
-                      <p className="text-xs text-gray-400 mt-0.5">{e.subtitle}</p>
+                {education
+                  .filter((e) => e.type === 'award')
+                  .map((e) => (
+                    <div key={e.id} className="flex gap-3">
+                      <span className="text-cyan-400 text-sm mt-0.5">🏆</span>
+                      <div>
+                        <h4 className="text-sm font-bold text-white">{e.title}</h4>
+                        <p className="text-xs text-gray-400 mt-0.5">{e.subtitle}</p>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
               </div>
             </div>
 
@@ -508,12 +580,14 @@ async function EducationSection() {
                 <Cpu className="w-5 h-5 text-pink-500" /> Activities & Leadership
               </h3>
               <div className="bg-glass-bg border border-white/5 rounded-xl p-5 flex flex-col gap-3">
-                {education.filter(e => e.type === 'activity').map((e) => (
-                  <div key={e.id}>
-                    {e.date && <h4 className="text-xs font-mono text-cyan-400">{e.date}</h4>}
-                    <p className="text-sm font-bold text-white mt-0.5">{e.title}</p>
-                  </div>
-                ))}
+                {education
+                  .filter((e) => e.type === 'activity')
+                  .map((e) => (
+                    <div key={e.id}>
+                      {e.date && <h4 className="text-xs font-mono text-cyan-400">{e.date}</h4>}
+                      <p className="text-sm font-bold text-white mt-0.5">{e.title}</p>
+                    </div>
+                  ))}
               </div>
             </div>
           </div>
@@ -532,7 +606,8 @@ async function CertificationsSection() {
         <div className="flex flex-col gap-2 mb-12">
           <span className="font-mono text-sm text-cyan-400 tracking-wider">06. Credentials</span>
           <h2 className="font-heading font-extrabold text-3xl md:text-4xl text-white flex items-center gap-4">
-            Certifications & Awards <span className="h-[1px] flex-grow max-w-[200px] bg-gradient-to-r from-white/10 to-transparent" />
+            Certifications & Awards{' '}
+            <span className="h-[1px] flex-grow max-w-[200px] bg-gradient-to-r from-white/10 to-transparent" />
           </h2>
         </div>
         <CertificationsGrid certifications={certifications} />
@@ -550,7 +625,8 @@ async function GallerySection() {
         <div className="flex flex-col gap-2 mb-12">
           <span className="font-mono text-sm text-cyan-400 tracking-wider">07. Gallery</span>
           <h2 className="font-heading font-extrabold text-3xl md:text-4xl text-white flex items-center gap-4">
-            Photo Gallery <span className="h-[1px] flex-grow max-w-[200px] bg-gradient-to-r from-white/10 to-transparent" />
+            Photo Gallery{' '}
+            <span className="h-[1px] flex-grow max-w-[200px] bg-gradient-to-r from-white/10 to-transparent" />
           </h2>
         </div>
         <GalleryGrid items={items} />
@@ -563,10 +639,14 @@ export default async function Home() {
   const profile = await fetchProfile().catch(() => null)
 
   if (!profile) {
-    return <div className="min-h-screen flex items-center justify-center text-gray-400">No profile data available.</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center text-gray-400">
+        No profile data available.
+      </div>
+    )
   }
 
-  const logoText = profile.name.replace(/\s+/g, '');
+  const logoText = profile.name.replace(/\s+/g, '')
 
   return (
     <>
@@ -610,16 +690,21 @@ export default async function Home() {
           <div className="flex flex-col gap-2 mb-12">
             <span className="font-mono text-sm text-cyan-400 tracking-wider">08. Network</span>
             <h2 className="font-heading font-extrabold text-3xl md:text-4xl text-white flex items-center gap-4">
-              Get In Touch <span className="h-[1px] flex-grow max-w-[200px] bg-gradient-to-r from-white/10 to-transparent" />
+              Get In Touch{' '}
+              <span className="h-[1px] flex-grow max-w-[200px] bg-gradient-to-r from-white/10 to-transparent" />
             </h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-            
             <div className="flex flex-col gap-6">
-              <h3 className="font-heading font-bold text-2xl text-white">              Let&apos;s build something amazing together!</h3>
+              <h3 className="font-heading font-bold text-2xl text-white">
+                {' '}
+                Let&apos;s build something amazing together!
+              </h3>
               <p className="text-gray-400 text-sm md:text-base leading-relaxed">
-                I am currently open to exciting new opportunities, collaborations, and contract work. Whether you have a project idea, a position to fill, or just want to say hi, feel free to drop me a message!
+                I am currently open to exciting new opportunities, collaborations, and contract
+                work. Whether you have a project idea, a position to fill, or just want to say hi,
+                feel free to drop me a message!
               </p>
 
               <div className="flex flex-col gap-4 mt-4 text-sm md:text-base">
@@ -629,7 +714,10 @@ export default async function Home() {
                   </div>
                   <div>
                     <span className="block font-mono text-[10px] text-gray-500">Email</span>
-                    <a href={`mailto:${profile.email}`} className="text-gray-300 hover:text-cyan-400 font-semibold transition-colors duration-200">
+                    <a
+                      href={`mailto:${profile.email}`}
+                      className="text-gray-300 hover:text-cyan-400 font-semibold transition-colors duration-200"
+                    >
                       {profile.email}
                     </a>
                   </div>
@@ -650,7 +738,6 @@ export default async function Home() {
             <div className="bg-glass-bg border border-white/5 rounded-xl p-8 shadow-xl">
               <ContactForm />
             </div>
-
           </div>
         </div>
       </section>
@@ -660,11 +747,12 @@ export default async function Home() {
         <div className="max-w-7xl mx-auto flex flex-col gap-2">
           <p className="text-gray-400 text-sm">&copy; 2026 {profile.name}. All Rights Reserved.</p>
           <p className="text-gray-500 text-xs flex items-center justify-center gap-1">
-            Engineered with <span className="text-cyan-400">♥</span> using Next.js, Framer Motion, and Supabase.
+            Engineered with <span className="text-cyan-400">♥</span> using Next.js, Framer Motion,
+            and Supabase.
           </p>
         </div>
       </footer>
       <ScrollToTop />
     </>
-  );
+  )
 }

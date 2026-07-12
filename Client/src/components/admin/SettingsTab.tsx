@@ -1,12 +1,28 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Save, Loader, Key, ShieldCheck, Eye, EyeOff, Mail, Image, RefreshCw, CheckCircle } from 'lucide-react'
+import {
+  Save,
+  Loader,
+  Key,
+  ShieldCheck,
+  Eye,
+  EyeOff,
+  Mail,
+  Image,
+  RefreshCw,
+  CheckCircle,
+} from 'lucide-react'
 
-const inputClass = "w-full px-3 py-2 bg-[#0f121d] border border-white/5 rounded-lg text-sm text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500/50 transition-colors"
+const inputClass =
+  'w-full px-3 py-2 bg-[#0f121d] border border-white/5 rounded-lg text-sm text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500/50 transition-colors'
 
 export default function SettingsTab({ showToast }: { showToast: (msg: string) => void }) {
-  const [adminInfo, setAdminInfo] = useState<{ username: string; display_name: string; email: string } | null>(null)
+  const [adminInfo, setAdminInfo] = useState<{
+    username: string
+    display_name: string
+    email: string
+  } | null>(null)
   const [loading, setLoading] = useState(true)
 
   const [displayName, setDisplayName] = useState('')
@@ -26,15 +42,21 @@ export default function SettingsTab({ showToast }: { showToast: (msg: string) =>
   const [quality, setQuality] = useState(80)
   const [scanning, setScanning] = useState(false)
   const [converting, setConverting] = useState(false)
-  const [legacyImages, setLegacyImages] = useState<{ table: string; id?: number; field: string; url: string; title: string }[]>([])
+  const [legacyImages, setLegacyImages] = useState<
+    { table: string; id?: number; field: string; url: string; title: string }[]
+  >([])
   const [status, setStatus] = useState('')
 
   useEffect(() => {
     fetch('/api/admin/auth')
-      .then(r => r.json())
-      .then(d => {
+      .then((r) => r.json())
+      .then((d) => {
         if (d.authenticated) {
-          const info = { username: d.username || 'admin', display_name: d.display_name || 'Admin', email: d.email || '' }
+          const info = {
+            username: d.username || 'admin',
+            display_name: d.display_name || 'Admin',
+            email: d.email || '',
+          }
           setAdminInfo(info)
           setDisplayName(info.display_name)
           setEmail(info.email)
@@ -55,7 +77,7 @@ export default function SettingsTab({ showToast }: { showToast: (msg: string) =>
     setSavingProfile(false)
     if (res.ok) {
       showToast('Settings saved')
-      setAdminInfo(prev => prev ? { ...prev, display_name: displayName, email } : prev)
+      setAdminInfo((prev) => (prev ? { ...prev, display_name: displayName, email } : prev))
     } else {
       setError('Failed to save settings')
     }
@@ -114,7 +136,13 @@ export default function SettingsTab({ showToast }: { showToast: (msg: string) =>
         const list = await projRes.json()
         list.forEach((p: any) => {
           if (p.image && !p.image.endsWith('.webp') && p.image.startsWith('http')) {
-            found.push({ table: 'projects', id: p.id, field: 'image', url: p.image, title: `Project: ${p.title}` })
+            found.push({
+              table: 'projects',
+              id: p.id,
+              field: 'image',
+              url: p.image,
+              title: `Project: ${p.title}`,
+            })
           }
         })
       }
@@ -125,7 +153,13 @@ export default function SettingsTab({ showToast }: { showToast: (msg: string) =>
         const list = await certRes.json()
         list.forEach((c: any) => {
           if (c.image && !c.image.endsWith('.webp') && c.image.startsWith('http')) {
-            found.push({ table: 'certifications', id: c.id, field: 'image', url: c.image, title: `Certification: ${c.title}` })
+            found.push({
+              table: 'certifications',
+              id: c.id,
+              field: 'image',
+              url: c.image,
+              title: `Certification: ${c.title}`,
+            })
           }
         })
       }
@@ -136,16 +170,26 @@ export default function SettingsTab({ showToast }: { showToast: (msg: string) =>
         const list = await galRes.json()
         list.forEach((g: any) => {
           if (g.image && !g.image.endsWith('.webp') && g.image.startsWith('http')) {
-            found.push({ table: 'gallery', id: g.id, field: 'image', url: g.image, title: `Gallery Item: ${g.title}` })
+            found.push({
+              table: 'gallery',
+              id: g.id,
+              field: 'image',
+              url: g.image,
+              title: `Gallery Item: ${g.title}`,
+            })
           }
         })
       }
 
       setLegacyImages(found)
       if (found.length === 0) {
-        setStatus('Scan completed. No legacy images found! Everything is already optimized in WebP.')
+        setStatus(
+          'Scan completed. No legacy images found! Everything is already optimized in WebP.',
+        )
       } else {
-        setStatus(`Scan completed. Found ${found.length} legacy images that can be converted to WebP.`)
+        setStatus(
+          `Scan completed. Found ${found.length} legacy images that can be converted to WebP.`,
+        )
       }
     } catch (err) {
       console.error(err)
@@ -162,7 +206,9 @@ export default function SettingsTab({ showToast }: { showToast: (msg: string) =>
 
     for (let i = 0; i < legacyImages.length; i++) {
       const item = legacyImages[i]
-      setStatus(prev => prev + `\n\n[${i + 1}/${legacyImages.length}] Fetching image: "${item.title}"...`)
+      setStatus(
+        (prev) => prev + `\n\n[${i + 1}/${legacyImages.length}] Fetching image: "${item.title}"...`,
+      )
 
       try {
         // Fetch image as blob
@@ -175,7 +221,7 @@ export default function SettingsTab({ showToast }: { showToast: (msg: string) =>
         const file = new File([blob], filename, { type: blob.type })
 
         // Compress
-        setStatus(prev => prev + `\nConverting and compressing to WebP at ${quality}% quality...`)
+        setStatus((prev) => prev + `\nConverting and compressing to WebP at ${quality}% quality...`)
         const webpFile = await compressAndConvertToWebp(file, quality / 100)
 
         // Upload
@@ -186,7 +232,7 @@ export default function SettingsTab({ showToast }: { showToast: (msg: string) =>
         const { url: webpUrl } = await uploadRes.json()
 
         // Update database row
-        setStatus(prev => prev + `\nUploading new WebP image and updating database record...`)
+        setStatus((prev) => prev + `\nUploading new WebP image and updating database record...`)
         if (item.table === 'profile') {
           const currentProfRes = await fetch('/api/admin/profile')
           if (currentProfRes.ok) {
@@ -194,7 +240,7 @@ export default function SettingsTab({ showToast }: { showToast: (msg: string) =>
             const updateRes = await fetch('/api/admin/profile', {
               method: 'PUT',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ ...currentProf, avatar: webpUrl })
+              body: JSON.stringify({ ...currentProf, avatar: webpUrl }),
             })
             if (!updateRes.ok) throw new Error('Failed to update profile record')
           }
@@ -202,7 +248,7 @@ export default function SettingsTab({ showToast }: { showToast: (msg: string) =>
           const updateRes = await fetch(`/api/admin/${item.table}/${item.id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ [item.field]: webpUrl })
+            body: JSON.stringify({ [item.field]: webpUrl }),
           })
           if (!updateRes.ok) {
             const errText = await updateRes.text()
@@ -211,15 +257,19 @@ export default function SettingsTab({ showToast }: { showToast: (msg: string) =>
         }
 
         successCount++
-        setStatus(prev => prev + `\nSuccess! Updated database link.`)
+        setStatus((prev) => prev + `\nSuccess! Updated database link.`)
       } catch (err: any) {
         console.error(err)
-        setStatus(prev => prev + `\nError: Failed to convert: ${err.message}`)
+        setStatus((prev) => prev + `\nError: Failed to convert: ${err.message}`)
       }
     }
 
     setLegacyImages([])
-    setStatus(prev => prev + `\n\n🎉 Migration completed! Successfully converted ${successCount} image(s) to WebP.`)
+    setStatus(
+      (prev) =>
+        prev +
+        `\n\n🎉 Migration completed! Successfully converted ${successCount} image(s) to WebP.`,
+    )
     showToast('Database images migrated successfully')
     setConverting(false)
   }
@@ -254,7 +304,7 @@ export default function SettingsTab({ showToast }: { showToast: (msg: string) =>
             <input
               type="text"
               value={displayName}
-              onChange={e => setDisplayName(e.target.value)}
+              onChange={(e) => setDisplayName(e.target.value)}
               className={inputClass}
               placeholder="Admin display name"
             />
@@ -266,15 +316,22 @@ export default function SettingsTab({ showToast }: { showToast: (msg: string) =>
             <input
               type="email"
               value={email}
-              onChange={e => setEmail(e.target.value)}
+              onChange={(e) => setEmail(e.target.value)}
               className={inputClass}
               placeholder="admin@example.com"
             />
           </div>
           {error && <p className="text-red-400 text-xs">{error}</p>}
-          <button onClick={handleSaveProfile} disabled={savingProfile}
-            className="flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 text-white self-start">
-            {savingProfile ? <Loader className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+          <button
+            onClick={handleSaveProfile}
+            disabled={savingProfile}
+            className="flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 text-white self-start"
+          >
+            {savingProfile ? (
+              <Loader className="w-4 h-4 animate-spin" />
+            ) : (
+              <Save className="w-4 h-4" />
+            )}
             Save Settings
           </button>
         </div>
@@ -295,13 +352,16 @@ export default function SettingsTab({ showToast }: { showToast: (msg: string) =>
               <input
                 type={showCurrent ? 'text' : 'password'}
                 value={currentPassword}
-                onChange={e => setCurrentPassword(e.target.value)}
+                onChange={(e) => setCurrentPassword(e.target.value)}
                 className={inputClass + ' pr-10'}
                 placeholder="Enter current password"
                 required
               />
-              <button type="button" onClick={() => setShowCurrent(!showCurrent)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300">
+              <button
+                type="button"
+                onClick={() => setShowCurrent(!showCurrent)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300"
+              >
                 {showCurrent ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
             </div>
@@ -315,13 +375,16 @@ export default function SettingsTab({ showToast }: { showToast: (msg: string) =>
               <input
                 type={showNew ? 'text' : 'password'}
                 value={newPassword}
-                onChange={e => setNewPassword(e.target.value)}
+                onChange={(e) => setNewPassword(e.target.value)}
                 className={inputClass + ' pr-10'}
                 placeholder="Enter new password (min 6 chars)"
                 required
               />
-              <button type="button" onClick={() => setShowNew(!showNew)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300">
+              <button
+                type="button"
+                onClick={() => setShowNew(!showNew)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300"
+              >
                 {showNew ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
             </div>
@@ -335,21 +398,31 @@ export default function SettingsTab({ showToast }: { showToast: (msg: string) =>
               <input
                 type={showConfirm ? 'text' : 'password'}
                 value={confirmPassword}
-                onChange={e => setConfirmPassword(e.target.value)}
+                onChange={(e) => setConfirmPassword(e.target.value)}
                 className={inputClass + ' pr-10'}
                 placeholder="Confirm new password"
                 required
               />
-              <button type="button" onClick={() => setShowConfirm(!showConfirm)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300">
+              <button
+                type="button"
+                onClick={() => setShowConfirm(!showConfirm)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300"
+              >
                 {showConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
             </div>
           </div>
 
-          <button type="submit" disabled={savingPassword || !currentPassword || !newPassword || !confirmPassword}
-            className="flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 text-white self-start">
-            {savingPassword ? <Loader className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+          <button
+            type="submit"
+            disabled={savingPassword || !currentPassword || !newPassword || !confirmPassword}
+            className="flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 text-white self-start"
+          >
+            {savingPassword ? (
+              <Loader className="w-4 h-4 animate-spin" />
+            ) : (
+              <Save className="w-4 h-4" />
+            )}
             {savingPassword ? 'Changing...' : 'Change Password'}
           </button>
         </form>
@@ -378,7 +451,7 @@ export default function SettingsTab({ showToast }: { showToast: (msg: string) =>
               min={10}
               max={100}
               value={quality}
-              onChange={e => setQuality(+e.target.value)}
+              onChange={(e) => setQuality(+e.target.value)}
               className="w-full accent-cyan-500 h-1.5 bg-white/5 rounded-full cursor-pointer"
             />
           </div>
@@ -390,7 +463,11 @@ export default function SettingsTab({ showToast }: { showToast: (msg: string) =>
               disabled={scanning || converting}
               className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/5 hover:bg-white/10 rounded-lg text-sm text-white transition-colors cursor-pointer"
             >
-              {scanning ? <Loader className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
+              {scanning ? (
+                <Loader className="w-4 h-4 animate-spin" />
+              ) : (
+                <RefreshCw className="w-4 h-4" />
+              )}
               Scan Legacy Images
             </button>
             {legacyImages.length > 0 && (
@@ -399,7 +476,11 @@ export default function SettingsTab({ showToast }: { showToast: (msg: string) =>
                 disabled={converting}
                 className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-lg text-sm font-semibold text-white hover:opacity-90 transition-opacity cursor-pointer"
               >
-                {converting ? <Loader className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
+                {converting ? (
+                  <Loader className="w-4 h-4 animate-spin" />
+                ) : (
+                  <CheckCircle className="w-4 h-4" />
+                )}
                 Convert {legacyImages.length} Image{legacyImages.length > 1 ? 's' : ''} to WebP
               </button>
             )}

@@ -1,13 +1,9 @@
 export function SkeletonLine({ className = '' }: { className?: string }) {
-  return (
-    <div className={`h-4 bg-white/5 rounded animate-pulse ${className}`} />
-  )
+  return <div className={`h-4 bg-white/5 rounded animate-pulse ${className}`} />
 }
 
 export function SkeletonBlock({ className = '' }: { className?: string }) {
-  return (
-    <div className={`bg-white/5 rounded-xl animate-pulse ${className}`} />
-  )
+  return <div className={`bg-white/5 rounded-xl animate-pulse ${className}`} />
 }
 
 export function SkeletonCard({ className = '' }: { className?: string }) {

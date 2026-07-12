@@ -1,39 +1,39 @@
-'use client';
+'use client'
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react'
 
 interface Props {
-  primaryRole: string;
+  primaryRole: string
 }
 
 export default function Typewriter({ primaryRole }: Props) {
-  const roles = [primaryRole, "Creative Web Architect", "UI/UX Engineer", "Problem Solver"];
-  const [roleIndex, setRoleIndex] = useState(0);
-  const [text, setText] = useState('');
-  const [isDeleting, setIsDeleting] = useState(false);
+  const roles = [primaryRole, 'Creative Web Architect', 'UI/UX Engineer', 'Problem Solver']
+  const [roleIndex, setRoleIndex] = useState(0)
+  const [text, setText] = useState('')
+  const [isDeleting, setIsDeleting] = useState(false)
 
   useEffect(() => {
-    const currentRole = roles[roleIndex];
-    
+    const currentRole = roles[roleIndex]
+
     const tick = () => {
       if (isDeleting) {
-        setText(currentRole.substring(0, text.length - 1));
+        setText(currentRole.substring(0, text.length - 1))
         if (text.length === 1) {
-          setIsDeleting(false);
-          setRoleIndex((prev) => (prev + 1) % roles.length);
+          setIsDeleting(false)
+          setRoleIndex((prev) => (prev + 1) % roles.length)
         }
       } else {
-        setText(currentRole.substring(0, text.length + 1));
+        setText(currentRole.substring(0, text.length + 1))
         if (text.length === currentRole.length - 1) {
-          setIsDeleting(true);
+          setIsDeleting(true)
         }
       }
-    };
+    }
 
-    const speed = isDeleting ? 50 : text.length === currentRole.length ? 2000 : 120;
-    const timer = setTimeout(tick, speed);
-    return () => clearTimeout(timer);
-  }, [text, isDeleting, roleIndex]);
+    const speed = isDeleting ? 50 : text.length === currentRole.length ? 2000 : 120
+    const timer = setTimeout(tick, speed)
+    return () => clearTimeout(timer)
+  }, [text, isDeleting, roleIndex])
 
   return (
     <div className="font-heading text-2xl md:text-4xl font-bold text-gray-300 min-h-[45px] flex items-center justify-center md:justify-start">
@@ -42,5 +42,5 @@ export default function Typewriter({ primaryRole }: Props) {
       </span>
       <span className="text-purple-500 font-light animate-blink ml-1">|</span>
     </div>
-  );
+  )
 }

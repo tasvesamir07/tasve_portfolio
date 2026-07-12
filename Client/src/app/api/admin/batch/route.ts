@@ -17,7 +17,12 @@ export async function POST(req: Request) {
       if (!item || typeof item !== 'object') {
         return NextResponse.json({ error: 'Each item must be an object' }, { status: 400 })
       }
-      if ('id' in item && item.id !== null && item.id !== undefined && typeof item.id !== 'number') {
+      if (
+        'id' in item &&
+        item.id !== null &&
+        item.id !== undefined &&
+        typeof item.id !== 'number'
+      ) {
         return NextResponse.json({ error: 'Item id must be a number if present' }, { status: 400 })
       }
       const { id, created_at, updated_at, ...data } = item

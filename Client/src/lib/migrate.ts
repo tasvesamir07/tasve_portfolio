@@ -15,10 +15,10 @@ function parseMigration(filePath: string): Statement[] {
   const raw = readFileSync(filePath, 'utf8')
   const parts = raw
     .split(';')
-    .map(s => s.trim())
-    .filter(s => s.length > 0 && !s.startsWith('--') && !s.startsWith('/*'))
+    .map((s) => s.trim())
+    .filter((s) => s.length > 0 && !s.startsWith('--') && !s.startsWith('/*'))
 
-  return parts.map(sql => ({
+  return parts.map((sql) => ({
     sql: sql + ';',
     isSeed: /^\s*INSERT\s+INTO/i.test(sql),
     isTruncate: /^\s*TRUNCATE\s+/i.test(sql),
@@ -31,7 +31,11 @@ function getConnectionString(): string | null {
 }
 
 function isSeedEmptyError(msg: string): boolean {
-  return msg.includes('already exists') || msg.includes('duplicate key') || msg.includes('violates unique constraint')
+  return (
+    msg.includes('already exists') ||
+    msg.includes('duplicate key') ||
+    msg.includes('violates unique constraint')
+  )
 }
 
 async function createVersionTable(client: Client): Promise<void> {
@@ -62,10 +66,9 @@ async function hasStatementRun(client: Client, hash: string): Promise<boolean> {
 
 async function markStatementRun(client: Client, hash: string): Promise<void> {
   try {
-    await client.query(
-      `INSERT INTO "${MIGRATION_TIMESTAMP_TABLE}" (statement_hash) VALUES ($1)`,
-      [hash],
-    )
+    await client.query(`INSERT INTO "${MIGRATION_TIMESTAMP_TABLE}" (statement_hash) VALUES ($1)`, [
+      hash,
+    ])
   } catch {
     // race condition on concurrent cold-start — ignore
   }

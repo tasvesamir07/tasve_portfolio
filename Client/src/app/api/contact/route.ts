@@ -12,7 +12,8 @@ export async function POST(req: Request) {
     }
 
     const parsed = ContactSchema.safeParse(await req.json())
-    if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
+    if (!parsed.success)
+      return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
 
     const supabaseAdmin = getSupabaseAdmin()
     const { error } = await supabaseAdmin.from('contacts').insert(parsed.data)

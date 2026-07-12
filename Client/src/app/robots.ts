@@ -4,9 +4,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://tasve-portfolio.ve
 
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: [
-      { userAgent: '*', allow: '/', disallow: '/admin' },
-    ],
+    rules: [{ userAgent: '*', allow: '/', disallow: '/admin' }],
     sitemap: `${BASE_URL}/sitemap.xml`,
   }
 }

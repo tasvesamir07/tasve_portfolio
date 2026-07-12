@@ -1,7 +1,14 @@
 import { NextResponse } from 'next/server'
 import { getSupabaseAdmin } from '@/lib/supabase-admin'
 
-const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml', 'application/pdf']
+const ALLOWED_TYPES = [
+  'image/jpeg',
+  'image/png',
+  'image/gif',
+  'image/webp',
+  'image/svg+xml',
+  'application/pdf',
+]
 const MAX_SIZE = 5 * 1024 * 1024
 
 export async function POST(req: Request) {
@@ -12,7 +19,10 @@ export async function POST(req: Request) {
     if (!file) return NextResponse.json({ error: 'No file provided' }, { status: 400 })
 
     if (!ALLOWED_TYPES.includes(file.type)) {
-      return NextResponse.json({ error: 'Invalid file type. Allowed: JPEG, PNG, GIF, WebP, SVG' }, { status: 400 })
+      return NextResponse.json(
+        { error: 'Invalid file type. Allowed: JPEG, PNG, GIF, WebP, SVG' },
+        { status: 400 },
+      )
     }
 
     if (file.size > MAX_SIZE) {

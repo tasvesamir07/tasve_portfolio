@@ -1,64 +1,80 @@
-'use client';
+'use client'
 
-import React, { useEffect, useState } from 'react';
-import { Menu, X, ChevronDown } from 'lucide-react';
+import React, { useEffect, useState } from 'react'
+import { Menu, X, ChevronDown } from 'lucide-react'
 
 interface Props {
-  logoText: string;
+  logoText: string
 }
 
 export default function Navbar({ logoText }: Props) {
-  const [scrolled, setScrolled] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState('home');
+  const [scrolled, setScrolled] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
+  const [activeSection, setActiveSection] = useState('home')
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
+      setScrolled(window.scrollY > 50)
 
       // Section tracker
-      const sections = ['home', 'about', 'skills', 'projects', 'experience', 'education', 'certifications', 'gallery', 'contact'];
-      let current = 'home';
-      
+      const sections = [
+        'home',
+        'about',
+        'skills',
+        'projects',
+        'experience',
+        'education',
+        'certifications',
+        'gallery',
+        'contact',
+      ]
+      let current = 'home'
+
       // If we are at the bottom of the page, force 'contact' to be active
-      const isAtBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 50;
-      
+      const isAtBottom =
+        window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 50
+
       if (isAtBottom) {
-        current = 'contact';
+        current = 'contact'
       } else {
         for (const sectionId of sections) {
-          const el = document.getElementById(sectionId);
+          const el = document.getElementById(sectionId)
           if (el) {
-            const rect = el.getBoundingClientRect();
+            const rect = el.getBoundingClientRect()
             if (rect.top <= 150) {
-              current = sectionId;
+              current = sectionId
             }
           }
         }
       }
-      setActiveSection(current);
-    };
+      setActiveSection(current)
+    }
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
-  const navLinks = ['home', 'about', 'skills', 'projects', 'experience', 'education'];
+  const navLinks = ['home', 'about', 'skills', 'projects', 'experience', 'education']
 
   return (
     <header
       className={`fixed top-0 left-0 w-full z-[1000] border-b border-transparent transition-all duration-200 ${
-        scrolled
-          ? 'bg-glass-bg backdrop-blur-xl border-white/5 py-3'
-          : 'bg-transparent py-5'
+        scrolled ? 'bg-glass-bg backdrop-blur-xl border-white/5 py-3' : 'bg-transparent py-5'
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center">
         {/* Brand Logo */}
-        <a href="#home" className="font-heading font-extrabold text-xl text-white flex items-center gap-1 group">
-          <span className="text-cyan-400 group-hover:text-pink-500 transition-colors duration-200">&lt;</span>
+        <a
+          href="#home"
+          className="font-heading font-extrabold text-xl text-white flex items-center gap-1 group"
+        >
+          <span className="text-cyan-400 group-hover:text-pink-500 transition-colors duration-200">
+            &lt;
+          </span>
           <span>{logoText}</span>
-          <span className="text-cyan-400 group-hover:text-pink-500 transition-colors duration-200">/&gt;</span>
+          <span className="text-cyan-400 group-hover:text-pink-500 transition-colors duration-200">
+            /&gt;
+          </span>
         </a>
 
         {/* Desktop Nav links */}
@@ -84,19 +100,26 @@ export default function Navbar({ logoText }: Props) {
             <li className="relative group/more">
               <button
                 className={`flex items-center gap-1 text-sm font-semibold transition-colors duration-200 capitalize tracking-wider cursor-pointer bg-transparent border-0 outline-none hover:text-white ${
-                  activeSection === 'certifications' || activeSection === 'gallery' || activeSection === 'contact' ? 'text-white' : 'text-gray-400'
+                  activeSection === 'certifications' ||
+                  activeSection === 'gallery' ||
+                  activeSection === 'contact'
+                    ? 'text-white'
+                    : 'text-gray-400'
                 }`}
                 aria-label="More sections"
               >
-                More <ChevronDown className="w-4 h-4 transition-transform duration-200 group-hover/more:rotate-180" />
+                More{' '}
+                <ChevronDown className="w-4 h-4 transition-transform duration-200 group-hover/more:rotate-180" />
               </button>
-              
+
               {/* Dropdown Box */}
               <div className="absolute right-0 top-full mt-2 w-52 bg-[#0a0c14]/95 backdrop-blur-xl border border-white/5 rounded-xl p-2 shadow-2xl transition-all duration-200 opacity-0 translate-y-2 invisible group-hover/more:opacity-100 group-hover/more:translate-y-0 group-hover/more:visible z-50">
                 <a
                   href="#certifications"
                   className={`block px-4 py-2.5 text-xs font-semibold uppercase tracking-wider hover:bg-white/5 rounded-lg transition-colors duration-200 hover:text-white ${
-                    activeSection === 'certifications' ? 'text-cyan-400 bg-white/5' : 'text-gray-400'
+                    activeSection === 'certifications'
+                      ? 'text-cyan-400 bg-white/5'
+                      : 'text-gray-400'
                   }`}
                 >
                   Certifications & Awards
@@ -190,5 +213,5 @@ export default function Navbar({ logoText }: Props) {
         </nav>
       </div>
     </header>
-  );
+  )
 }

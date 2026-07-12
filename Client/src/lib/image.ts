@@ -7,7 +7,7 @@
 export async function compressAndConvertToWebp(
   file: File,
   quality = 0.8,
-  maxWidth = 1200
+  maxWidth = 1200,
 ): Promise<File> {
   // If the file is already a small WebP, bypass compression
   if (file.type === 'image/webp' && file.size < 200 * 1024) {
@@ -58,7 +58,7 @@ export async function compressAndConvertToWebp(
             }
           },
           'image/webp',
-          quality
+          quality,
         )
       }
       img.onerror = (err) => reject(err)

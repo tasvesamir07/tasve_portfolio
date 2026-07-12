@@ -1,5 +1,13 @@
 import { getSupabase } from './supabase'
-import type { ProfileRow, ProjectRow, SkillRow, ExperienceRow, EducationRow, CertificationRow, GalleryRow } from './database.types'
+import type {
+  ProfileRow,
+  ProjectRow,
+  SkillRow,
+  ExperienceRow,
+  EducationRow,
+  CertificationRow,
+  GalleryRow,
+} from './database.types'
 
 export interface Project {
   id: string
@@ -117,23 +125,32 @@ export async function fetchProfile(): Promise<Profile> {
 
 export async function fetchProjects(): Promise<Project[]> {
   const supabase = getSupabase()
-  const { data, error } = await supabase.from('projects').select('*').order('sort_order', { ascending: true })
+  const { data, error } = await supabase
+    .from('projects')
+    .select('*')
+    .order('sort_order', { ascending: true })
   if (error) throw error
   return formatProjects(data as ProjectRow[])
 }
 
 export async function fetchSkills(): Promise<Skill[]> {
   const supabase = getSupabase()
-  const { data, error } = await supabase.from('skills').select('*').order('sort_order', { ascending: true })
+  const { data, error } = await supabase
+    .from('skills')
+    .select('*')
+    .order('sort_order', { ascending: true })
   if (error) throw error
   return formatSkills(data as SkillRow[])
 }
 
 export async function fetchEducation(): Promise<Education[]> {
   const supabase = getSupabase()
-  const { data, error } = await supabase.from('education').select('*').order('sort_order', { ascending: true })
+  const { data, error } = await supabase
+    .from('education')
+    .select('*')
+    .order('sort_order', { ascending: true })
   if (error) throw error
-  return (data as EducationRow[]).map(item => ({
+  return (data as EducationRow[]).map((item) => ({
     id: item.id,
     type: item.type,
     title: item.title || '',
@@ -180,9 +197,12 @@ export interface GalleryItem {
 
 export async function fetchCertifications(): Promise<Certification[]> {
   const supabase = getSupabase()
-  const { data, error } = await supabase.from('certifications').select('*').order('sort_order', { ascending: true })
+  const { data, error } = await supabase
+    .from('certifications')
+    .select('*')
+    .order('sort_order', { ascending: true })
   if (error) throw error
-  return (data as CertificationRow[]).map(item => ({
+  return (data as CertificationRow[]).map((item) => ({
     id: item.id,
     title: item.title || '',
     issuer: item.issuer || '',
@@ -194,9 +214,12 @@ export async function fetchCertifications(): Promise<Certification[]> {
 
 export async function fetchGallery(): Promise<GalleryItem[]> {
   const supabase = getSupabase()
-  const { data, error } = await supabase.from('gallery').select('*').order('sort_order', { ascending: true })
+  const { data, error } = await supabase
+    .from('gallery')
+    .select('*')
+    .order('sort_order', { ascending: true })
   if (error) throw error
-  return (data as GalleryRow[]).map(item => ({
+  return (data as GalleryRow[]).map((item) => ({
     id: item.id,
     title: item.title || '',
     image: item.image || '',
@@ -206,7 +229,10 @@ export async function fetchGallery(): Promise<GalleryItem[]> {
 
 export async function fetchExperience(): Promise<Experience[]> {
   const supabase = getSupabase()
-  const { data, error } = await supabase.from('experiences').select('*').order('sort_order', { ascending: true })
+  const { data, error } = await supabase
+    .from('experiences')
+    .select('*')
+    .order('sort_order', { ascending: true })
   if (error) throw error
   return formatExperiences(data as ExperienceRow[])
 }

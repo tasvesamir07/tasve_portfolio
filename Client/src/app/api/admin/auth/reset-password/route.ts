@@ -21,7 +21,10 @@ export async function POST(req: Request) {
   try {
     const parsed = ResetPasswordSchema.safeParse(await req.json())
     if (!parsed.success) {
-      return NextResponse.json({ error: 'Invalid request. New password must be at least 6 characters.' }, { status: 400 })
+      return NextResponse.json(
+        { error: 'Invalid request. New password must be at least 6 characters.' },
+        { status: 400 },
+      )
     }
 
     const { username, otp, newPassword } = parsed.data

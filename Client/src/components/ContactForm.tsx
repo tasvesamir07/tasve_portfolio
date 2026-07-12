@@ -1,42 +1,42 @@
-'use client';
+'use client'
 
-import React, { useState } from 'react';
-import { Send, CheckCircle, Loader } from 'lucide-react';
+import React, { useState } from 'react'
+import { Send, CheckCircle, Loader } from 'lucide-react'
 
 export default function ContactForm() {
-  const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-  const [errorMsg, setErrorMsg] = useState('');
+  const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' })
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+  const [errorMsg, setErrorMsg] = useState('')
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+    setForm({ ...form, [e.target.name]: e.target.value })
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setStatus('loading');
+    e.preventDefault()
+    setStatus('loading')
 
     try {
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form)
-      });
+        body: JSON.stringify(form),
+      })
 
       if (!res.ok) {
         const body = await res.json().catch(() => ({}))
         throw new Error(body.error || 'Failed to send message')
       }
 
-      setStatus('success');
-      setForm({ name: '', email: '', subject: '', message: '' });
-      setTimeout(() => setStatus('idle'), 5000);
+      setStatus('success')
+      setForm({ name: '', email: '', subject: '', message: '' })
+      setTimeout(() => setStatus('idle'), 5000)
     } catch (err) {
-      setErrorMsg(err instanceof Error ? err.message : 'Something went wrong');
-      setStatus('error');
-      setTimeout(() => setStatus('idle'), 5000);
+      setErrorMsg(err instanceof Error ? err.message : 'Something went wrong')
+      setStatus('error')
+      setTimeout(() => setStatus('idle'), 5000)
     }
-  };
+  }
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6" autoComplete="off">
@@ -106,7 +106,8 @@ export default function ContactForm() {
 
       {status === 'success' ? (
         <div className="flex items-center gap-3 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 p-4 rounded-lg text-sm animate-fade-in">
-          <CheckCircle className="w-5 h-5" /> Message sent successfully! I will get back to you soon.
+          <CheckCircle className="w-5 h-5" /> Message sent successfully! I will get back to you
+          soon.
         </div>
       ) : status === 'error' ? (
         <div className="flex items-center gap-3 bg-red-500/10 border border-red-500/30 text-red-400 p-4 rounded-lg text-sm animate-fade-in">
@@ -130,5 +131,5 @@ export default function ContactForm() {
         </button>
       )}
     </form>
-  );
+  )
 }

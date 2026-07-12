@@ -34,7 +34,8 @@ export default function GalleryGrid({ items }: { items: GalleryItem[] }) {
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
       >
         {items.map((item) => (
-          <div key={item.id}
+          <div
+            key={item.id}
             className="bg-glass-bg border border-white/5 rounded-xl overflow-hidden hover:border-white/10 hover:shadow-lg hover:shadow-purple-500/5 transition-all duration-200 group"
           >
             <div className="relative h-48 overflow-hidden bg-[#0f121d] flex items-center justify-center">
@@ -44,18 +45,21 @@ export default function GalleryGrid({ items }: { items: GalleryItem[] }) {
                   className="w-full h-full block cursor-zoom-in bg-transparent border-0 p-0 outline-none"
                   title="View full image"
                 >
-                  <img src={item.image} alt={item.title || 'Gallery image'}
-                    className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-300" />
+                  <img
+                    src={item.image}
+                    alt={item.title || 'Gallery image'}
+                    className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-300"
+                  />
                 </button>
               ) : (
                 <ImageOff className="w-12 h-12 text-gray-600" />
               )}
             </div>
             <div className="p-4">
-              <h3 className="font-heading font-bold text-sm text-white">{item.title || 'Untitled'}</h3>
-              {item.description && (
-                <p className="text-xs text-gray-400 mt-1">{item.description}</p>
-              )}
+              <h3 className="font-heading font-bold text-sm text-white">
+                {item.title || 'Untitled'}
+              </h3>
+              {item.description && <p className="text-xs text-gray-400 mt-1">{item.description}</p>}
             </div>
           </div>
         ))}
