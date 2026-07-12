@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { LogOut, Settings } from 'lucide-react'
+import { LogOut, Settings, Award, Image as ImageIcon } from 'lucide-react'
 import ProfileTab from '@/components/admin/ProfileTab'
 import ProjectsTab from '@/components/admin/ProjectsTab'
 import SkillsTab from '@/components/admin/SkillsTab'
@@ -11,9 +11,11 @@ import ExperiencesTab from '@/components/admin/ExperiencesTab'
 import EducationTab from '@/components/admin/EducationTab'
 import MessagesTab from '@/components/admin/MessagesTab'
 import SettingsTab from '@/components/admin/SettingsTab'
+import CertificationsTab from '@/components/admin/CertificationsTab'
+import GalleryTab from '@/components/admin/GalleryTab'
 import { AdminSkeleton } from '@/components/Skeleton'
 
-type Tab = 'profile' | 'projects' | 'skills' | 'experiences' | 'messages' | 'education' | 'settings'
+type Tab = 'profile' | 'projects' | 'skills' | 'experiences' | 'messages' | 'education' | 'certifications' | 'gallery' | 'settings'
 
 interface ProfileData {
   name: string; title: string; intro: string; description: string
@@ -39,12 +41,22 @@ interface EducationData {
   id?: number; type: string; title: string; subtitle: string; date: string; details: string; sort_order: number
 }
 
+interface CertificationData {
+  id?: number; title: string; issuer: string; date: string; credential_url: string; image: string; sort_order: number
+}
+
+interface GalleryItemData {
+  id?: number; title: string; image: string; description: string; sort_order: number
+}
+
 function moveItem<T>(arr: T[], from: number, to: number): T[] {
   const next = [...arr]
   const [moved] = next.splice(from, 1)
   next.splice(to, 0, moved)
   return next
 }
+
+type CollectionKey = 'certifications' | 'gallery'
 
 export default function AdminPage() {
   const router = useRouter()
@@ -59,6 +71,8 @@ export default function AdminPage() {
   const [skills, setSkills] = useState<SkillData[]>([])
   const [experiences, setExperiences] = useState<ExperienceData[]>([])
   const [education, setEducation] = useState<EducationData[]>([])
+  const [certifications, setCertifications] = useState<CertificationData[]>([])
+  const [gallery, setGallery] = useState<GalleryItemData[]>([])
 
   const showToast = useCallback((msg: string) => {
     setToast(msg)
@@ -84,6 +98,8 @@ export default function AdminPage() {
       fetch('/api/admin/skills').then(checkRes).then(setSkills).catch(() => { showToast('Failed to load skills'); setSkills([]) }),
       fetch('/api/admin/experiences').then(checkRes).then(setExperiences).catch(() => { showToast('Failed to load experiences'); setExperiences([]) }),
       fetch('/api/admin/education').then(checkRes).then(setEducation).catch(() => { showToast('Failed to load education'); setEducation([]) }),
+      fetch('/api/admin/certifications').then(checkRes).then(setCertifications).catch(() => { showToast('Failed to load certifications'); setCertifications([]) }),
+      fetch('/api/admin/gallery').then(checkRes).then(setGallery).catch(() => { showToast('Failed to load gallery'); setGallery([]) }),
     ]).finally(() => setLoadingData(false))
   }, [authed])
 
@@ -268,11 +284,102 @@ export default function AdminPage() {
     setEducation(moveItem(education, idx, to))
   }
 
+  // === Certifications handlers ===
+  const handleCertImage = async (idx: number, file: File) => {
+    const fd = new FormData(); fd.append('file', file)
+    const res = await fetch('/api/admin/upload', { method: 'POST', body: fd })
+    const { url } = await res.json()
+    const updated = [...certifications]; updated[idx] = { ...updated[idx], image: url }; setCertifications(updated)
+  }
+
+  const saveCertifications = async () => {
+    setSaving(true)
+    const items = certifications.map((c, i) => ({ ...c, sort_order: i }))
+    const res = await fetch('/api/admin/batch', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ table: 'certifications', items }),
+    })
+    setSaving(false)
+    showToast(res.ok ? 'Certifications saved' : 'Failed to save')
+  }
+
+  const addCertification = async () => {
+    const newC = { title: '', issuer: '', date: '', credential_url: '', image: '', sort_order: certifications.length }
+    const res = await fetch('/api/admin/certifications', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newC) })
+    if (!res.ok) { showToast('Failed to add'); return }
+    const saved = await res.json()
+    setCertifications([...certifications, saved])
+    showToast('Certification added')
+  }
+
+  const deleteCertification = async (id: number) => {
+    try {
+      const res = await fetch(`/api/admin/certifications/${id}`, { method: 'DELETE' })
+      if (!res.ok) throw new Error('Failed to delete')
+      setCertifications(certifications.filter(c => c.id !== id))
+      showToast('Certification deleted')
+    } catch {
+      showToast('Failed to delete')
+    }
+  }
+
+  const moveCertification = (idx: number, dir: 'up' | 'down') => {
+    const to = dir === 'up' ? idx - 1 : idx + 1
+    if (to < 0 || to >= certifications.length) return
+    setCertifications(moveItem(certifications, idx, to))
+  }
+
+  // === Gallery handlers ===
+  const handleGalleryImage = async (idx: number, file: File) => {
+    const fd = new FormData(); fd.append('file', file)
+    const res = await fetch('/api/admin/upload', { method: 'POST', body: fd })
+    const { url } = await res.json()
+    const updated = [...gallery]; updated[idx] = { ...updated[idx], image: url }; setGallery(updated)
+  }
+
+  const saveGallery = async () => {
+    setSaving(true)
+    const items = gallery.map((g, i) => ({ ...g, sort_order: i }))
+    const res = await fetch('/api/admin/batch', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ table: 'gallery', items }),
+    })
+    setSaving(false)
+    showToast(res.ok ? 'Gallery saved' : 'Failed to save')
+  }
+
+  const addGalleryItem = async () => {
+    const newG = { title: '', image: '', description: '', sort_order: gallery.length }
+    const res = await fetch('/api/admin/gallery', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newG) })
+    if (!res.ok) { showToast('Failed to add'); return }
+    const saved = await res.json()
+    setGallery([...gallery, saved])
+    showToast('Image added')
+  }
+
+  const deleteGalleryItem = async (id: number) => {
+    try {
+      const res = await fetch(`/api/admin/gallery/${id}`, { method: 'DELETE' })
+      if (!res.ok) throw new Error('Failed to delete')
+      setGallery(gallery.filter(g => g.id !== id))
+      showToast('Image deleted')
+    } catch {
+      showToast('Failed to delete')
+    }
+  }
+
+  const moveGalleryItem = (idx: number, dir: 'up' | 'down') => {
+    const to = dir === 'up' ? idx - 1 : idx + 1
+    if (to < 0 || to >= gallery.length) return
+    setGallery(moveItem(gallery, idx, to))
+  }
+
   if (!authed) return null
 
   const tabLabels: Record<Tab, string> = {
     profile: 'Profile', projects: 'Projects', skills: 'Skills',
-    experiences: 'Experience', messages: 'Messages', education: 'Education', settings: 'Settings',
+    experiences: 'Experience', messages: 'Messages', education: 'Education',
+    certifications: 'Certifications', gallery: 'Gallery', settings: 'Settings',
   }
 
   return (
@@ -307,13 +414,15 @@ export default function AdminPage() {
             }`}
           >
             {t === 'settings' && <Settings className="w-3.5 h-3.5" />}
+            {t === 'certifications' && <Award className="w-3.5 h-3.5" />}
+            {t === 'gallery' && <ImageIcon className="w-3.5 h-3.5" />}
             {tabLabels[t]}
           </button>
         ))}
       </div>
 
       <div className="p-6 max-w-4xl mx-auto">
-        {loadingData && tab !== 'settings' && tab !== 'messages' ? (
+        {loadingData && !['settings', 'messages', 'certifications', 'gallery'].includes(tab) ? (
           <AdminSkeleton />
         ) : (
           <>
@@ -379,6 +488,28 @@ export default function AdminPage() {
                 onDelete={deleteEducation}
                 onMove={moveEducation}
                 onSave={saveEducation}
+              />
+            )}
+            {tab === 'certifications' && (
+              <CertificationsTab
+                certifications={certifications} saving={saving}
+                onAdd={addCertification}
+                onUpdate={(idx, c) => { const u = [...certifications]; u[idx] = c; setCertifications(u) }}
+                onDelete={deleteCertification}
+                onImageUpload={handleCertImage}
+                onMove={moveCertification}
+                onSave={saveCertifications}
+              />
+            )}
+            {tab === 'gallery' && (
+              <GalleryTab
+                items={gallery} saving={saving}
+                onAdd={addGalleryItem}
+                onUpdate={(idx, g) => { const u = [...gallery]; u[idx] = g; setGallery(u) }}
+                onDelete={deleteGalleryItem}
+                onImageUpload={handleGalleryImage}
+                onMove={moveGalleryItem}
+                onSave={saveGallery}
               />
             )}
             {tab === 'messages' && <MessagesTab showToast={showToast} />}

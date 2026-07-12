@@ -54,6 +54,22 @@ export const EducationSchema = z.object({
   sort_order: z.number().int().optional(),
 })
 
+export const CertificationSchema = z.object({
+  title: z.string().max(300).default(''),
+  issuer: z.string().max(300).default(''),
+  date: z.string().max(100).default(''),
+  credential_url: z.string().max(1000).default(''),
+  image: z.string().max(1000).default(''),
+  sort_order: z.number().int().optional(),
+})
+
+export const GallerySchema = z.object({
+  title: z.string().max(300).default(''),
+  image: z.string().max(1000).default(''),
+  description: z.string().max(2000).default(''),
+  sort_order: z.number().int().optional(),
+})
+
 export const ContactSchema = z.object({
   name: z.string().min(1).max(200),
   email: z.string().email().max(200),

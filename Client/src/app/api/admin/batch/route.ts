@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { getSupabaseAdmin } from '@/lib/supabase-admin'
 import { revalidateHome } from '@/lib/revalidate'
 
-const ALLOWED_TABLES = ['projects', 'skills', 'experiences'] as const
+const ALLOWED_TABLES = ['projects', 'skills', 'experiences', 'certifications', 'gallery'] as const
 
 export async function POST(req: Request) {
   try {

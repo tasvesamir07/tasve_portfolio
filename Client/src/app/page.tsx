@@ -4,9 +4,11 @@ import {
   fetchProjects, 
   fetchSkills, 
   fetchExperience, 
-  fetchEducation 
+  fetchEducation,
+  fetchCertifications,
+  fetchGallery,
 } from '@/lib/api';
-import type { Education } from '@/lib/api';
+import type { Education, Certification, GalleryItem } from '@/lib/api';
 import Navbar from '@/components/Navbar';
 import Typewriter from '@/components/Typewriter';
 import ProjectsGrid from '@/components/ProjectsGrid';
@@ -93,6 +95,38 @@ function ExperienceSkeleton() {
         <div className="flex flex-col gap-12 pl-10">
           {[...Array(2)].map((_, i) => (
             <SkeletonCard key={i} />
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function CertificationsSkeleton() {
+  return (
+    <section className="py-24 px-6 md:px-12 border-t border-white/5">
+      <div className="max-w-5xl mx-auto">
+        <SkeletonLine className="w-32 h-4 mb-4" />
+        <SkeletonLine className="w-64 h-8 mb-12" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[...Array(3)].map((_, i) => (
+            <SkeletonBlock key={i} className="h-40 rounded-xl" />
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function GallerySkeleton() {
+  return (
+    <section className="py-24 px-6 md:px-12 border-t border-white/5">
+      <div className="max-w-5xl mx-auto">
+        <SkeletonLine className="w-32 h-4 mb-4" />
+        <SkeletonLine className="w-64 h-8 mb-12" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {[...Array(3)].map((_, i) => (
+            <SkeletonBlock key={i} className="h-48 rounded-xl" />
           ))}
         </div>
       </div>
@@ -495,6 +529,94 @@ async function EducationSection() {
   )
 }
 
+async function CertificationsSection() {
+  const certifications = await fetchCertifications().catch(() => [] as Certification[])
+  if (certifications.length === 0) return null
+  return (
+    <section id="certifications" className="py-24 px-6 md:px-12 border-t border-white/5">
+      <div className="max-w-5xl mx-auto">
+        <div className="flex flex-col gap-2 mb-12">
+          <span className="font-mono text-sm text-cyan-400 tracking-wider">06. Credentials</span>
+          <h2 className="font-heading font-extrabold text-3xl md:text-4xl text-white flex items-center gap-4">
+            Certifications <span className="h-[1px] flex-grow max-w-[200px] bg-gradient-to-r from-white/10 to-transparent" />
+          </h2>
+        </div>
+        <AnimatedSection
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-50px' }}
+          transition={{ duration: 0.6 }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        >
+          {certifications.map((cert) => (
+            <div key={cert.id}
+              className="bg-glass-bg border border-white/5 rounded-xl p-5 hover:border-white/10 hover:shadow-lg hover:shadow-purple-500/5 transition-all duration-200 flex flex-col items-center text-center gap-3 group"
+            >
+              {cert.image && (
+                <div className="w-20 h-20 rounded-xl overflow-hidden bg-[#0f121d] border border-white/5 p-2 flex items-center justify-center group-hover:border-cyan-500/30 transition-colors">
+                  <img src={cert.image} alt={cert.title} className="w-full h-full object-contain" />
+                </div>
+              )}
+              <div>
+                <h3 className="font-heading font-bold text-sm text-white">{cert.title}</h3>
+                <p className="text-xs text-cyan-400 mt-0.5">{cert.issuer}</p>
+                {cert.date && <p className="text-[10px] text-gray-500 font-mono mt-1">{cert.date}</p>}
+              </div>
+              {cert.credential_url && (
+                <a href={cert.credential_url} target="_blank" rel="noopener noreferrer"
+                  className="text-xs text-gray-400 hover:text-cyan-400 font-semibold transition-colors flex items-center gap-1 mt-auto">
+                  View Credential →
+                </a>
+              )}
+            </div>
+          ))}
+        </AnimatedSection>
+      </div>
+    </section>
+  )
+}
+
+async function GallerySection() {
+  const items = await fetchGallery().catch(() => [] as GalleryItem[])
+  if (items.length === 0) return null
+  return (
+    <section id="gallery" className="py-24 px-6 md:px-12 border-t border-white/5">
+      <div className="max-w-5xl mx-auto">
+        <div className="flex flex-col gap-2 mb-12">
+          <span className="font-mono text-sm text-cyan-400 tracking-wider">07. Gallery</span>
+          <h2 className="font-heading font-extrabold text-3xl md:text-4xl text-white flex items-center gap-4">
+            Photo Gallery <span className="h-[1px] flex-grow max-w-[200px] bg-gradient-to-r from-white/10 to-transparent" />
+          </h2>
+        </div>
+        <AnimatedSection
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-50px' }}
+          transition={{ duration: 0.6 }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        >
+          {items.map((item) => (
+            <div key={item.id}
+              className="bg-glass-bg border border-white/5 rounded-xl overflow-hidden hover:border-white/10 hover:shadow-lg hover:shadow-purple-500/5 transition-all duration-200 group"
+            >
+              <div className="relative h-48 overflow-hidden bg-[#0f121d]">
+                <img src={item.image} alt={item.title}
+                  className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-300" />
+              </div>
+              <div className="p-4">
+                <h3 className="font-heading font-bold text-sm text-white">{item.title}</h3>
+                {item.description && (
+                  <p className="text-xs text-gray-400 mt-1">{item.description}</p>
+                )}
+              </div>
+            </div>
+          ))}
+        </AnimatedSection>
+      </div>
+    </section>
+  )
+}
+
 export default async function Home() {
   const profile = await fetchProfile().catch(() => null)
 
@@ -532,11 +654,19 @@ export default async function Home() {
         <EducationSection />
       </Suspense>
 
+      <Suspense fallback={<CertificationsSkeleton />}>
+        <CertificationsSection />
+      </Suspense>
+
+      <Suspense fallback={<GallerySkeleton />}>
+        <GallerySection />
+      </Suspense>
+
       {/* --- CONTACT SECTION --- */}
       <section id="contact" className="py-24 px-6 md:px-12 border-t border-white/5">
         <div className="max-w-5xl mx-auto">
           <div className="flex flex-col gap-2 mb-12">
-            <span className="font-mono text-sm text-cyan-400 tracking-wider">06. Network</span>
+            <span className="font-mono text-sm text-cyan-400 tracking-wider">08. Network</span>
             <h2 className="font-heading font-extrabold text-3xl md:text-4xl text-white flex items-center gap-4">
               Get In Touch <span className="h-[1px] flex-grow max-w-[200px] bg-gradient-to-r from-white/10 to-transparent" />
             </h2>

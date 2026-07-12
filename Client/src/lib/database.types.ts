@@ -85,6 +85,27 @@ export interface OTPCodeRow {
   created_at: string
 }
 
+export interface CertificationRow {
+  id: number
+  title: string
+  issuer: string
+  date: string
+  credential_url: string
+  image: string
+  sort_order: number
+  created_at: string
+  updated_at: string
+}
+
+export interface GalleryRow {
+  id: number
+  title: string
+  image: string
+  description: string
+  sort_order: number
+  created_at: string
+}
+
 export interface ContactRow {
   id: number
   name: string
