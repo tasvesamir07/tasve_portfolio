@@ -84,7 +84,7 @@ export default function Navbar({ logoText }: Props) {
             <li className="relative group/more">
               <button
                 className={`flex items-center gap-1 text-sm font-semibold transition-colors duration-200 capitalize tracking-wider cursor-pointer bg-transparent border-0 outline-none hover:text-white ${
-                  activeSection === 'certifications' || activeSection === 'gallery' ? 'text-white' : 'text-gray-400'
+                  activeSection === 'certifications' || activeSection === 'gallery' || activeSection === 'contact' ? 'text-white' : 'text-gray-400'
                 }`}
                 aria-label="More sections"
               >
@@ -109,22 +109,15 @@ export default function Navbar({ logoText }: Props) {
                 >
                   Gallery
                 </a>
+                <a
+                  href="#contact"
+                  className={`block px-4 py-2.5 text-xs font-semibold uppercase tracking-wider hover:bg-white/5 rounded-lg transition-colors duration-200 hover:text-white ${
+                    activeSection === 'contact' ? 'text-cyan-400 bg-white/5' : 'text-gray-400'
+                  }`}
+                >
+                  Contact
+                </a>
               </div>
-            </li>
-
-            {/* Contact link (always last) */}
-            <li>
-              <a
-                href="#contact"
-                className={`relative text-sm font-semibold capitalize tracking-wider transition-colors duration-200 hover:text-white ${
-                  activeSection === 'contact' ? 'text-white' : 'text-gray-400'
-                }`}
-              >
-                contact
-                {activeSection === 'contact' && (
-                  <span className="absolute bottom-[-6px] left-0 w-full h-[2px] bg-gradient-to-r from-purple-500 to-cyan-500" />
-                )}
-              </a>
             </li>
           </ul>
         </nav>
