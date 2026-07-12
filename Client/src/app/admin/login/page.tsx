@@ -1,9 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { LogIn, Lock, User, ArrowLeft, Shield, Eye, EyeOff, Loader, Mail, KeyRound, CheckCircle } from 'lucide-react'
+import { ArrowRight, Lock, User, ArrowLeft, Shield, Eye, EyeOff, Loader, Mail, KeyRound, CheckCircle } from 'lucide-react'
 
 export default function LoginPage() {
   const [mode, setMode] = useState<'login' | 'forgot'>('login')
@@ -14,6 +14,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState('')
   const router = useRouter()
+  const passwordRef = useRef<HTMLInputElement>(null)
 
   // Forgot password - step 1: username
   const [resetStep, setResetStep] = useState<'username' | 'otp' | 'password'>('username')
@@ -281,6 +282,14 @@ export default function LoginPage() {
               placeholder="Username"
               className="w-full pl-10 pr-4 py-2.5 bg-[#0f121d] border border-white/5 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500/50 transition-colors"
               autoFocus
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  if (!password) {
+                    e.preventDefault()
+                    passwordRef.current?.focus()
+                  }
+                }
+              }}
             />
           </div>
           <div className="relative">
@@ -290,6 +299,7 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Password"
+              ref={passwordRef}
               className="w-full pl-10 pr-10 py-2.5 bg-[#0f121d] border border-white/5 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500/50 transition-colors"
             />
             <button type="button" onClick={() => setShowPassword(!showPassword)}
@@ -303,7 +313,7 @@ export default function LoginPage() {
             disabled={loading}
             className="flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-lg font-semibold text-white hover:opacity-90 transition-opacity disabled:opacity-50"
           >
-            <LogIn className="w-4 h-4" />
+            <ArrowRight className="w-4 h-4" />
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
 
