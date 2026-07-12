@@ -14,12 +14,15 @@ async function ensureAdminExists(supabase: ReturnType<typeof getSupabaseAdmin>) 
   if (!adminPassword) return
 
   const password_hash = hashPassword(adminPassword)
-  await supabase.from('admins').insert({
-    username: process.env.ADMIN_USERNAME || 'admin',
-    password_hash,
-    display_name: 'Admin',
-    email: process.env.SMTP_USER || '',
-  }).maybeSingle()
+  await supabase
+    .from('admins')
+    .insert({
+      username: process.env.ADMIN_USERNAME || 'admin',
+      password_hash,
+      display_name: 'Admin',
+      email: process.env.SMTP_USER || '',
+    })
+    .maybeSingle()
 }
 
 export async function POST(req: Request) {
@@ -57,7 +60,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Invalid username or password' }, { status: 401 })
     }
 
-    const token = createSessionToken(adminPassword)
+    const token = await createSessionToken(adminPassword)
     const cookieStore = await cookies()
     cookieStore.set('admin_token', token, {
       httpOnly: true,
@@ -83,13 +86,16 @@ export async function GET() {
   }
 
   try {
-    const authenticated = validateSessionToken(token, adminPassword)
+    const authenticated = await validateSessionToken(token, adminPassword)
     if (!authenticated) {
       return NextResponse.json({ authenticated: false })
     }
 
     const supabase = getSupabaseAdmin()
-    const { data: admins } = await supabase.from('admins').select('username, display_name, email').limit(1)
+    const { data: admins } = await supabase
+      .from('admins')
+      .select('username, display_name, email')
+      .limit(1)
 
     return NextResponse.json({
       authenticated: true,

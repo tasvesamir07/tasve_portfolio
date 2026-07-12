@@ -1,18 +1,47 @@
-import { randomUUID, createHmac, timingSafeEqual } from 'node:crypto'
+export async function createSessionToken(password: string): Promise<string> {
+  const uuid = crypto.randomUUID()
+  const encoder = new TextEncoder()
+  const keyData = encoder.encode(password)
+  const data = encoder.encode(uuid)
 
-export function createSessionToken(password: string): string {
-  const uuid = randomUUID()
-  const hmac = createHmac('sha256', password).update(uuid).digest('hex')
+  const key = await crypto.subtle.importKey(
+    'raw',
+    keyData,
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign'],
+  )
+
+  const signature = await crypto.subtle.sign('HMAC', key, data)
+
+  const hmac = Array.from(new Uint8Array(signature))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('')
+
   return `${uuid}.${hmac}`
 }
 
-export function validateSessionToken(token: string, password: string): boolean {
+export async function validateSessionToken(token: string, password: string): Promise<boolean> {
   const [uuid, hmac] = token.split('.')
   if (!uuid || !hmac) return false
-  const expected = createHmac('sha256', password).update(uuid).digest('hex')
-  try {
-    return timingSafeEqual(Buffer.from(hmac), Buffer.from(expected))
-  } catch {
-    return false
-  }
+
+  const encoder = new TextEncoder()
+  const keyData = encoder.encode(password)
+  const data = encoder.encode(uuid)
+
+  const key = await crypto.subtle.importKey(
+    'raw',
+    keyData,
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign'],
+  )
+
+  const signature = await crypto.subtle.sign('HMAC', key, data)
+
+  const expected = Array.from(new Uint8Array(signature))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('')
+
+  return hmac === expected
 }

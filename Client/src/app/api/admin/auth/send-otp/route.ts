@@ -9,6 +9,17 @@ const SendOTPSchema = z.object({
   username: z.string().min(1),
 })
 
+function maskEmail(email: string): string {
+  const [localPart, domain] = email.split('@')
+  if (!localPart || !domain) return email
+  if (localPart.length <= 4) {
+    return `${localPart[0]}***${localPart[localPart.length - 1]}@${domain}`
+  }
+  const first = localPart.slice(0, 2)
+  const last = localPart.slice(-4)
+  return `${first}******${last}@${domain}`
+}
+
 export async function POST(req: Request) {
   const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
   const { allowed } = checkRateLimit(`send-otp:${ip}`, 3, 60_000)
@@ -32,7 +43,7 @@ export async function POST(req: Request) {
       .limit(1)
 
     if (!admins || admins.length === 0 || !admins[0].email) {
-      return NextResponse.json({ success: true, message: 'If the account exists, an OTP has been sent.' })
+      return NextResponse.json({ error: 'Admin username not found.' }, { status: 404 })
     }
 
     const admin = admins[0]
@@ -43,13 +54,18 @@ export async function POST(req: Request) {
 
     const sent = await sendOTPEmail(admin.email, otp.code)
     if (!sent) {
-      return NextResponse.json({ error: 'SMTP is not configured. Set SMTP_USER and SMTP_PASS env vars.' }, { status: 500 })
+      return NextResponse.json(
+        { error: 'SMTP is not configured. Set SMTP_USER and SMTP_PASS env vars.' },
+        { status: 500 },
+      )
     }
 
+    const masked = maskEmail(admin.email)
     return NextResponse.json({
       success: true,
       otp_id: otp.id,
-      message: 'OTP sent to your registered email.',
+      email: masked,
+      message: `OTP sent to your registered email: ${masked}`,
     })
   } catch (err) {
     console.error('Send OTP error:', err)
