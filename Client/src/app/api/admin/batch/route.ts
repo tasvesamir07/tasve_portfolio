@@ -20,9 +20,13 @@ export async function POST(req: Request) {
       if ('id' in item && item.id !== null && item.id !== undefined && typeof item.id !== 'number') {
         return NextResponse.json({ error: 'Item id must be a number if present' }, { status: 400 })
       }
-      const { id, ...data } = item
+      const { id, created_at, updated_at, ...data } = item
       if (id) {
-        const { error } = await supabaseAdmin.from(table).update({ ...data, updated_at: new Date().toISOString() }).eq('id', id)
+        const updatePayload: any = { ...data }
+        if (!['skills', 'gallery'].includes(table)) {
+          updatePayload.updated_at = new Date().toISOString()
+        }
+        const { error } = await supabaseAdmin.from(table).update(updatePayload).eq('id', id)
         if (error) return NextResponse.json({ error: error.message }, { status: 500 })
       } else {
         const { error } = await supabaseAdmin.from(table).insert(data)
