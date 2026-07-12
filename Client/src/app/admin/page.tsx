@@ -15,6 +15,7 @@ import SettingsTab from '@/components/admin/SettingsTab'
 import DashboardStats from '@/components/admin/DashboardStats'
 import { AdminSkeleton } from '@/components/Skeleton'
 import { compressAndConvertToWebp } from '@/lib/image'
+import ScrollToTop from '@/components/ScrollToTop'
 
 type Tab = 'dashboard' | 'profile' | 'projects' | 'skills' | 'experiences' | 'education' | 'certifications' | 'gallery' | 'messages' | 'settings'
 
@@ -448,26 +449,8 @@ function AdminPageInner() {
     setGallery(moveItem(gallery, idx, to))
   }
 
-  const showTabs = ['dashboard', 'profile', 'projects', 'skills', 'experiences', 'education', 'certifications', 'gallery', 'messages', 'settings']
-
   return (
     <>
-      <div className="flex items-center gap-3 mb-6">
-        {showTabs.map((t) => (
-          <button
-            key={t}
-            onClick={() => setTab(t as Tab)}
-            className={`px-3 py-1.5 text-xs font-medium rounded-lg capitalize transition-colors cursor-pointer ${
-              tab === t
-                ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20'
-                : 'text-gray-500 hover:text-white bg-white/5 border border-white/5'
-            }`}
-          >
-            {t}
-          </button>
-        ))}
-      </div>
-
       {loadingData && !['dashboard', 'certifications', 'gallery'].includes(tab) ? (
         <AdminSkeleton />
       ) : (
@@ -528,6 +511,7 @@ function AdminPageInner() {
           {tab === 'settings' && <SettingsTab />}
         </>
       )}
+      <ScrollToTop />
     </>
   )
 }
