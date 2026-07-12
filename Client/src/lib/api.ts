@@ -143,6 +143,25 @@ export async function fetchEducation(): Promise<Education[]> {
   }))
 }
 
+export async function fetchProject(id: string): Promise<Project> {
+  const supabase = getSupabase()
+  const { data, error } = await supabase.from('projects').select('*').eq('id', id).single()
+  if (error) throw error
+  const row = data as ProjectRow
+  return {
+    id: row.id.toString(),
+    title: row.title || '',
+    category: row.category || '',
+    tag: row.tag || '',
+    desc: row.desc || '',
+    tags: row.tags ? row.tags.split(',').map((t: string) => t.trim()) : [],
+    github: row.github || '',
+    live: row.live || '',
+    image: row.image || '',
+    diagram_url: row.diagram_url || '',
+  }
+}
+
 export async function fetchExperience(): Promise<Experience[]> {
   const supabase = getSupabase()
   const { data, error } = await supabase.from('experiences').select('*').order('sort_order', { ascending: true })

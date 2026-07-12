@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ExternalLink, Code, FileImage } from 'lucide-react';
 import Card3DTilt from './Card3DTilt';
@@ -110,6 +111,12 @@ export default function ProjectsGrid({ projects }: Props) {
                         <ExternalLink className="w-5 h-5" />
                       </a>
                     )}
+                    <Link
+                      href={`/projects/${p.id}`}
+                      className="ml-auto text-xs font-mono text-gray-500 hover:text-cyan-400 transition-colors"
+                    >
+                      Details →
+                    </Link>
                     {p.diagram_url && (
                       <button
                         onClick={() => setDiagramUrl(p.diagram_url)}

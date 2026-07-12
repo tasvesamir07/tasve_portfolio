@@ -307,7 +307,28 @@ export default function AdminPage() {
 
       <div className="p-6 max-w-4xl mx-auto">
         {tab === 'profile' && profile && (
-          <ProfileTab profile={profile} saving={saving} onChange={setProfile} onSave={saveProfile} />
+          <div className="flex flex-col gap-6">
+            {/* Dashboard Stats */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="bg-[#0f121d]/60 backdrop-blur border border-white/5 rounded-xl p-4">
+                <p className="text-2xl font-bold text-cyan-400">{projects.length}</p>
+                <p className="text-xs text-gray-500 font-mono mt-1">Projects</p>
+              </div>
+              <div className="bg-[#0f121d]/60 backdrop-blur border border-white/5 rounded-xl p-4">
+                <p className="text-2xl font-bold text-purple-400">{skills.length}</p>
+                <p className="text-xs text-gray-500 font-mono mt-1">Skills</p>
+              </div>
+              <div className="bg-[#0f121d]/60 backdrop-blur border border-white/5 rounded-xl p-4">
+                <p className="text-2xl font-bold text-pink-400">{experiences.length}</p>
+                <p className="text-xs text-gray-500 font-mono mt-1">Experiences</p>
+              </div>
+              <div className="bg-[#0f121d]/60 backdrop-blur border border-white/5 rounded-xl p-4">
+                <p className="text-2xl font-bold text-emerald-400">{education.length}</p>
+                <p className="text-xs text-gray-500 font-mono mt-1">Education</p>
+              </div>
+            </div>
+            <ProfileTab profile={profile} saving={saving} onChange={setProfile} onSave={saveProfile} />
+          </div>
         )}
         {tab === 'projects' && (
           <ProjectsTab

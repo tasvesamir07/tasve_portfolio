@@ -24,6 +24,7 @@ import {
   Layers, 
   Briefcase 
 } from 'lucide-react';
+import AnimatedSection from '@/components/AnimatedSection'
 
 export const revalidate = 3600;
 
@@ -157,7 +158,13 @@ export default async function Home() {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+          <AnimatedSection
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-50px' }}
+            transition={{ duration: 0.6 }}
+            className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start"
+          >
             {/* Bio Text */}
             <div className="flex flex-col gap-6 text-gray-400 text-base leading-relaxed">
               {profile.bioParagraphs.map((p, idx) => (
@@ -217,7 +224,7 @@ export default async function Home() {
                 </div>
               </Card3DTilt>
             </div>
-          </div>
+          </AnimatedSection>
         </div>
       </section>
 
@@ -231,7 +238,13 @@ export default async function Home() {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <AnimatedSection
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-50px' }}
+            transition={{ duration: 0.6 }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
             {skills.map((cat) => (
               <div 
                 key={cat.category}
@@ -259,7 +272,7 @@ export default async function Home() {
                 </div>
               </div>
             ))}
-          </div>
+          </AnimatedSection>
         </div>
       </section>
 
@@ -274,7 +287,14 @@ export default async function Home() {
           </div>
 
           {/* Interactive filterable projects component */}
-          <ProjectsGrid projects={projects} />
+          <AnimatedSection
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-50px' }}
+            transition={{ duration: 0.6 }}
+          >
+            <ProjectsGrid projects={projects} />
+          </AnimatedSection>
         </div>
       </section>
 
@@ -288,7 +308,13 @@ export default async function Home() {
             </h2>
           </div>
 
-          <div className="relative pl-10 border-l border-white/10 flex flex-col gap-12">
+          <AnimatedSection
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: '-50px' }}
+            transition={{ duration: 0.6 }}
+            className="relative pl-10 border-l border-white/10 flex flex-col gap-12"
+          >
             {experiences.map((exp) => (
               <div key={exp.company + exp.date} className="relative group">
                 {/* Connecting Dot */}
@@ -304,7 +330,7 @@ export default async function Home() {
                 </div>
               </div>
             ))}
-          </div>
+          </AnimatedSection>
         </div>
       </section>
 
@@ -319,7 +345,13 @@ export default async function Home() {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+          <AnimatedSection
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-50px' }}
+            transition={{ duration: 0.6 }}
+            className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start"
+          >
             {/* Left: Education Timeline */}
             <div className="lg:col-span-7 flex flex-col gap-6">
               <h3 className="text-xl font-bold font-heading text-white flex items-center gap-2 mb-2">
@@ -383,7 +415,7 @@ export default async function Home() {
                 </div>
               </div>
             </div>
-          </div>
+          </AnimatedSection>
         </div>
       </section>
       )}
