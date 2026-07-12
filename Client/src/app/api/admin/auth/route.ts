@@ -46,14 +46,15 @@ export async function POST(req: Request) {
     const supabase = getSupabaseAdmin()
     await ensureAdminExists(supabase)
 
+    const input = username.toLowerCase().trim()
     const { data: admins } = await supabase
       .from('admins')
       .select('*')
-      .eq('username', username.toLowerCase().trim())
+      .or(`username.eq.${input},email.eq.${input}`)
       .limit(1)
 
     if (!admins || admins.length === 0) {
-      return NextResponse.json({ error: 'Invalid username or password' }, { status: 401 })
+      return NextResponse.json({ error: 'Invalid username/email or password' }, { status: 401 })
     }
 
     if (!verifyPassword(password, admins[0].password_hash)) {

@@ -143,7 +143,7 @@ export default function LoginPage() {
             <div>
               <h1 className="text-lg font-bold text-white">Reset Password</h1>
               <p className="text-xs text-gray-500 font-mono">
-                {resetStep === 'username' && 'Enter your username'}
+                {resetStep === 'username' && 'Enter your username or email'}
                 {resetStep === 'otp' && 'Check your email for OTP'}
                 {resetStep === 'password' && 'Choose a new password'}
               </p>
@@ -194,7 +194,7 @@ export default function LoginPage() {
                   type="text"
                   value={resetUsername}
                   onChange={(e) => setResetUsername(e.target.value)}
-                  placeholder="Admin Username"
+                  placeholder="Username or Email"
                   className="w-full pl-10 pr-4 py-2.5 bg-[#0f121d] border border-white/5 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500/50 transition-colors"
                   autoFocus
                 />
@@ -346,7 +346,7 @@ export default function LoginPage() {
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="Username"
+              placeholder="Username or Email"
               className="w-full pl-10 pr-4 py-2.5 bg-[#0f121d] border border-white/5 rounded-lg text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500/50 transition-colors"
               autoFocus
               onKeyDown={(e) => {

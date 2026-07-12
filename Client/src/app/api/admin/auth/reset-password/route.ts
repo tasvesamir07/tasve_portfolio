@@ -30,10 +30,11 @@ export async function POST(req: Request) {
     const { username, otp, newPassword } = parsed.data
     const supabase = getSupabaseAdmin()
 
+    const input = username.toLowerCase().trim()
     const { data: admins } = await supabase
       .from('admins')
       .select('*')
-      .eq('username', username.toLowerCase().trim())
+      .or(`username.eq.${input},email.eq.${input}`)
       .limit(1)
 
     if (!admins || admins.length === 0) {

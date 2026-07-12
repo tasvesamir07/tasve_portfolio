@@ -36,14 +36,15 @@ export async function POST(req: Request) {
     const { username } = parsed.data
     const supabase = getSupabaseAdmin()
 
+    const input = username.toLowerCase().trim()
     const { data: admins } = await supabase
       .from('admins')
       .select('id, email, username')
-      .eq('username', username.toLowerCase().trim())
+      .or(`username.eq.${input},email.eq.${input}`)
       .limit(1)
 
     if (!admins || admins.length === 0 || !admins[0].email) {
-      return NextResponse.json({ error: 'Admin username not found.' }, { status: 404 })
+      return NextResponse.json({ error: 'Admin username or email not found.' }, { status: 404 })
     }
 
     const admin = admins[0]
