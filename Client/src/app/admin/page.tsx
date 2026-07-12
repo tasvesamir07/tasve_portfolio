@@ -15,6 +15,7 @@ import CertificationsTab from '@/components/admin/CertificationsTab'
 import GalleryTab from '@/components/admin/GalleryTab'
 import { AdminSkeleton } from '@/components/Skeleton'
 import { compressAndConvertToWebp } from '@/lib/image'
+import ScrollToTop from '@/components/ScrollToTop'
 
 type Tab = 'profile' | 'projects' | 'skills' | 'experiences' | 'messages' | 'education' | 'certifications' | 'gallery' | 'settings'
 
@@ -536,6 +537,7 @@ export default function AdminPage() {
           </>
         )}
       </div>
+      <ScrollToTop />
     </div>
   )
 }
