@@ -16,6 +16,7 @@ export const ProfileSchema = z.object({
   avatar: z.string().max(1000).optional(),
   resume_url: z.string().max(1000).optional(),
   passion: z.string().max(200).optional(),
+  roles_list: z.string().max(1000).optional(),
 })
 
 export const ProjectSchema = z.object({

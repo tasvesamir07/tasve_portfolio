@@ -195,7 +195,7 @@ async function HeroSection({
             {profile.name}
           </h1>
 
-          <Typewriter primaryRole={profile.title} />
+          <Typewriter roles={profile.rolesList && profile.rolesList.length > 0 ? profile.rolesList : [profile.title]} />
 
           <p className="text-gray-400 text-base md:text-lg leading-relaxed max-w-xl mx-auto lg:mx-0">
             {profile.description}

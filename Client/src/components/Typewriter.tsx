@@ -3,24 +3,24 @@
 import React, { useEffect, useState } from 'react'
 
 interface Props {
-  primaryRole: string
+  roles: string[]
 }
 
-export default function Typewriter({ primaryRole }: Props) {
+export default function Typewriter({ roles }: Props) {
   const [roleIndex, setRoleIndex] = useState(0)
   const [text, setText] = useState('')
   const [isDeleting, setIsDeleting] = useState(false)
 
   useEffect(() => {
-    const roles = [primaryRole, 'Creative Web Architect', 'UI/UX Engineer', 'Problem Solver']
-    const currentRole = roles[roleIndex]
+    const rolesList = roles && roles.length > 0 ? roles : ['Creative Web Architect', 'UI/UX Engineer', 'Problem Solver']
+    const currentRole = rolesList[roleIndex]
 
     const tick = () => {
       if (isDeleting) {
         setText(currentRole.substring(0, text.length - 1))
         if (text.length === 1) {
           setIsDeleting(false)
-          setRoleIndex((prev) => (prev + 1) % roles.length)
+          setRoleIndex((prev) => (prev + 1) % rolesList.length)
         }
       } else {
         setText(currentRole.substring(0, text.length + 1))
@@ -33,7 +33,7 @@ export default function Typewriter({ primaryRole }: Props) {
     const speed = isDeleting ? 50 : text.length === currentRole.length ? 2000 : 120
     const timer = setTimeout(tick, speed)
     return () => clearTimeout(timer)
-  }, [text, isDeleting, roleIndex, primaryRole])
+  }, [text, isDeleting, roleIndex, roles])
 
   return (
     <div className="font-heading text-2xl md:text-4xl font-bold text-gray-300 min-h-[45px] flex items-center justify-center md:justify-start">

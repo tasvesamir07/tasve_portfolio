@@ -19,6 +19,7 @@ interface ProfileData {
   avatar: string
   resume_url: string
   passion: string
+  roles_list: string
 }
 
 interface Props {
@@ -47,6 +48,7 @@ const fieldLabels: Record<string, string> = {
   twitter: 'Twitter URL',
   codepen: 'CodePen URL',
   passion: 'Passion (for developer.json)',
+  roles_list: 'Typewriter Roles (comma separated)',
 }
 
 export default function ProfileTab({ profile, saving, onChange, onSave }: Props) {
@@ -85,6 +87,7 @@ export default function ProfileTab({ profile, saving, onChange, onSave }: Props)
     'twitter',
     'codepen',
     'passion',
+    'roles_list',
   ]
 
   return (

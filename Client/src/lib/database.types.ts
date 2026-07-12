@@ -15,6 +15,7 @@ export interface ProfileRow {
   avatar: string
   resume_url: string
   passion: string
+  roles_list: string
   created_at: string
   updated_at: string
 }

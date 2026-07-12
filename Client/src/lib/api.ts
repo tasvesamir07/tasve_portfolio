@@ -38,6 +38,7 @@ export interface Profile {
   avatar: string
   resume_url: string
   passion: string
+  rolesList: string[]
 }
 
 export interface Skill {
@@ -78,6 +79,7 @@ export function formatProfile(data: ProfileRow): Profile {
     avatar: data.avatar || '',
     resume_url: data.resume_url || '',
     passion: data.passion || '',
+    rolesList: data.roles_list ? data.roles_list.split(',').map((r: string) => r.trim()).filter(Boolean) : [],
   }
 }
 
