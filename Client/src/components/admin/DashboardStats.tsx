@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from 'react'
 import {
-  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
-  PieChart, Pie, Cell,
-  LineChart, Line, CartesianGrid,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  PieChart, Pie, Cell, LineChart, Line,
 } from 'recharts'
+import type { PieLabelRenderProps } from 'recharts/types'
 import { FolderKanban, BarChart3, Briefcase, GraduationCap, Award, Image as ImageIcon, Mail, Loader } from 'lucide-react'
 
 const COLORS = ['#06b6d4', '#a855f7', '#ec4899', '#10b981', '#f59e0b', '#ef4444', '#6366f1']
@@ -150,7 +150,7 @@ export default function DashboardStats() {
                   cx="50%"
                   cy="50%"
                   outerRadius={70}
-                  label={(props: { category?: string; count?: number }) => `${props.category}: ${props.count}`}
+                  label={(props: PieLabelRenderProps) => `${props.payload?.category}: ${props.payload?.count}`}
                   labelLine={false}
                 >
                   {data.projectsByCategory.map((_, i) => (
