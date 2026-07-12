@@ -1,9 +1,24 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { LogOut, Settings, Award, Image as ImageIcon } from 'lucide-react'
+import { toast, Toaster } from 'sonner'
+import {
+  LogOut,
+  Settings,
+  Award,
+  Image as ImageIcon,
+  User,
+  FolderKanban,
+  BarChart3,
+  Briefcase,
+  GraduationCap,
+  Mail,
+  Menu,
+  X,
+  ChevronLeft,
+} from 'lucide-react'
 import ProfileTab from '@/components/admin/ProfileTab'
 import ProjectsTab from '@/components/admin/ProjectsTab'
 import SkillsTab from '@/components/admin/SkillsTab'
@@ -117,8 +132,6 @@ export default function AdminPage() {
   const [authed, setAuthed] = useState(false)
   const [loadingData, setLoadingData] = useState(true)
   const [saving, setSaving] = useState(false)
-  const [toast, setToast] = useState<string | null>(null)
-
   const [profile, setProfile] = useState<ProfileData | null>(null)
   const [projects, setProjects] = useState<ProjectData[]>([])
   const [skills, setSkills] = useState<SkillData[]>([])
@@ -126,11 +139,6 @@ export default function AdminPage() {
   const [education, setEducation] = useState<EducationData[]>([])
   const [certifications, setCertifications] = useState<CertificationData[]>([])
   const [gallery, setGallery] = useState<GalleryItemData[]>([])
-
-  const showToast = useCallback((msg: string) => {
-    setToast(msg)
-    setTimeout(() => setToast(null), 3000)
-  }, [])
 
   useEffect(() => {
     fetch('/api/admin/auth')
@@ -152,49 +160,49 @@ export default function AdminPage() {
         .then(checkRes)
         .then(setProfile)
         .catch(() => {
-          showToast('Failed to load profile')
+          toast('Failed to load profile')
           setProfile(null)
         }),
       fetch('/api/admin/projects')
         .then(checkRes)
         .then(setProjects)
         .catch(() => {
-          showToast('Failed to load projects')
+          toast('Failed to load projects')
           setProjects([])
         }),
       fetch('/api/admin/skills')
         .then(checkRes)
         .then(setSkills)
         .catch(() => {
-          showToast('Failed to load skills')
+          toast('Failed to load skills')
           setSkills([])
         }),
       fetch('/api/admin/experiences')
         .then(checkRes)
         .then(setExperiences)
         .catch(() => {
-          showToast('Failed to load experiences')
+          toast('Failed to load experiences')
           setExperiences([])
         }),
       fetch('/api/admin/education')
         .then(checkRes)
         .then(setEducation)
         .catch(() => {
-          showToast('Failed to load education')
+          toast('Failed to load education')
           setEducation([])
         }),
       fetch('/api/admin/certifications')
         .then(checkRes)
         .then(setCertifications)
         .catch(() => {
-          showToast('Failed to load certifications')
+          toast('Failed to load certifications')
           setCertifications([])
         }),
       fetch('/api/admin/gallery')
         .then(checkRes)
         .then(setGallery)
         .catch(() => {
-          showToast('Failed to load gallery')
+          toast('Failed to load gallery')
           setGallery([])
         }),
     ]).finally(() => setLoadingData(false))
@@ -214,7 +222,7 @@ export default function AdminPage() {
       body: JSON.stringify(profile),
     })
     setSaving(false)
-    showToast(res.ok ? 'Profile saved' : 'Failed to save profile')
+    toast(res.ok ? 'Profile saved' : 'Failed to save profile')
   }
 
   const handleProjectImage = async (idx: number, file: File) => {
@@ -229,7 +237,7 @@ export default function AdminPage() {
       setProjects(updated)
     } catch (err) {
       console.error('Project image upload failed:', err)
-      showToast('Image compression failed')
+      toast('Image compression failed')
     }
   }
 
@@ -242,7 +250,7 @@ export default function AdminPage() {
       body: JSON.stringify({ table: 'projects', items }),
     })
     setSaving(false)
-    showToast(res.ok ? 'Projects saved' : 'Failed to save')
+    toast(res.ok ? 'Projects saved' : 'Failed to save')
   }
 
   const addProject = async () => {
@@ -263,12 +271,12 @@ export default function AdminPage() {
       body: JSON.stringify(newP),
     })
     if (!res.ok) {
-      showToast('Failed to add')
+      toast('Failed to add')
       return
     }
     const saved = await res.json()
     setProjects([...projects, saved])
-    showToast('Project added')
+    toast('Project added')
   }
 
   const deleteProject = async (id: number) => {
@@ -276,9 +284,9 @@ export default function AdminPage() {
       const res = await fetch(`/api/admin/projects/${id}`, { method: 'DELETE' })
       if (!res.ok) throw new Error('Failed to delete')
       setProjects(projects.filter((p) => p.id !== id))
-      showToast('Project deleted')
+      toast('Project deleted')
     } catch {
-      showToast('Failed to delete project')
+      toast('Failed to delete project')
     }
   }
 
@@ -297,7 +305,7 @@ export default function AdminPage() {
       body: JSON.stringify({ table: 'skills', items }),
     })
     setSaving(false)
-    showToast(res.ok ? 'Skills saved' : 'Failed to save')
+    toast(res.ok ? 'Skills saved' : 'Failed to save')
   }
 
   const addSkill = async () => {
@@ -308,12 +316,12 @@ export default function AdminPage() {
       body: JSON.stringify(newS),
     })
     if (!res.ok) {
-      showToast('Failed to add')
+      toast('Failed to add')
       return
     }
     const saved = await res.json()
     setSkills([...skills, saved])
-    showToast('Skill added')
+    toast('Skill added')
   }
 
   const deleteSkill = async (id: number) => {
@@ -321,9 +329,9 @@ export default function AdminPage() {
       const res = await fetch(`/api/admin/skills/${id}`, { method: 'DELETE' })
       if (!res.ok) throw new Error('Failed to delete')
       setSkills(skills.filter((s) => s.id !== id))
-      showToast('Skill deleted')
+      toast('Skill deleted')
     } catch {
-      showToast('Failed to delete skill')
+      toast('Failed to delete skill')
     }
   }
 
@@ -342,7 +350,7 @@ export default function AdminPage() {
       body: JSON.stringify({ table: 'experiences', items }),
     })
     setSaving(false)
-    showToast(res.ok ? 'Experiences saved' : 'Failed to save')
+    toast(res.ok ? 'Experiences saved' : 'Failed to save')
   }
 
   const addExperience = async () => {
@@ -353,12 +361,12 @@ export default function AdminPage() {
       body: JSON.stringify(newE),
     })
     if (!res.ok) {
-      showToast('Failed to add')
+      toast('Failed to add')
       return
     }
     const saved = await res.json()
     setExperiences([...experiences, saved])
-    showToast('Experience added')
+    toast('Experience added')
   }
 
   const deleteExperience = async (id: number) => {
@@ -366,9 +374,9 @@ export default function AdminPage() {
       const res = await fetch(`/api/admin/experiences/${id}`, { method: 'DELETE' })
       if (!res.ok) throw new Error('Failed to delete')
       setExperiences(experiences.filter((e) => e.id !== id))
-      showToast('Experience deleted')
+      toast('Experience deleted')
     } catch {
-      showToast('Failed to delete experience')
+      toast('Failed to delete experience')
     }
   }
 
@@ -406,7 +414,7 @@ export default function AdminPage() {
       }),
     )
     setSaving(false)
-    showToast('Education saved')
+    toast('Education saved')
   }
 
   const addEducation = async () => {
@@ -424,12 +432,12 @@ export default function AdminPage() {
       body: JSON.stringify(newE),
     })
     if (!res.ok) {
-      showToast('Failed to add')
+      toast('Failed to add')
       return
     }
     const saved = await res.json()
     setEducation([...education, saved])
-    showToast('Entry added')
+    toast('Entry added')
   }
 
   const deleteEducation = async (id: number) => {
@@ -437,9 +445,9 @@ export default function AdminPage() {
       const res = await fetch(`/api/admin/education/${id}`, { method: 'DELETE' })
       if (!res.ok) throw new Error('Failed to delete')
       setEducation(education.filter((e) => e.id !== id))
-      showToast('Entry deleted')
+      toast('Entry deleted')
     } catch {
-      showToast('Failed to delete')
+      toast('Failed to delete')
     }
   }
 
@@ -462,7 +470,7 @@ export default function AdminPage() {
       setCertifications(updated)
     } catch (err) {
       console.error('Certification image upload failed:', err)
-      showToast('Image compression failed')
+      toast('Image compression failed')
     }
   }
 
@@ -475,7 +483,7 @@ export default function AdminPage() {
       body: JSON.stringify({ table: 'certifications', items }),
     })
     setSaving(false)
-    showToast(res.ok ? 'Certifications saved' : 'Failed to save')
+    toast(res.ok ? 'Certifications saved' : 'Failed to save')
   }
 
   const addCertification = async () => {
@@ -493,12 +501,12 @@ export default function AdminPage() {
       body: JSON.stringify(newC),
     })
     if (!res.ok) {
-      showToast('Failed to add')
+      toast('Failed to add')
       return
     }
     const saved = await res.json()
     setCertifications([...certifications, saved])
-    showToast('Certification added')
+    toast('Certification added')
   }
 
   const deleteCertification = async (id: number) => {
@@ -506,9 +514,9 @@ export default function AdminPage() {
       const res = await fetch(`/api/admin/certifications/${id}`, { method: 'DELETE' })
       if (!res.ok) throw new Error('Failed to delete')
       setCertifications(certifications.filter((c) => c.id !== id))
-      showToast('Certification deleted')
+      toast('Certification deleted')
     } catch {
-      showToast('Failed to delete')
+      toast('Failed to delete')
     }
   }
 
@@ -531,7 +539,7 @@ export default function AdminPage() {
       setGallery(updated)
     } catch (err) {
       console.error('Gallery image upload failed:', err)
-      showToast('Image compression failed')
+      toast('Image compression failed')
     }
   }
 
@@ -544,7 +552,7 @@ export default function AdminPage() {
       body: JSON.stringify({ table: 'gallery', items }),
     })
     setSaving(false)
-    showToast(res.ok ? 'Gallery saved' : 'Failed to save')
+    toast(res.ok ? 'Gallery saved' : 'Failed to save')
   }
 
   const addGalleryItem = async () => {
@@ -555,12 +563,12 @@ export default function AdminPage() {
       body: JSON.stringify(newG),
     })
     if (!res.ok) {
-      showToast('Failed to add')
+      toast('Failed to add')
       return
     }
     const saved = await res.json()
     setGallery([...gallery, saved])
-    showToast('Image added')
+    toast('Image added')
   }
 
   const deleteGalleryItem = async (id: number) => {
@@ -568,9 +576,9 @@ export default function AdminPage() {
       const res = await fetch(`/api/admin/gallery/${id}`, { method: 'DELETE' })
       if (!res.ok) throw new Error('Failed to delete')
       setGallery(gallery.filter((g) => g.id !== id))
-      showToast('Image deleted')
+      toast('Image deleted')
     } catch {
-      showToast('Failed to delete')
+      toast('Failed to delete')
     }
   }
 
@@ -582,199 +590,258 @@ export default function AdminPage() {
 
   if (!authed) return null
 
-  const tabLabels: Record<Tab, string> = {
-    profile: 'Profile',
-    projects: 'Projects',
-    skills: 'Skills',
-    experiences: 'Experience',
-    messages: 'Messages',
-    education: 'Education',
-    certifications: 'Certifications',
-    gallery: 'Gallery',
-    settings: 'Settings',
+  const tabLabels: Record<Tab, { label: string; icon: React.ReactNode }> = {
+    profile: { label: 'Profile', icon: <User className="w-4 h-4" /> },
+    projects: { label: 'Projects', icon: <FolderKanban className="w-4 h-4" /> },
+    skills: { label: 'Skills', icon: <BarChart3 className="w-4 h-4" /> },
+    experiences: { label: 'Experience', icon: <Briefcase className="w-4 h-4" /> },
+    education: { label: 'Education', icon: <GraduationCap className="w-4 h-4" /> },
+    certifications: { label: 'Certifications', icon: <Award className="w-4 h-4" /> },
+    gallery: { label: 'Gallery', icon: <ImageIcon className="w-4 h-4" /> },
+    messages: { label: 'Messages', icon: <Mail className="w-4 h-4" /> },
+    settings: { label: 'Settings', icon: <Settings className="w-4 h-4" /> },
   }
 
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+
   return (
-    <div className="min-h-screen bg-[#07090e]">
-      {toast && (
-        <div className="fixed top-4 right-4 z-50 px-4 py-2 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 rounded-lg text-sm backdrop-blur animate-fade-in">
-          {toast}
-        </div>
+    <div className="min-h-screen bg-[#07090e] flex">
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          style: {
+            background: '#0f121d',
+            border: '1px solid rgba(255,255,255,0.05)',
+            color: '#e5e7eb',
+            fontSize: '14px',
+          },
+        }}
+      />
+
+      {/* Mobile sidebar overlay */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 z-30 bg-black/50 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
       )}
 
-      <header className="sticky top-0 z-40 bg-[#0f121d]/80 backdrop-blur-xl border-b border-white/5 px-6 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-6">
-          <div className="flex items-center gap-3">
-            <span className="text-cyan-400 font-bold text-lg">&lt;</span>
-            <h1 className="text-lg font-bold text-white">Admin</h1>
-            <span className="text-cyan-400 font-bold text-lg">/&gt;</span>
+      {/* Sidebar */}
+      <aside
+        className={`fixed md:sticky top-0 z-40 h-screen w-56 bg-[#0f121d]/95 backdrop-blur-xl border-r border-white/5 flex flex-col transition-transform duration-200 md:translate-x-0 ${
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
+        <div className="flex items-center justify-between px-4 h-14 border-b border-white/5">
+          <div className="flex items-center gap-2">
+            <span className="text-cyan-400 font-bold">&lt;</span>
+            <span className="text-white font-bold">Admin</span>
+            <span className="text-cyan-400 font-bold">/&gt;</span>
           </div>
+          <button
+            onClick={() => setSidebarOpen(false)}
+            className="md:hidden text-gray-400 hover:text-white cursor-pointer"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+        <nav className="flex-1 overflow-y-auto p-2 space-y-1">
+          {(Object.keys(tabLabels) as Tab[]).map((t) => (
+            <button
+              key={t}
+              onClick={() => {
+                setTab(t)
+                setSidebarOpen(false)
+              }}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg transition-colors text-left cursor-pointer ${
+                tab === t
+                  ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20'
+                  : 'text-gray-400 hover:text-white hover:bg-white/5 border border-transparent'
+              }`}
+            >
+              {tabLabels[t].icon}
+              <span>{tabLabels[t].label}</span>
+            </button>
+          ))}
+        </nav>
+        <div className="p-2 border-t border-white/5 space-y-1">
           <Link
             href="/"
-            className="text-xs text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-lg border border-white/5 transition-all"
+            className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
           >
-            ← View Portfolio
+            <ChevronLeft className="w-4 h-4" /> View Site
           </Link>
-        </div>
-        <button
-          onClick={handleLogout}
-          className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"
-        >
-          <LogOut className="w-4 h-4" /> Logout
-        </button>
-      </header>
-
-      <div className="flex border-b border-white/5 px-6 bg-[#0f121d]/40 overflow-x-auto">
-        {(Object.keys(tabLabels) as Tab[]).map((t) => (
           <button
-            key={t}
-            onClick={() => setTab(t)}
-            className={`px-4 py-3 text-sm font-medium capitalize border-b-2 transition-colors shrink-0 flex items-center gap-1.5 ${
-              tab === t
-                ? 'border-cyan-400 text-cyan-400'
-                : 'border-transparent text-gray-500 hover:text-gray-300'
-            }`}
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-gray-400 hover:text-red-400 hover:bg-red-400/5 rounded-lg transition-colors cursor-pointer"
           >
-            {t === 'settings' && <Settings className="w-3.5 h-3.5" />}
-            {t === 'certifications' && <Award className="w-3.5 h-3.5" />}
-            {t === 'gallery' && <ImageIcon className="w-3.5 h-3.5" />}
-            {tabLabels[t]}
+            <LogOut className="w-4 h-4" /> Logout
           </button>
-        ))}
-      </div>
+        </div>
+      </aside>
 
-      <div className="p-6 max-w-4xl mx-auto">
-        {loadingData && !['settings', 'messages', 'certifications', 'gallery'].includes(tab) ? (
-          <AdminSkeleton />
-        ) : (
-          <>
-            {tab === 'profile' && profile && (
-              <div className="flex flex-col gap-6">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="bg-[#0f121d]/60 backdrop-blur border border-white/5 rounded-xl p-4">
-                    <p className="text-2xl font-bold text-cyan-400">{projects.length}</p>
-                    <p className="text-xs text-gray-500 font-mono mt-1">Projects</p>
+      {/* Main content area */}
+      <div className="flex-1 flex flex-col min-w-0">
+        {/* Top bar */}
+        <header className="sticky top-0 z-20 bg-[#0f121d]/80 backdrop-blur-xl border-b border-white/5 px-4 md:px-6 h-14 flex items-center justify-between">
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="md:hidden text-gray-400 hover:text-white cursor-pointer"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+          <div className="hidden md:flex items-center gap-3">
+            <span className="text-sm text-gray-500 font-mono">{tabLabels[tab].label}</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/"
+              className="hidden md:inline-flex text-xs text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-lg border border-white/5 transition-all"
+            >
+              View Portfolio
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors cursor-pointer"
+            >
+              <LogOut className="w-4 h-4" /> Logout
+            </button>
+          </div>
+        </header>
+
+        <div className="p-4 md:p-6 max-w-4xl mx-auto w-full">
+          {loadingData && !['settings', 'messages', 'certifications', 'gallery'].includes(tab) ? (
+            <AdminSkeleton />
+          ) : (
+            <>
+              {tab === 'profile' && profile && (
+                <div className="flex flex-col gap-6">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="bg-[#0f121d]/60 backdrop-blur border border-white/5 rounded-xl p-4">
+                      <p className="text-2xl font-bold text-cyan-400">{projects.length}</p>
+                      <p className="text-xs text-gray-500 font-mono mt-1">Projects</p>
+                    </div>
+                    <div className="bg-[#0f121d]/60 backdrop-blur border border-white/5 rounded-xl p-4">
+                      <p className="text-2xl font-bold text-purple-400">{skills.length}</p>
+                      <p className="text-xs text-gray-500 font-mono mt-1">Skills</p>
+                    </div>
+                    <div className="bg-[#0f121d]/60 backdrop-blur border border-white/5 rounded-xl p-4">
+                      <p className="text-2xl font-bold text-pink-400">{experiences.length}</p>
+                      <p className="text-xs text-gray-500 font-mono mt-1">Experiences</p>
+                    </div>
+                    <div className="bg-[#0f121d]/60 backdrop-blur border border-white/5 rounded-xl p-4">
+                      <p className="text-2xl font-bold text-emerald-400">{education.length}</p>
+                      <p className="text-xs text-gray-500 font-mono mt-1">Education</p>
+                    </div>
                   </div>
-                  <div className="bg-[#0f121d]/60 backdrop-blur border border-white/5 rounded-xl p-4">
-                    <p className="text-2xl font-bold text-purple-400">{skills.length}</p>
-                    <p className="text-xs text-gray-500 font-mono mt-1">Skills</p>
-                  </div>
-                  <div className="bg-[#0f121d]/60 backdrop-blur border border-white/5 rounded-xl p-4">
-                    <p className="text-2xl font-bold text-pink-400">{experiences.length}</p>
-                    <p className="text-xs text-gray-500 font-mono mt-1">Experiences</p>
-                  </div>
-                  <div className="bg-[#0f121d]/60 backdrop-blur border border-white/5 rounded-xl p-4">
-                    <p className="text-2xl font-bold text-emerald-400">{education.length}</p>
-                    <p className="text-xs text-gray-500 font-mono mt-1">Education</p>
-                  </div>
+                  <ProfileTab
+                    profile={profile}
+                    saving={saving}
+                    onChange={setProfile}
+                    onSave={saveProfile}
+                  />
                 </div>
-                <ProfileTab
-                  profile={profile}
+              )}
+              {tab === 'projects' && (
+                <ProjectsTab
+                  projects={projects}
                   saving={saving}
-                  onChange={setProfile}
-                  onSave={saveProfile}
+                  onAdd={addProject}
+                  onUpdate={(idx, p) => {
+                    const u = [...projects]
+                    u[idx] = p
+                    setProjects(u)
+                  }}
+                  onDelete={deleteProject}
+                  onImageUpload={handleProjectImage}
+                  onMove={moveProject}
+                  onSave={saveProjects}
                 />
-              </div>
-            )}
-            {tab === 'projects' && (
-              <ProjectsTab
-                projects={projects}
-                saving={saving}
-                onAdd={addProject}
-                onUpdate={(idx, p) => {
-                  const u = [...projects]
-                  u[idx] = p
-                  setProjects(u)
-                }}
-                onDelete={deleteProject}
-                onImageUpload={handleProjectImage}
-                onMove={moveProject}
-                onSave={saveProjects}
-              />
-            )}
-            {tab === 'skills' && (
-              <SkillsTab
-                skills={skills}
-                saving={saving}
-                onAdd={addSkill}
-                onUpdate={(idx, s) => {
-                  const u = [...skills]
-                  u[idx] = s
-                  setSkills(u)
-                }}
-                onDelete={deleteSkill}
-                onMove={moveSkill}
-                onSave={saveSkills}
-              />
-            )}
-            {tab === 'experiences' && (
-              <ExperiencesTab
-                experiences={experiences}
-                saving={saving}
-                onAdd={addExperience}
-                onUpdate={(idx, e) => {
-                  const u = [...experiences]
-                  u[idx] = e
-                  setExperiences(u)
-                }}
-                onDelete={deleteExperience}
-                onMove={moveExperience}
-                onSave={saveExperiences}
-              />
-            )}
-            {tab === 'education' && (
-              <EducationTab
-                education={education}
-                saving={saving}
-                onAdd={addEducation}
-                onUpdate={(idx, e) => {
-                  const u = [...education]
-                  u[idx] = e
-                  setEducation(u)
-                }}
-                onDelete={deleteEducation}
-                onMove={moveEducation}
-                onSave={saveEducation}
-              />
-            )}
-            {tab === 'certifications' && (
-              <CertificationsTab
-                certifications={certifications}
-                saving={saving}
-                onAdd={addCertification}
-                onUpdate={(idx, c) => {
-                  const u = [...certifications]
-                  u[idx] = c
-                  setCertifications(u)
-                }}
-                onDelete={deleteCertification}
-                onImageUpload={handleCertImage}
-                onMove={moveCertification}
-                onSave={saveCertifications}
-              />
-            )}
-            {tab === 'gallery' && (
-              <GalleryTab
-                items={gallery}
-                saving={saving}
-                onAdd={addGalleryItem}
-                onUpdate={(idx, g) => {
-                  const u = [...gallery]
-                  u[idx] = g
-                  setGallery(u)
-                }}
-                onDelete={deleteGalleryItem}
-                onImageUpload={handleGalleryImage}
-                onMove={moveGalleryItem}
-                onSave={saveGallery}
-              />
-            )}
-            {tab === 'messages' && <MessagesTab showToast={showToast} />}
-            {tab === 'settings' && <SettingsTab showToast={showToast} />}
-          </>
-        )}
+              )}
+              {tab === 'skills' && (
+                <SkillsTab
+                  skills={skills}
+                  saving={saving}
+                  onAdd={addSkill}
+                  onUpdate={(idx, s) => {
+                    const u = [...skills]
+                    u[idx] = s
+                    setSkills(u)
+                  }}
+                  onDelete={deleteSkill}
+                  onMove={moveSkill}
+                  onSave={saveSkills}
+                />
+              )}
+              {tab === 'experiences' && (
+                <ExperiencesTab
+                  experiences={experiences}
+                  saving={saving}
+                  onAdd={addExperience}
+                  onUpdate={(idx, e) => {
+                    const u = [...experiences]
+                    u[idx] = e
+                    setExperiences(u)
+                  }}
+                  onDelete={deleteExperience}
+                  onMove={moveExperience}
+                  onSave={saveExperiences}
+                />
+              )}
+              {tab === 'education' && (
+                <EducationTab
+                  education={education}
+                  saving={saving}
+                  onAdd={addEducation}
+                  onUpdate={(idx, e) => {
+                    const u = [...education]
+                    u[idx] = e
+                    setEducation(u)
+                  }}
+                  onDelete={deleteEducation}
+                  onMove={moveEducation}
+                  onSave={saveEducation}
+                />
+              )}
+              {tab === 'certifications' && (
+                <CertificationsTab
+                  certifications={certifications}
+                  saving={saving}
+                  onAdd={addCertification}
+                  onUpdate={(idx, c) => {
+                    const u = [...certifications]
+                    u[idx] = c
+                    setCertifications(u)
+                  }}
+                  onDelete={deleteCertification}
+                  onImageUpload={handleCertImage}
+                  onMove={moveCertification}
+                  onSave={saveCertifications}
+                />
+              )}
+              {tab === 'gallery' && (
+                <GalleryTab
+                  items={gallery}
+                  saving={saving}
+                  onAdd={addGalleryItem}
+                  onUpdate={(idx, g) => {
+                    const u = [...gallery]
+                    u[idx] = g
+                    setGallery(u)
+                  }}
+                  onDelete={deleteGalleryItem}
+                  onImageUpload={handleGalleryImage}
+                  onMove={moveGalleryItem}
+                  onSave={saveGallery}
+                />
+              )}
+              {tab === 'messages' && <MessagesTab />}
+              {tab === 'settings' && <SettingsTab />}
+            </>
+          )}
+        </div>
+        <ScrollToTop />
       </div>
-      <ScrollToTop />
     </div>
   )
 }

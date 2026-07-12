@@ -13,11 +13,12 @@ import {
   RefreshCw,
   CheckCircle,
 } from 'lucide-react'
+import { toast } from 'sonner'
 
 const inputClass =
   'w-full px-3 py-2 bg-[#0f121d] border border-white/5 rounded-lg text-sm text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500/50 transition-colors'
 
-export default function SettingsTab({ showToast }: { showToast: (msg: string) => void }) {
+export default function SettingsTab() {
   const [adminInfo, setAdminInfo] = useState<{
     username: string
     display_name: string
@@ -76,7 +77,7 @@ export default function SettingsTab({ showToast }: { showToast: (msg: string) =>
     })
     setSavingProfile(false)
     if (res.ok) {
-      showToast('Settings saved')
+      toast('Settings saved')
       setAdminInfo((prev) => (prev ? { ...prev, display_name: displayName, email } : prev))
     } else {
       setError('Failed to save settings')
@@ -105,7 +106,7 @@ export default function SettingsTab({ showToast }: { showToast: (msg: string) =>
     setSavingPassword(false)
 
     if (res.ok) {
-      showToast('Password changed successfully')
+      toast('Password changed successfully')
       setCurrentPassword('')
       setNewPassword('')
       setConfirmPassword('')
@@ -270,7 +271,7 @@ export default function SettingsTab({ showToast }: { showToast: (msg: string) =>
         prev +
         `\n\n🎉 Migration completed! Successfully converted ${successCount} image(s) to WebP.`,
     )
-    showToast('Database images migrated successfully')
+    toast('Database images migrated successfully')
     setConverting(false)
   }
 
