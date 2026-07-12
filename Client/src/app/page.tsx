@@ -542,25 +542,27 @@ async function CertificationsSection() {
         >
           {certifications.map((cert) => (
             <div key={cert.id}
-              className="bg-glass-bg border border-white/5 rounded-xl p-5 hover:border-white/10 hover:shadow-lg hover:shadow-purple-500/5 transition-all duration-200 flex flex-col items-center text-center gap-3 group"
+              className="bg-glass-bg border border-white/5 rounded-xl p-5 hover:border-white/10 hover:shadow-lg hover:shadow-purple-500/5 transition-all duration-200 flex flex-col gap-4 group"
             >
-              <div className="w-20 h-20 rounded-xl overflow-hidden bg-[#0f121d] border border-white/5 p-2 flex items-center justify-center group-hover:border-cyan-500/30 transition-colors shrink-0">
+              <div className="w-full aspect-[4/3] rounded-lg overflow-hidden bg-[#0a0c14]/80 border border-white/5 p-2 flex items-center justify-center group-hover:border-cyan-500/30 transition-colors shrink-0">
                 {cert.image ? (
                   <a href={cert.image} target="_blank" rel="noopener noreferrer" className="w-full h-full block cursor-zoom-in" title="View full certificate">
-                    <img src={cert.image} alt={cert.title || 'Certification badge'} className="w-full h-full object-contain" />
+                    <img src={cert.image} alt={cert.title || 'Certification badge'} className="w-full h-full object-contain transition-transform group-hover:scale-[1.02] duration-300" />
                   </a>
                 ) : (
-                  <ScrollText className="w-8 h-8 text-gray-600" />
+                  <ScrollText className="w-10 h-10 text-gray-600" />
                 )}
               </div>
-              <div>
-                <h3 className="font-heading font-bold text-sm text-white">{cert.title || 'Untitled Certification'}</h3>
-                {cert.issuer && <p className="text-xs text-cyan-400 mt-0.5">{cert.issuer}</p>}
-                {cert.date && <p className="text-[10px] text-gray-500 font-mono mt-1">{cert.date}</p>}
+              <div className="flex flex-col gap-1.5">
+                <h3 className="font-heading font-bold text-base text-white leading-snug">{cert.title || 'Untitled Certification'}</h3>
+                <div className="flex justify-between items-center text-xs">
+                  {cert.issuer && <span className="text-cyan-400 font-semibold">{cert.issuer}</span>}
+                  {cert.date && <span className="text-gray-500 font-mono">{cert.date}</span>}
+                </div>
               </div>
               {cert.credential_url && (
                 <a href={cert.credential_url} target="_blank" rel="noopener noreferrer"
-                  className="text-xs text-gray-400 hover:text-cyan-400 font-semibold transition-colors flex items-center gap-1 mt-auto">
+                  className="text-xs text-gray-400 hover:text-cyan-400 font-semibold transition-colors flex items-center gap-1 mt-auto self-start border border-white/5 hover:border-cyan-400/20 bg-white/5 px-3 py-1.5 rounded-lg">
                   View Credential →
                 </a>
               )}
