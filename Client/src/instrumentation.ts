@@ -1,9 +1,12 @@
+import { migrate } from '@/lib/migrate'
+
 export async function register() {
-  if (process.env.NEXT_RUNTIME === 'nodejs' && process.env.DATABASE_URL) {
-    const { migrate } = await import('./lib/migrate')
+  if (process.env.NEXT_RUNTIME === 'nodejs') {
     const result = await migrate()
-    if (!result.ok && result.reason) {
-      console.warn('[instrumentation] Migration:', result.reason)
+    if (result.ok) {
+      console.log('[instrumentation] Migration completed successfully')
+    } else if (result.reason) {
+      console.log('[instrumentation] Migration skipped:', result.reason)
     }
   }
 }

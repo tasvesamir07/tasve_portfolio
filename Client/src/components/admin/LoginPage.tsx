@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import {
   ArrowRight,
@@ -16,7 +15,11 @@ import {
   CheckCircle,
 } from 'lucide-react'
 
-export default function LoginPage() {
+interface LoginPageProps {
+  onSuccess: () => void
+}
+
+export default function LoginPage({ onSuccess }: LoginPageProps) {
   const [mode, setMode] = useState<'login' | 'forgot'>('login')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -24,7 +27,6 @@ export default function LoginPage() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState('')
-  const router = useRouter()
   const passwordRef = useRef<HTMLInputElement>(null)
 
   // Forgot password - step 1: username
@@ -48,7 +50,7 @@ export default function LoginPage() {
     })
 
     if (res.ok) {
-      router.push('/admin')
+      onSuccess()
     } else {
       const data = await res.json()
       setError(data.error || 'Invalid credentials')

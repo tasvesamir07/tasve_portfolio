@@ -4,15 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { X, ScrollText } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import AnimatedSection from './AnimatedSection'
-
-interface Certification {
-  id: number
-  title: string
-  issuer: string
-  date: string
-  credential_url: string
-  image: string
-}
+import type { Certification } from '@/lib/api'
 
 export default function CertificationsGrid({
   certifications,

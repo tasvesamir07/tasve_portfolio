@@ -104,6 +104,7 @@ CREATE TABLE IF NOT EXISTS gallery (
   image TEXT NOT NULL DEFAULT '',
   description TEXT NOT NULL DEFAULT '',
   sort_order INT DEFAULT 0,
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 

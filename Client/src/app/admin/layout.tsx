@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter, useSearchParams, usePathname } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Toaster } from 'sonner'
 import {
@@ -9,6 +9,7 @@ import {
   BarChart3, Briefcase, GraduationCap, Mail, Menu, X, ChevronLeft, LayoutDashboard,
 } from 'lucide-react'
 import { AdminSkeleton } from '@/components/Skeleton'
+import LoginPage from '@/components/admin/LoginPage'
 
 const tabs = [
   { key: '/admin', tab: null, label: 'Dashboard', icon: <LayoutDashboard className="w-4 h-4" /> },
@@ -26,14 +27,10 @@ const tabs = [
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const pathname = usePathname()
-  const isLoginPage = pathname === '/admin/login'
   const [authed, setAuthed] = useState<boolean | null>(null)
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   useEffect(() => {
-    if (isLoginPage) return
-
     fetch('/api/admin/auth')
       .then((r) => {
         if (!r.ok) throw new Error()
@@ -42,22 +39,19 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       .then((d) => setAuthed(d.authenticated))
       .catch(() => {
         setAuthed(false)
-        router.push('/admin/login')
       })
-  }, [router, isLoginPage])
+  }, [])
 
   const handleLogout = async () => {
     await fetch('/api/admin/auth', { method: 'DELETE' })
-    router.push('/admin/login')
-  }
-
-  if (isLoginPage) {
-    return <>{children}</>
+    setAuthed(false)
   }
 
   if (authed === null) return <AdminSkeleton />
 
-  if (!authed) return null
+  if (!authed) {
+    return <LoginPage onSuccess={() => setAuthed(true)} />
+  }
 
   const currentTab = searchParams.get('tab')
 
