@@ -43,3 +43,4 @@ Thumbs.db
 # Root temporary files
 /package.json
 /package-lock.json
+Client/run-migration.js

@@ -17,7 +17,7 @@ export default function Navbar({ logoText }: Props) {
       setScrolled(window.scrollY > 50);
 
       // Section tracker
-      const sections = ['home', 'about', 'skills', 'projects', 'experience', 'contact'];
+      const sections = ['home', 'about', 'skills', 'projects', 'experience', 'education', 'contact'];
       let current = 'home';
       
       // If we are at the bottom of the page, force 'contact' to be active
@@ -43,7 +43,7 @@ export default function Navbar({ logoText }: Props) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const navLinks = ['home', 'about', 'skills', 'projects', 'experience', 'contact'];
+  const navLinks = ['home', 'about', 'skills', 'projects', 'experience', 'education', 'contact'];
 
   return (
     <header

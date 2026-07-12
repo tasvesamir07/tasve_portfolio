@@ -283,11 +283,124 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* --- EDUCATION & CREDENTIALS SECTION --- */}
+      <section id="education" className="py-24 px-6 md:px-12 border-t border-white/5">
+        <div className="max-w-5xl mx-auto">
+          <div className="flex flex-col gap-2 mb-16">
+            <span className="font-mono text-sm text-cyan-400 tracking-wider">05. Academy</span>
+            <h2 className="font-heading font-extrabold text-3xl md:text-4xl text-white flex items-center gap-4">
+              Education & Credentials <span className="h-[1px] flex-grow max-w-[200px] bg-gradient-to-r from-white/10 to-transparent" />
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+            {/* Left: Education Timeline */}
+            <div className="lg:col-span-7 flex flex-col gap-6">
+              <h3 className="text-xl font-bold font-heading text-white flex items-center gap-2 mb-2">
+                <Briefcase className="w-5 h-5 text-cyan-400" /> Education History
+              </h3>
+              
+              <div className="flex flex-col gap-6">
+                <div className="bg-glass-bg border border-white/5 rounded-xl p-5 hover:border-white/10 transition-colors duration-200">
+                  <div className="flex justify-between items-start gap-4">
+                    <div>
+                      <h4 className="font-heading font-bold text-lg text-white">B.Sc. in Software Engineering</h4>
+                      <p className="text-cyan-400 text-sm mt-0.5">Daffodil International University</p>
+                    </div>
+                    <span className="font-mono text-[10px] text-cyan-400 bg-cyan-400/5 border border-cyan-400/10 px-2.5 py-0.5 rounded-full shrink-0">
+                      2023 - Present
+                    </span>
+                  </div>
+                  <ul className="list-disc list-inside mt-3 text-gray-400 text-xs flex flex-col gap-1.5">
+                    <li>CGPA: <strong className="text-white">4.00 / 4.00</strong> (7th semester)</li>
+                    <li>Dean’s List Award (Spring 2025, Fall 2024)</li>
+                  </ul>
+                </div>
+
+                <div className="bg-glass-bg border border-white/5 rounded-xl p-5 hover:border-white/10 transition-colors duration-200">
+                  <div className="flex justify-between items-start gap-4">
+                    <div>
+                      <h4 className="font-heading font-bold text-lg text-white">Higher Secondary Certificate (HSC)</h4>
+                      <p className="text-cyan-400 text-sm mt-0.5">Mirpur Cantonment Public School and College</p>
+                    </div>
+                    <span className="font-mono text-[10px] text-purple-400 bg-purple-400/5 border border-purple-400/10 px-2.5 py-0.5 rounded-full shrink-0">
+                      Batch 2022
+                    </span>
+                  </div>
+                  <p className="text-gray-400 text-xs mt-3">GPA: <strong className="text-white">5.00 / 5.00</strong></p>
+                </div>
+
+                <div className="bg-glass-bg border border-white/5 rounded-xl p-5 hover:border-white/10 transition-colors duration-200">
+                  <div className="flex justify-between items-start gap-4">
+                    <div>
+                      <h4 className="font-heading font-bold text-lg text-white">Secondary School Certificate (SSC)</h4>
+                      <p className="text-cyan-400 text-sm mt-0.5">Adamjee Cantonment Public School</p>
+                    </div>
+                    <span className="font-mono text-[10px] text-purple-400 bg-purple-400/5 border border-purple-400/10 px-2.5 py-0.5 rounded-full shrink-0">
+                      Batch 2020
+                    </span>
+                  </div>
+                  <p className="text-gray-400 text-xs mt-3">GPA: <strong className="text-white">5.00 / 5.00</strong></p>
+                </div>
+              </div>
+            </div>
+
+            {/* Right: Awards & Extra-Curriculars */}
+            <div className="lg:col-span-5 flex flex-col gap-6">
+              <div>
+                <h3 className="text-xl font-bold font-heading text-white flex items-center gap-2 mb-4">
+                  <Award className="w-5 h-5 text-purple-400" /> Honors & Awards
+                </h3>
+                <div className="bg-glass-bg border border-white/5 rounded-xl p-5 flex flex-col gap-4">
+                  <div className="flex gap-3">
+                    <span className="text-cyan-400 text-sm mt-0.5">🏆</span>
+                    <div>
+                      <h4 className="text-sm font-bold text-white">Champion</h4>
+                      <p className="text-xs text-gray-400 mt-0.5">Robotics and IoT Device Competition, 2025</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <span className="text-purple-400 text-sm mt-0.5">🥈</span>
+                    <div>
+                      <h4 className="text-sm font-bold text-white">Finalist</h4>
+                      <p className="text-xs text-gray-400 mt-0.5">AI Competition (2026), 2nd National Social Business Case Competition (2025)</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <span className="text-cyan-400 text-sm mt-0.5">⚡</span>
+                    <div>
+                      <h4 className="text-sm font-bold text-white">Technical Training</h4>
+                      <p className="text-xs text-gray-400 mt-0.5">PKI Training By CCA (2026), Introduction to Statistical Thinking (2025)</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-xl font-bold font-heading text-white flex items-center gap-2 mb-4">
+                  <Cpu className="w-5 h-5 text-pink-500" /> Activities & Leadership
+                </h3>
+                <div className="bg-glass-bg border border-white/5 rounded-xl p-5 flex flex-col gap-3">
+                  <div>
+                    <h4 className="text-xs font-mono text-cyan-400">December 2024 - Jan 2026</h4>
+                    <p className="text-sm font-bold text-white mt-0.5">Department Representative | ORIYET</p>
+                  </div>
+                  <div className="border-t border-white/5 pt-3">
+                    <h4 className="text-xs font-mono text-cyan-400">December 2023 - Present</h4>
+                    <p className="text-sm font-bold text-white mt-0.5">Member | DIU Data Science & Software Engineering Clubs</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* --- CONTACT SECTION --- */}
       <section id="contact" className="py-24 px-6 md:px-12 border-t border-white/5">
         <div className="max-w-5xl mx-auto">
           <div className="flex flex-col gap-2 mb-12">
-            <span className="font-mono text-sm text-cyan-400 tracking-wider">05. Network</span>
+            <span className="font-mono text-sm text-cyan-400 tracking-wider">06. Network</span>
             <h2 className="font-heading font-extrabold text-3xl md:text-4xl text-white flex items-center gap-4">
               Get In Touch <span className="h-[1px] flex-grow max-w-[200px] bg-gradient-to-r from-white/10 to-transparent" />
             </h2>
