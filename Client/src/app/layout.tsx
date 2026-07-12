@@ -3,7 +3,7 @@ import { Outfit, Fira_Code } from "next/font/google";
 import "./globals.css";
 import ParticleBg from "@/components/ParticleBg";
 import CustomCursor from "@/components/CustomCursor";
-import { Analytics } from "@vercel/analytics/react"
+import { Analytics } from "@vercel/analytics/next"
 import { getSupabase } from "@/lib/supabase";
 
 const outfit = Outfit({
