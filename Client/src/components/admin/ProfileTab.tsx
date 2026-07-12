@@ -1,6 +1,7 @@
 'use client'
 
 import { Save, Loader, Upload, User } from 'lucide-react'
+import { compressAndConvertToWebp } from '@/lib/image'
 
 interface ProfileData {
   name: string; title: string; intro: string; description: string
@@ -37,12 +38,17 @@ export default function ProfileTab({ profile, saving, onChange, onSave }: Props)
   const set = (field: keyof ProfileData, value: string) => onChange({ ...profile, [field]: value })
 
   const handleAvatarUpload = async (file: File) => {
-    const fd = new FormData()
-    fd.append('file', file)
-    const res = await fetch('/api/admin/upload', { method: 'POST', body: fd })
-    if (res.ok) {
-      const { url } = await res.json()
-      onChange({ ...profile, avatar: url })
+    try {
+      const compressedFile = await compressAndConvertToWebp(file)
+      const fd = new FormData()
+      fd.append('file', compressedFile)
+      const res = await fetch('/api/admin/upload', { method: 'POST', body: fd })
+      if (res.ok) {
+        const { url } = await res.json()
+        onChange({ ...profile, avatar: url })
+      }
+    } catch (err) {
+      console.error('Avatar upload failed:', err)
     }
   }
 

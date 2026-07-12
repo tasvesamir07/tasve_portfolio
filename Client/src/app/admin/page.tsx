@@ -14,6 +14,7 @@ import SettingsTab from '@/components/admin/SettingsTab'
 import CertificationsTab from '@/components/admin/CertificationsTab'
 import GalleryTab from '@/components/admin/GalleryTab'
 import { AdminSkeleton } from '@/components/Skeleton'
+import { compressAndConvertToWebp } from '@/lib/image'
 
 type Tab = 'profile' | 'projects' | 'skills' | 'experiences' | 'messages' | 'education' | 'certifications' | 'gallery' | 'settings'
 
@@ -119,10 +120,16 @@ export default function AdminPage() {
   }
 
   const handleProjectImage = async (idx: number, file: File) => {
-    const fd = new FormData(); fd.append('file', file)
-    const res = await fetch('/api/admin/upload', { method: 'POST', body: fd })
-    const { url } = await res.json()
-    const updated = [...projects]; updated[idx] = { ...updated[idx], image: url }; setProjects(updated)
+    try {
+      const compressed = await compressAndConvertToWebp(file)
+      const fd = new FormData(); fd.append('file', compressed)
+      const res = await fetch('/api/admin/upload', { method: 'POST', body: fd })
+      const { url } = await res.json()
+      const updated = [...projects]; updated[idx] = { ...updated[idx], image: url }; setProjects(updated)
+    } catch (err) {
+      console.error('Project image upload failed:', err)
+      showToast('Image compression failed')
+    }
   }
 
   const saveProjects = async () => {
@@ -286,10 +293,16 @@ export default function AdminPage() {
 
   // === Certifications handlers ===
   const handleCertImage = async (idx: number, file: File) => {
-    const fd = new FormData(); fd.append('file', file)
-    const res = await fetch('/api/admin/upload', { method: 'POST', body: fd })
-    const { url } = await res.json()
-    const updated = [...certifications]; updated[idx] = { ...updated[idx], image: url }; setCertifications(updated)
+    try {
+      const compressed = await compressAndConvertToWebp(file)
+      const fd = new FormData(); fd.append('file', compressed)
+      const res = await fetch('/api/admin/upload', { method: 'POST', body: fd })
+      const { url } = await res.json()
+      const updated = [...certifications]; updated[idx] = { ...updated[idx], image: url }; setCertifications(updated)
+    } catch (err) {
+      console.error('Certification image upload failed:', err)
+      showToast('Image compression failed')
+    }
   }
 
   const saveCertifications = async () => {
@@ -331,10 +344,16 @@ export default function AdminPage() {
 
   // === Gallery handlers ===
   const handleGalleryImage = async (idx: number, file: File) => {
-    const fd = new FormData(); fd.append('file', file)
-    const res = await fetch('/api/admin/upload', { method: 'POST', body: fd })
-    const { url } = await res.json()
-    const updated = [...gallery]; updated[idx] = { ...updated[idx], image: url }; setGallery(updated)
+    try {
+      const compressed = await compressAndConvertToWebp(file)
+      const fd = new FormData(); fd.append('file', compressed)
+      const res = await fetch('/api/admin/upload', { method: 'POST', body: fd })
+      const { url } = await res.json()
+      const updated = [...gallery]; updated[idx] = { ...updated[idx], image: url }; setGallery(updated)
+    } catch (err) {
+      console.error('Gallery image upload failed:', err)
+      showToast('Image compression failed')
+    }
   }
 
   const saveGallery = async () => {

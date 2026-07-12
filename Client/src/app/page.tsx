@@ -29,6 +29,7 @@ import {
 } from 'lucide-react';
 import AnimatedSection from '@/components/AnimatedSection'
 import ScrollToTop from '@/components/ScrollToTop';
+import SkillBar from '@/components/SkillBar';
 import { SkeletonBlock, SkeletonLine, SkeletonCard } from '@/components/Skeleton'
 
 export const revalidate = 3600;
@@ -358,18 +359,7 @@ async function SkillsSection() {
               </div>
               <div className="flex flex-col gap-5">
                 {cat.items.map((item) => (
-                  <div key={item.name} className="flex flex-col gap-1.5">
-                    <div className="flex justify-between text-sm text-gray-400 font-semibold">
-                      <span>{item.name}</span>
-                      <span>{item.value}%</span>
-                    </div>
-                    <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
-                      <div 
-                        className="h-full bg-gradient-to-r from-purple-500 to-cyan-500 rounded-full" 
-                        style={{ width: `${item.value}%` }}
-                      />
-                    </div>
-                  </div>
+                  <SkillBar key={item.name} name={item.name} value={item.value} />
                 ))}
               </div>
             </div>
