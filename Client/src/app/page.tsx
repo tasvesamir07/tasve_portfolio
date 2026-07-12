@@ -23,7 +23,7 @@ import {
   Briefcase 
 } from 'lucide-react';
 
-export const revalidate = 600; // Cache and revalidate page content every 10 mins
+export const dynamic = 'force-dynamic';
 
 export default async function Home() {
   // Fetch dynamic portfolio data

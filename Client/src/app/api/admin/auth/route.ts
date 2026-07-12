@@ -1,8 +1,12 @@
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
+import { LoginSchema } from '@/lib/validation'
 
 export async function POST(req: Request) {
-  const { password } = await req.json()
+  const parsed = LoginSchema.safeParse(await req.json())
+  if (!parsed.success) return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
+
+  const { password } = parsed.data
   const adminPassword = process.env.ADMIN_PASSWORD
 
   if (!adminPassword || password !== adminPassword) {

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getSupabaseAdmin } from '@/lib/supabase-admin'
+import { ExperienceSchema } from '@/lib/validation'
 
 export async function GET() {
   const supabaseAdmin = getSupabaseAdmin()
@@ -9,9 +10,11 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+  const parsed = ExperienceSchema.safeParse(await req.json())
+  if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
+
   const supabaseAdmin = getSupabaseAdmin()
-  const body = await req.json()
-  const { data, error } = await supabaseAdmin.from('experiences').insert(body).select().single()
+  const { data, error } = await supabaseAdmin.from('experiences').insert(parsed.data).select().single()
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json(data)
 }
