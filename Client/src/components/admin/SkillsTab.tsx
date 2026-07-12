@@ -58,11 +58,11 @@ export default function SkillsTab({
           key={s.id || idx}
           className={
             cardClass +
-            ' flex flex-col md:flex-row items-start md:items-center gap-4 shadow-xl shadow-black/10'
+            ' flex flex-col lg:flex-row items-start lg:items-center gap-4 shadow-xl shadow-black/10'
           }
         >
           {/* Controls */}
-          <div className="flex items-center gap-3 w-full md:w-auto pb-2 md:pb-0 border-b md:border-b-0 border-white/5 shrink-0">
+          <div className="flex items-center gap-3 w-full lg:w-auto pb-2 lg:pb-0 border-b lg:border-b-0 border-white/5 shrink-0">
             <GripVertical className="w-4 h-4 text-gray-600 cursor-grab active:cursor-grabbing shrink-0" />
             <div className="flex gap-1 shrink-0">
               <button
@@ -82,14 +82,14 @@ export default function SkillsTab({
                 <ChevronDown className="w-3.5 h-3.5" />
               </button>
             </div>
-            <span className="text-xs font-bold text-gray-500 font-mono md:hidden">
+            <span className="text-xs font-bold text-gray-500 font-mono lg:hidden">
               Skill #{idx + 1}
             </span>
           </div>
 
-          {/* Form Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 flex-grow w-full">
-            <div className="md:col-span-4">
+          {/* Form Fields */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 flex-grow w-full">
+            <div className="flex-grow sm:flex-1 min-w-[150px]">
               <label className="text-[10px] text-gray-500 font-bold uppercase tracking-wider block mb-1.5">
                 Category
               </label>
@@ -104,7 +104,7 @@ export default function SkillsTab({
               />
             </div>
 
-            <div className="md:col-span-5">
+            <div className="flex-grow sm:flex-1 min-w-[150px]">
               <label className="text-[10px] text-gray-500 font-bold uppercase tracking-wider block mb-1.5">
                 Skill Name
               </label>
@@ -119,7 +119,7 @@ export default function SkillsTab({
               />
             </div>
 
-            <div className="md:col-span-3">
+            <div className="w-full sm:w-[220px] shrink-0">
               <label className="text-[10px] text-gray-500 font-bold uppercase tracking-wider block mb-1.5">
                 Proficiency Level
               </label>
@@ -142,7 +142,7 @@ export default function SkillsTab({
             </div>
           </div>
           {/* Delete Action */}
-          <div className="self-end md:self-center shrink-0 pt-2 md:pt-0">
+          <div className="self-end lg:self-center shrink-0 pt-2 lg:pt-0">
             <button
               onClick={() => s.id && onDelete(s.id)}
               className={btnDanger}
