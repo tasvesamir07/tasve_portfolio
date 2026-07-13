@@ -9,7 +9,7 @@ export default function ParticleBg() {
 
   useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
-    if (mq.matches) return
+    const prefersReduced = mq.matches
 
     const canvas = canvasRef.current
     if (!canvas) return
@@ -43,6 +43,13 @@ export default function ParticleBg() {
       canvas.height = window.innerHeight
       particleCount = window.innerWidth < 768 ? 40 : 100
       initParticles()
+      if (prefersReduced) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        for (let i = 0; i < particlesArray.length; i++) {
+          particlesArray[i].draw()
+        }
+        connectParticles()
+      }
     }
 
     window.addEventListener('mousemove', handleMouseMove)
@@ -158,7 +165,15 @@ export default function ParticleBg() {
     }
 
     initParticles()
-    animateParticles()
+    if (prefersReduced) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      for (let i = 0; i < particlesArray.length; i++) {
+        particlesArray[i].draw()
+      }
+      connectParticles()
+    } else {
+      animateParticles()
+    }
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove)
