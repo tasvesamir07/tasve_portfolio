@@ -128,18 +128,33 @@ export default function Navbar({ logoText }: Props) {
             </li>
             {navLinks.map((link) => (
               <li key={link}>
-                <Link
-                  href={pathname === '/' ? `#${link}` : `/#${link}`}
-                  className={`relative text-sm font-semibold capitalize tracking-wider transition-colors duration-200 hover:text-white ${
-                    activeSection === link ? 'text-white' : 'text-gray-400'
-                  }`}
-                  aria-label={`Navigate to ${link} section`}
-                >
-                  {link}
-                  {activeSection === link && (
-                    <span className="absolute bottom-[-6px] left-0 w-full h-[2px] bg-gradient-to-r from-purple-500 to-cyan-500" />
-                  )}
-                </Link>
+                {pathname === '/' ? (
+                  <a
+                    href={`#${link}`}
+                    className={`relative text-sm font-semibold capitalize tracking-wider transition-colors duration-200 hover:text-white ${
+                      activeSection === link ? 'text-white' : 'text-gray-400'
+                    }`}
+                    aria-label={`Navigate to ${link} section`}
+                  >
+                    {link}
+                    {activeSection === link && (
+                      <span className="absolute bottom-[-6px] left-0 w-full h-[2px] bg-gradient-to-r from-purple-500 to-cyan-500" />
+                    )}
+                  </a>
+                ) : (
+                  <Link
+                    href={`/#${link}`}
+                    className={`relative text-sm font-semibold capitalize tracking-wider transition-colors duration-200 hover:text-white ${
+                      activeSection === link ? 'text-white' : 'text-gray-400'
+                    }`}
+                    aria-label={`Navigate to ${link} section`}
+                  >
+                    {link}
+                    {activeSection === link && (
+                      <span className="absolute bottom-[-6px] left-0 w-full h-[2px] bg-gradient-to-r from-purple-500 to-cyan-500" />
+                    )}
+                  </Link>
+                )}
               </li>
             ))}
 
@@ -176,35 +191,67 @@ export default function Navbar({ logoText }: Props) {
 
               {/* Dropdown Box */}
               <div className="absolute right-0 top-full mt-2 w-52 bg-[#0a0c14]/95 backdrop-blur-xl border border-white/5 rounded-xl p-2 shadow-2xl transition-all duration-200 opacity-0 translate-y-2 invisible group-hover/more:opacity-100 group-hover/more:translate-y-0 group-hover/more:visible z-50">
-                <Link
-                  href={pathname === '/' ? '#certifications' : '/#certifications'}
-                  className={`block px-4 py-2.5 text-xs font-semibold uppercase tracking-wider hover:bg-white/5 rounded-lg transition-colors duration-200 hover:text-white ${
-                    activeSection === 'certifications'
-                      ? 'text-cyan-400 bg-white/5'
-                      : 'text-gray-400'
-                  }`}
-                  aria-label="Certifications section"
-                >
-                  Certifications & Awards
-                </Link>
-                <Link
-                  href={pathname === '/' ? '#gallery' : '/#gallery'}
-                  className={`block px-4 py-2.5 text-xs font-semibold uppercase tracking-wider hover:bg-white/5 rounded-lg transition-colors duration-200 hover:text-white ${
-                    activeSection === 'gallery' ? 'text-cyan-400 bg-white/5' : 'text-gray-400'
-                  }`}
-                  aria-label="Gallery section"
-                >
-                  Gallery
-                </Link>
-                <Link
-                  href={pathname === '/' ? '#contact' : '/#contact'}
-                  className={`block px-4 py-2.5 text-xs font-semibold uppercase tracking-wider hover:bg-white/5 rounded-lg transition-colors duration-200 hover:text-white ${
-                    activeSection === 'contact' ? 'text-cyan-400 bg-white/5' : 'text-gray-400'
-                  }`}
-                  aria-label="Contact section"
-                >
-                  Contact
-                </Link>
+                {pathname === '/' ? (
+                  <>
+                    <a
+                      href="#certifications"
+                      className={`block px-4 py-2.5 text-xs font-semibold uppercase tracking-wider hover:bg-white/5 rounded-lg transition-colors duration-200 hover:text-white ${
+                        activeSection === 'certifications' ? 'text-cyan-400 bg-white/5' : 'text-gray-400'
+                      }`}
+                      aria-label="Certifications section"
+                    >
+                      Certifications & Awards
+                    </a>
+                    <a
+                      href="#gallery"
+                      className={`block px-4 py-2.5 text-xs font-semibold uppercase tracking-wider hover:bg-white/5 rounded-lg transition-colors duration-200 hover:text-white ${
+                        activeSection === 'gallery' ? 'text-cyan-400 bg-white/5' : 'text-gray-400'
+                      }`}
+                      aria-label="Gallery section"
+                    >
+                      Gallery
+                    </a>
+                    <a
+                      href="#contact"
+                      className={`block px-4 py-2.5 text-xs font-semibold uppercase tracking-wider hover:bg-white/5 rounded-lg transition-colors duration-200 hover:text-white ${
+                        activeSection === 'contact' ? 'text-cyan-400 bg-white/5' : 'text-gray-400'
+                      }`}
+                      aria-label="Contact section"
+                    >
+                      Contact
+                    </a>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      href="/#certifications"
+                      className={`block px-4 py-2.5 text-xs font-semibold uppercase tracking-wider hover:bg-white/5 rounded-lg transition-colors duration-200 hover:text-white ${
+                        activeSection === 'certifications' ? 'text-cyan-400 bg-white/5' : 'text-gray-400'
+                      }`}
+                      aria-label="Certifications section"
+                    >
+                      Certifications & Awards
+                    </Link>
+                    <Link
+                      href="/#gallery"
+                      className={`block px-4 py-2.5 text-xs font-semibold uppercase tracking-wider hover:bg-white/5 rounded-lg transition-colors duration-200 hover:text-white ${
+                        activeSection === 'gallery' ? 'text-cyan-400 bg-white/5' : 'text-gray-400'
+                      }`}
+                      aria-label="Gallery section"
+                    >
+                      Gallery
+                    </Link>
+                    <Link
+                      href="/#contact"
+                      className={`block px-4 py-2.5 text-xs font-semibold uppercase tracking-wider hover:bg-white/5 rounded-lg transition-colors duration-200 hover:text-white ${
+                        activeSection === 'contact' ? 'text-cyan-400 bg-white/5' : 'text-gray-400'
+                      }`}
+                      aria-label="Contact section"
+                    >
+                      Contact
+                    </Link>
+                  </>
+                )}
               </div>
             </li>
           </ul>
@@ -230,16 +277,29 @@ export default function Navbar({ logoText }: Props) {
           <ul className="flex flex-col items-center gap-6">
             {navLinks.map((link) => (
               <li key={link}>
-                <Link
-                  href={pathname === '/' ? `#${link}` : `/#${link}`}
-                  onClick={() => setIsOpen(false)}
-                  className={`text-xl font-bold font-heading capitalize tracking-wider transition-colors duration-200 hover:text-cyan-400 ${
-                    activeSection === link ? 'text-cyan-400' : 'text-gray-300'
-                  }`}
-                  aria-label={`Navigate to ${link} section`}
-                >
-                  {link}
-                </Link>
+                {pathname === '/' ? (
+                  <a
+                    href={`#${link}`}
+                    onClick={() => setIsOpen(false)}
+                    className={`text-xl font-bold font-heading capitalize tracking-wider transition-colors duration-200 hover:text-cyan-400 ${
+                      activeSection === link ? 'text-cyan-400' : 'text-gray-300'
+                    }`}
+                    aria-label={`Navigate to ${link} section`}
+                  >
+                    {link}
+                  </a>
+                ) : (
+                  <Link
+                    href={`/#${link}`}
+                    onClick={() => setIsOpen(false)}
+                    className={`text-xl font-bold font-heading capitalize tracking-wider transition-colors duration-200 hover:text-cyan-400 ${
+                      activeSection === link ? 'text-cyan-400' : 'text-gray-300'
+                    }`}
+                    aria-label={`Navigate to ${link} section`}
+                  >
+                    {link}
+                  </Link>
+                )}
               </li>
             ))}
             <li>
@@ -252,37 +312,73 @@ export default function Navbar({ logoText }: Props) {
               </Link>
             </li>
             <li>
-              <Link
-                href={pathname === '/' ? '#certifications' : '/#certifications'}
-                onClick={() => setIsOpen(false)}
-                className={`text-xl font-bold font-heading capitalize tracking-wider transition-colors duration-200 hover:text-cyan-400 ${
-                  activeSection === 'certifications' ? 'text-cyan-400' : 'text-gray-300'
-                }`}
-              >
-                Certifications & Awards
-              </Link>
+              {pathname === '/' ? (
+                <a
+                  href="#certifications"
+                  onClick={() => setIsOpen(false)}
+                  className={`text-xl font-bold font-heading capitalize tracking-wider transition-colors duration-200 hover:text-cyan-400 ${
+                    activeSection === 'certifications' ? 'text-cyan-400' : 'text-gray-300'
+                  }`}
+                >
+                  Certifications & Awards
+                </a>
+              ) : (
+                <Link
+                  href="/#certifications"
+                  onClick={() => setIsOpen(false)}
+                  className={`text-xl font-bold font-heading capitalize tracking-wider transition-colors duration-200 hover:text-cyan-400 ${
+                    activeSection === 'certifications' ? 'text-cyan-400' : 'text-gray-300'
+                  }`}
+                >
+                  Certifications & Awards
+                </Link>
+              )}
             </li>
             <li>
-              <Link
-                href={pathname === '/' ? '#gallery' : '/#gallery'}
-                onClick={() => setIsOpen(false)}
-                className={`text-xl font-bold font-heading capitalize tracking-wider transition-colors duration-200 hover:text-cyan-400 ${
-                  activeSection === 'gallery' ? 'text-cyan-400' : 'text-gray-300'
-                }`}
-              >
-                Gallery
-              </Link>
+              {pathname === '/' ? (
+                <a
+                  href="#gallery"
+                  onClick={() => setIsOpen(false)}
+                  className={`text-xl font-bold font-heading capitalize tracking-wider transition-colors duration-200 hover:text-cyan-400 ${
+                    activeSection === 'gallery' ? 'text-cyan-400' : 'text-gray-300'
+                  }`}
+                >
+                  Gallery
+                </a>
+              ) : (
+                <Link
+                  href="/#gallery"
+                  onClick={() => setIsOpen(false)}
+                  className={`text-xl font-bold font-heading capitalize tracking-wider transition-colors duration-200 hover:text-cyan-400 ${
+                    activeSection === 'gallery' ? 'text-cyan-400' : 'text-gray-300'
+                  }`}
+                >
+                  Gallery
+                </Link>
+              )}
             </li>
             <li>
-              <Link
-                href={pathname === '/' ? '#contact' : '/#contact'}
-                onClick={() => setIsOpen(false)}
-                className={`text-xl font-bold font-heading capitalize tracking-wider transition-colors duration-200 hover:text-cyan-400 ${
-                  activeSection === 'contact' ? 'text-cyan-400' : 'text-gray-300'
-                }`}
-              >
-                contact
-              </Link>
+              {pathname === '/' ? (
+                <a
+                  href="#contact"
+                  onClick={() => setIsOpen(false)}
+                  className={`text-xl font-bold font-heading capitalize tracking-wider transition-colors duration-200 hover:text-cyan-400 ${
+                    activeSection === 'contact' ? 'text-cyan-400' : 'text-gray-300'
+                  }`}
+                >
+                  contact
+                </a>
+              ) : (
+                <Link
+                  href="/#contact"
+                  onClick={() => setIsOpen(false)}
+                  className={`text-xl font-bold font-heading capitalize tracking-wider transition-colors duration-200 hover:text-cyan-400 ${
+                    activeSection === 'contact' ? 'text-cyan-400' : 'text-gray-300'
+                  }`}
+                >
+                  contact
+                </Link>
+              )}
             </li>
             <li>
               <button

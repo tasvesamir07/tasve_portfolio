@@ -1,4 +1,5 @@
 import { getSupabase } from './supabase'
+import { unstable_cache } from 'next/cache'
 import type {
   ProfileRow,
   ProjectRow,
@@ -121,67 +122,106 @@ export function formatExperiences(data: ExperienceRow[]): Experience[] {
   }))
 }
 
+const getCachedProfile = unstable_cache(
+  async () => {
+    const supabase = getSupabase()
+    const { data, error } = await supabase.from('profile').select('*').limit(1).single()
+    if (error) throw error
+    return formatProfile(data as ProfileRow)
+  },
+  ['profile-data'],
+  { revalidate: 3600, tags: ['profile'] }
+)
+
 export async function fetchProfile(): Promise<Profile> {
-  const supabase = getSupabase()
-  const { data, error } = await supabase.from('profile').select('*').limit(1).single()
-  if (error) throw error
-  return formatProfile(data as ProfileRow)
+  return getCachedProfile()
 }
+
+const getCachedProjects = unstable_cache(
+  async () => {
+    const supabase = getSupabase()
+    const { data, error } = await supabase
+      .from('projects')
+      .select('*')
+      .order('sort_order', { ascending: true })
+    if (error) throw error
+    return formatProjects(data as ProjectRow[])
+  },
+  ['projects-list'],
+  { revalidate: 3600, tags: ['projects'] }
+)
 
 export async function fetchProjects(): Promise<Project[]> {
-  const supabase = getSupabase()
-  const { data, error } = await supabase
-    .from('projects')
-    .select('*')
-    .order('sort_order', { ascending: true })
-  if (error) throw error
-  return formatProjects(data as ProjectRow[])
+  return getCachedProjects()
 }
+
+const getCachedSkills = unstable_cache(
+  async () => {
+    const supabase = getSupabase()
+    const { data, error } = await supabase
+      .from('skills')
+      .select('*')
+      .order('sort_order', { ascending: true })
+    if (error) throw error
+    return formatSkills(data as SkillRow[])
+  },
+  ['skills-list'],
+  { revalidate: 3600, tags: ['skills'] }
+)
 
 export async function fetchSkills(): Promise<Skill[]> {
-  const supabase = getSupabase()
-  const { data, error } = await supabase
-    .from('skills')
-    .select('*')
-    .order('sort_order', { ascending: true })
-  if (error) throw error
-  return formatSkills(data as SkillRow[])
+  return getCachedSkills()
 }
 
+const getCachedEducation = unstable_cache(
+  async () => {
+    const supabase = getSupabase()
+    const { data, error } = await supabase
+      .from('education')
+      .select('*')
+      .order('sort_order', { ascending: true })
+    if (error) throw error
+    return (data as EducationRow[]).map((item) => ({
+      id: item.id,
+      type: item.type,
+      title: item.title || '',
+      subtitle: item.subtitle || '',
+      date: item.date || '',
+      details: item.details || '',
+    }))
+  },
+  ['education-list'],
+  { revalidate: 3600, tags: ['education'] }
+)
+
 export async function fetchEducation(): Promise<Education[]> {
-  const supabase = getSupabase()
-  const { data, error } = await supabase
-    .from('education')
-    .select('*')
-    .order('sort_order', { ascending: true })
-  if (error) throw error
-  return (data as EducationRow[]).map((item) => ({
-    id: item.id,
-    type: item.type,
-    title: item.title || '',
-    subtitle: item.subtitle || '',
-    date: item.date || '',
-    details: item.details || '',
-  }))
+  return getCachedEducation()
 }
 
 export async function fetchProject(id: string): Promise<Project> {
-  const supabase = getSupabase()
-  const { data, error } = await supabase.from('projects').select('*').eq('id', id).single()
-  if (error) throw error
-  const row = data as ProjectRow
-  return {
-    id: row.id.toString(),
-    title: row.title || '',
-    category: row.category || '',
-    tag: row.tag || '',
-    desc: row.desc || '',
-    tags: row.tags ? row.tags.split(',').map((t: string) => t.trim()) : [],
-    github: row.github || '',
-    live: row.live || '',
-    image: row.image || '',
-    diagram_url: row.diagram_url || '',
-  }
+  const getCachedProject = unstable_cache(
+    async (projId: string) => {
+      const supabase = getSupabase()
+      const { data, error } = await supabase.from('projects').select('*').eq('id', projId).single()
+      if (error) throw error
+      const row = data as ProjectRow
+      return {
+        id: row.id.toString(),
+        title: row.title || '',
+        category: row.category || '',
+        tag: row.tag || '',
+        desc: row.desc || '',
+        tags: row.tags ? row.tags.split(',').map((t: string) => t.trim()) : [],
+        github: row.github || '',
+        live: row.live || '',
+        image: row.image || '',
+        diagram_url: row.diagram_url || '',
+      }
+    },
+    [`project-detail-${id}`],
+    { revalidate: 3600, tags: ['projects'] }
+  )
+  return getCachedProject(id)
 }
 
 export interface Certification {
@@ -200,46 +240,70 @@ export interface GalleryItem {
   description: string
 }
 
+const getCachedCertifications = unstable_cache(
+  async () => {
+    const supabase = getSupabase()
+    const { data, error } = await supabase
+      .from('certifications')
+      .select('*')
+      .order('sort_order', { ascending: true })
+    if (error) throw error
+    return (data as CertificationRow[]).map((item) => ({
+      id: item.id,
+      title: item.title || '',
+      issuer: item.issuer || '',
+      date: item.date || '',
+      credential_url: item.credential_url || '',
+      image: item.image || '',
+    }))
+  },
+  ['certifications-list'],
+  { revalidate: 3600, tags: ['certifications'] }
+)
+
 export async function fetchCertifications(): Promise<Certification[]> {
-  const supabase = getSupabase()
-  const { data, error } = await supabase
-    .from('certifications')
-    .select('*')
-    .order('sort_order', { ascending: true })
-  if (error) throw error
-  return (data as CertificationRow[]).map((item) => ({
-    id: item.id,
-    title: item.title || '',
-    issuer: item.issuer || '',
-    date: item.date || '',
-    credential_url: item.credential_url || '',
-    image: item.image || '',
-  }))
+  return getCachedCertifications()
 }
+
+const getCachedGallery = unstable_cache(
+  async () => {
+    const supabase = getSupabase()
+    const { data, error } = await supabase
+      .from('gallery')
+      .select('*')
+      .order('sort_order', { ascending: true })
+    if (error) throw error
+    return (data as GalleryRow[]).map((item) => ({
+      id: item.id,
+      title: item.title || '',
+      image: item.image || '',
+      description: item.description || '',
+    }))
+  },
+  ['gallery-list'],
+  { revalidate: 3600, tags: ['gallery'] }
+)
 
 export async function fetchGallery(): Promise<GalleryItem[]> {
-  const supabase = getSupabase()
-  const { data, error } = await supabase
-    .from('gallery')
-    .select('*')
-    .order('sort_order', { ascending: true })
-  if (error) throw error
-  return (data as GalleryRow[]).map((item) => ({
-    id: item.id,
-    title: item.title || '',
-    image: item.image || '',
-    description: item.description || '',
-  }))
+  return getCachedGallery()
 }
 
+const getCachedExperience = unstable_cache(
+  async () => {
+    const supabase = getSupabase()
+    const { data, error } = await supabase
+      .from('experiences')
+      .select('*')
+      .order('sort_order', { ascending: true })
+    if (error) throw error
+    return formatExperiences(data as ExperienceRow[])
+  },
+  ['experience-list'],
+  { revalidate: 3600, tags: ['experiences'] }
+)
+
 export async function fetchExperience(): Promise<Experience[]> {
-  const supabase = getSupabase()
-  const { data, error } = await supabase
-    .from('experiences')
-    .select('*')
-    .order('sort_order', { ascending: true })
-  if (error) throw error
-  return formatExperiences(data as ExperienceRow[])
+  return getCachedExperience()
 }
 
 export interface BlogPost {
@@ -255,48 +319,63 @@ export interface BlogPost {
   created_at: string
 }
 
+const getCachedBlogPosts = unstable_cache(
+  async () => {
+    const supabase = getSupabase()
+    const { data, error } = await supabase
+      .from('blogs')
+      .select('*')
+      .eq('published', true)
+      .order('created_at', { ascending: false })
+    if (error) throw error
+    return (data as BlogRow[]).map((item) => ({
+      id: item.id,
+      title: item.title || '',
+      slug: item.slug || '',
+      excerpt: item.excerpt || '',
+      content: item.content || '',
+      cover_image: item.cover_image || '',
+      tags: item.tags ? item.tags.split(',').map((t: string) => t.trim()).filter(Boolean) : [],
+      published: item.published,
+      read_time: item.read_time || '',
+      created_at: item.created_at || '',
+    }))
+  },
+  ['blog-posts-list'],
+  { revalidate: 3600, tags: ['blogs'] }
+)
+
 export async function fetchBlogPosts(): Promise<BlogPost[]> {
-  const supabase = getSupabase()
-  const { data, error } = await supabase
-    .from('blogs')
-    .select('*')
-    .eq('published', true)
-    .order('created_at', { ascending: false })
-  if (error) throw error
-  return (data as BlogRow[]).map((item) => ({
-    id: item.id,
-    title: item.title || '',
-    slug: item.slug || '',
-    excerpt: item.excerpt || '',
-    content: item.content || '',
-    cover_image: item.cover_image || '',
-    tags: item.tags ? item.tags.split(',').map((t: string) => t.trim()).filter(Boolean) : [],
-    published: item.published,
-    read_time: item.read_time || '',
-    created_at: item.created_at || '',
-  }))
+  return getCachedBlogPosts()
 }
 
 export async function fetchBlogPost(slug: string): Promise<BlogPost | null> {
-  const supabase = getSupabase()
-  const { data, error } = await supabase
-    .from('blogs')
-    .select('*')
-    .eq('slug', slug)
-    .eq('published', true)
-    .single()
-  if (error) return null
-  const item = data as BlogRow
-  return {
-    id: item.id,
-    title: item.title || '',
-    slug: item.slug || '',
-    excerpt: item.excerpt || '',
-    content: item.content || '',
-    cover_image: item.cover_image || '',
-    tags: item.tags ? item.tags.split(',').map((t: string) => t.trim()).filter(Boolean) : [],
-    published: item.published,
-    read_time: item.read_time || '',
-    created_at: item.created_at || '',
-  }
+  const getCachedBlogPost = unstable_cache(
+    async (s: string) => {
+      const supabase = getSupabase()
+      const { data, error } = await supabase
+        .from('blogs')
+        .select('*')
+        .eq('slug', s)
+        .eq('published', true)
+        .single()
+      if (error) return null
+      const item = data as BlogRow
+      return {
+        id: item.id,
+        title: item.title || '',
+        slug: item.slug || '',
+        excerpt: item.excerpt || '',
+        content: item.content || '',
+        cover_image: item.cover_image || '',
+        tags: item.tags ? item.tags.split(',').map((t: string) => t.trim()).filter(Boolean) : [],
+        published: item.published,
+        read_time: item.read_time || '',
+        created_at: item.created_at || '',
+      }
+    },
+    [`blog-post-detail-${slug}`],
+    { revalidate: 3600, tags: ['blogs'] }
+  )
+  return getCachedBlogPost(slug)
 }
