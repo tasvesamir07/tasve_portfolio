@@ -17,6 +17,25 @@
   --text-muted: #6b7280;
   --border-subtle: rgba(255, 255, 255, 0.05);
   --card-bg: rgba(15, 18, 29, 0.6);
+
+  --color-glass-bg: rgba(15, 18, 29, 0.6);
+  --color-glass-bg-hover: rgba(15, 18, 29, 0.8);
+  --color-glass-border: rgba(255, 255, 255, 0.05);
+  --color-glass-border-hover: rgba(255, 255, 255, 0.1);
+}
+
+/* Brighter text colors in dark mode (default theme) for readability */
+.text-gray-200 {
+  color: #f1f5f9 !important;
+}
+.text-gray-300 {
+  color: #e2e8f0 !important;
+}
+.text-gray-400 {
+  color: #cbd5e1 !important;
+}
+.text-gray-500 {
+  color: #94a3b8 !important;
 }
 
 [data-theme="light"] {
@@ -39,8 +58,136 @@
   --color-glass-border-hover: rgba(0, 0, 0, 0.15);
 }
 
+/* Light Theme Overrides for Hardcoded Dark Classes */
+[data-theme="light"] .bg-\[\#07090e\] {
+  background-color: var(--bg-primary) !important;
+}
+[data-theme="light"] .bg-\[\#0f121d\] {
+  background-color: var(--bg-secondary) !important;
+}
+[data-theme="light"] .bg-\[\#0a0c14\] {
+  background-color: var(--bg-tertiary) !important;
+}
+[data-theme="light"] .bg-\[\#0b0d16\]\/80 {
+  background-color: rgba(241, 245, 249, 0.8) !important;
+}
+[data-theme="light"] .bg-\[\#0f121d\]\/60 {
+  background-color: var(--card-bg) !important;
+}
+[data-theme="light"] .bg-\[\#0f121d\]\/80 {
+  background-color: var(--card-bg) !important;
+}
+[data-theme="light"] .bg-\[\#0a0c14\]\/80 {
+  background-color: rgba(255, 255, 255, 0.8) !important;
+}
+[data-theme="light"] .bg-\[\#0a0c14\]\/95 {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+}
+[data-theme="light"] .bg-\[\#07090e\]\/95 {
+  background-color: rgba(248, 250, 252, 0.95) !important;
+}
+
+/* Borders */
+[data-theme="light"] .border-white\/5 {
+  border-color: var(--border-subtle) !important;
+}
+[data-theme="light"] .border-white\/10 {
+  border-color: rgba(0, 0, 0, 0.12) !important;
+}
+[data-theme="light"] .border-white\/20 {
+  border-color: rgba(0, 0, 0, 0.2) !important;
+}
+[data-theme="light"] .border-t-white\/5 {
+  border-top-color: var(--border-subtle) !important;
+}
+[data-theme="light"] .border-b-white\/10 {
+  border-bottom-color: rgba(0, 0, 0, 0.12) !important;
+}
+
+/* Global text-white contrast override in light mode */
+[data-theme="light"] .text-white {
+  color: var(--text-primary) !important;
+}
+
+/* Restore white text color for specific dark/gradient backgrounds in light mode */
+[data-theme="light"] .bg-gradient-to-r,
+[data-theme="light"] .bg-gradient-to-r * {
+  color: #ffffff !important;
+}
+[data-theme="light"] .bg-purple-500,
+[data-theme="light"] .bg-purple-500 * {
+  color: #ffffff !important;
+}
+[data-theme="light"] .bg-cyan-500,
+[data-theme="light"] .bg-cyan-500 * {
+  color: #ffffff !important;
+}
+[data-theme="light"] .bg-pink-500,
+[data-theme="light"] .bg-pink-500 * {
+  color: #ffffff !important;
+}
+[data-theme="light"] .bg-emerald-500,
+[data-theme="light"] .bg-emerald-500 * {
+  color: #ffffff !important;
+}
+
+
+/* General grey text colors in light mode */
+[data-theme="light"] .text-gray-200 {
+  color: var(--text-primary) !important;
+}
+[data-theme="light"] .text-gray-300 {
+  color: #334155 !important;
+}
+[data-theme="light"] .text-gray-400 {
+  color: #334155 !important;
+}
+[data-theme="light"] .text-gray-500 {
+  color: #475569 !important;
+}
+
+/* Neon text color contrast overrides in light mode */
+[data-theme="light"] .text-cyan-400 {
+  color: #0891b2 !important;
+}
+[data-theme="light"] .text-cyan-500 {
+  color: #0e7490 !important;
+}
+[data-theme="light"] .text-purple-400 {
+  color: #7c3aed !important;
+}
+[data-theme="light"] .text-purple-500 {
+  color: #6d28d9 !important;
+}
+[data-theme="light"] .text-pink-400 {
+  color: #db2777 !important;
+}
+[data-theme="light"] .text-pink-500 {
+  color: #be185d !important;
+}
+
+/* Navbar active links and hover states */
+[data-theme="light"] nav a.text-white,
+[data-theme="light"] header a.text-white,
+[data-theme="light"] header button.text-gray-400,
+[data-theme="light"] nav a:hover,
+[data-theme="light"] header a:hover {
+  color: var(--text-primary) !important;
+}
+
+/* Inputs & Form Elements */
+[data-theme="light"] input,
+[data-theme="light"] textarea,
+[data-theme="light"] select {
+  color: var(--text-primary) !important;
+}
+[data-theme="light"] input::placeholder,
+[data-theme="light"] textarea::placeholder {
+  color: var(--text-muted) !important;
+}
+
 [data-theme="light"] body {
-  background-color: var(--background);
+  background-color: transparent !important;
   color: var(--foreground);
 }
 
@@ -89,10 +236,11 @@
 /* --- Base Styles --- */
 html {
   scroll-behavior: smooth;
+  background-color: var(--background);
 }
 
 body {
-  background-color: var(--background);
+  background-color: transparent !important;
   color: var(--foreground);
   font-family: var(--font-sans);
   overflow-x: hidden;

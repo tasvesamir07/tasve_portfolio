@@ -1,9 +1,11 @@
 'use client'
 
 import React, { useEffect, useRef } from 'react'
+import { useTheme } from '@/lib/theme'
 
 export default function ParticleBg() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
+  const { theme } = useTheme()
 
   useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
@@ -64,7 +66,9 @@ export default function ParticleBg() {
         this.size = Math.random() * 2 + 1
         this.speedX = Math.random() * 0.8 - 0.4
         this.speedY = Math.random() * 0.8 - 0.4
-        this.color = 'rgba(139, 92, 246, 0.45)'
+        this.color = theme === 'dark' 
+          ? 'rgba(167, 139, 250, 0.8)' 
+          : 'rgba(79, 70, 229, 0.8)'
       }
 
       update() {
@@ -107,7 +111,9 @@ export default function ParticleBg() {
 
           if (distance < 110) {
             opacityValue = 1 - distance / 110
-            ctx.strokeStyle = `rgba(6, 182, 212, ${opacityValue * 0.15})`
+            ctx.strokeStyle = theme === 'dark'
+              ? `rgba(34, 211, 238, ${opacityValue * 0.35})`
+              : `rgba(71, 85, 105, ${opacityValue * 0.45})`
             ctx.lineWidth = 1
             ctx.beginPath()
             ctx.moveTo(particlesArray[a].x, particlesArray[a].y)
@@ -122,7 +128,9 @@ export default function ParticleBg() {
           const distanceMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse)
           if (distanceMouse < canvasMouse.radius) {
             opacityValue = 1 - distanceMouse / canvasMouse.radius
-            ctx.strokeStyle = `rgba(236, 72, 153, ${opacityValue * 0.25})`
+            ctx.strokeStyle = theme === 'dark'
+              ? `rgba(244, 63, 94, ${opacityValue * 0.45})`
+              : `rgba(219, 39, 119, ${opacityValue * 0.55})`
             ctx.lineWidth = 1
             ctx.beginPath()
             ctx.moveTo(particlesArray[a].x, particlesArray[a].y)
@@ -158,7 +166,7 @@ export default function ParticleBg() {
       window.removeEventListener('resize', handleResize)
       cancelAnimationFrame(animationFrameId)
     }
-  }, [])
+  }, [theme])
 
   return (
     <canvas

@@ -14,31 +14,26 @@ const ThemeCtx = createContext<ThemeContextValue>({
   toggle: () => {},
 })
 
-function getInitialTheme(): Theme {
-  if (typeof window === 'undefined') return 'dark'
-  const stored = localStorage.getItem('theme') as Theme | null
-  return stored === 'light' || stored === 'dark' ? stored : 'dark'
-}
-
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>(getInitialTheme)
+  const [theme, setTheme] = useState<Theme>('dark')
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme)
-  }, [theme])
+    const stored = localStorage.getItem('theme') as Theme | null
+    if (stored === 'light' || stored === 'dark') {
+      setTheme(stored)
+    }
+    setMounted(true)
+  }, [])
 
   useEffect(() => {
-    localStorage.setItem('theme', theme)
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setMounted(true)
-  }, [theme])
+    if (mounted) {
+      document.documentElement.setAttribute('data-theme', theme)
+      localStorage.setItem('theme', theme)
+    }
+  }, [theme, mounted])
 
   const toggle = useCallback(() => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark')), [])
-
-  if (!mounted) {
-    return <>{children}</>
-  }
 
   return (
     <ThemeCtx.Provider value={{ theme, toggle }}>
