@@ -1,11 +1,15 @@
 import type { Context } from 'grammy'
 import { verifyPhone, authorizeChat, clearConversation, setConversation } from '../store'
+import { requestPhoneKB, mainMenuKB } from '../keyboards'
 
 export async function handleVerificationStart(ctx: Context) {
   const chatId = ctx.chat?.id
   if (!chatId) return
   await setConversation(chatId, 'verify', 0, {})
-  await ctx.reply('🔐 Please enter the admin phone number to verify this chat:')
+  await ctx.reply('🔐 *Security Check: Authorization Required*\n\nPlease click the button below to share your phone number, or type it manually to verify your identity:', {
+    parse_mode: 'Markdown',
+    reply_markup: requestPhoneKB(),
+  })
 }
 
 export async function handleVerificationStep(ctx: Context, text: string) {
@@ -16,7 +20,9 @@ export async function handleVerificationStep(ctx: Context, text: string) {
     const success = await authorizeChat(chatId)
     if (success) {
       await clearConversation(chatId)
-      await ctx.reply('✅ Identity verified successfully! You are now authorized to manage the portfolio.\n\nUse /start to view all available commands.')
+      await ctx.reply('✅ Identity verified successfully! You are now authorized to manage the portfolio.', {
+        reply_markup: mainMenuKB(),
+      })
     } else {
       await ctx.reply('❌ Failed to authorize this chat ID in the database. Please try again.')
     }

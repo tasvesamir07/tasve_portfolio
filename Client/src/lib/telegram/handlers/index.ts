@@ -1,6 +1,7 @@
 import type { Bot, Context } from 'grammy'
 import { getConversation, clearConversation } from '../store'
 import { helpText } from '../formats'
+import { mainMenuKB } from '../keyboards'
 
 // Import all handlers
 import { handleVerificationStep } from './auth'
@@ -20,7 +21,10 @@ export function registerHandlers(bot: Bot) {
     await ctx.reply(`👋 Welcome to the *Portfolio Manager Bot*!
 You can manage all sections of your website directly from Telegram.
 
-${helpText()}`, { parse_mode: 'Markdown' })
+${helpText()}`, {
+      parse_mode: 'Markdown',
+      reply_markup: mainMenuKB(),
+    })
   })
 
   bot.command('cancel', async (ctx) => {
@@ -28,8 +32,21 @@ ${helpText()}`, { parse_mode: 'Markdown' })
     if (chatId) {
       await clearConversation(chatId)
     }
-    await ctx.reply('❌ Current operation has been cancelled.')
+    await ctx.reply('❌ Current operation has been cancelled.', {
+      reply_markup: mainMenuKB(),
+    })
   })
+
+  // Keyboard button text listeners
+  bot.hears('👤 Profile', handleProfileCommand)
+  bot.hears('📝 Blogs', handleBlogCommand)
+  bot.hears('🖥️ Projects', handleProjectCommand)
+  bot.hears('📊 Skills', handleSkillCommand)
+  bot.hears('🖼️ Gallery', handleGalleryCommand)
+  bot.hears('🏅 Certs', handleCertCommand)
+  bot.hears('💼 Exp', handleExperienceCommand)
+  bot.hears('🎓 Edu', handleEducationCommand)
+  bot.hears('📬 Messages', handleMessagesCommand)
 
   bot.command('profile', handleProfileCommand)
   bot.command('blog', handleBlogCommand)

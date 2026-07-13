@@ -1,8 +1,9 @@
 import { Bot } from 'grammy'
 import { resolveBotToken } from './config'
-import { isAuthorized, getConversation } from './store'
+import { isAuthorized, getConversation, verifyPhone, authorizeChat, clearConversation } from './store'
 import { handleVerificationStart } from './handlers/auth'
 import { registerHandlers, handleFallback } from './handlers'
+import { mainMenuKB } from './keyboards'
 
 let _bot: Bot | null = null
 
@@ -42,6 +43,47 @@ export async function getBot(): Promise<Bot> {
 
     // Otherwise, start phone verification
     await handleVerificationStart(ctx)
+  })
+
+  // Handle shared contacts during verification
+  bot.on('message:contact', async (ctx) => {
+    const chatId = ctx.chat!.id
+    const authorized = await isAuthorized(chatId)
+    if (authorized) {
+      await ctx.reply('✅ You are already verified!', {
+        reply_markup: mainMenuKB(),
+      })
+      return
+    }
+
+    const state = await getConversation(chatId)
+    if (state?.command !== 'verify') {
+      await ctx.reply('🔒 Send /start to begin verification.')
+      return
+    }
+
+    const contact = ctx.message.contact
+    // Verify that the shared contact belongs to the sender
+    if (contact.user_id && contact.user_id !== ctx.from?.id) {
+      await ctx.reply('❌ You must share your own contact to verify.')
+      return
+    }
+
+    const phone = contact.phone_number
+    const isMatch = await verifyPhone(phone)
+    if (isMatch) {
+      const success = await authorizeChat(chatId)
+      if (success) {
+        await clearConversation(chatId)
+        await ctx.reply('🎉 Identity verified successfully! Welcome, Admin.', {
+          reply_markup: mainMenuKB(),
+        })
+      } else {
+        await ctx.reply('❌ Failed to authorize this chat ID in the database. Please try again.')
+      }
+    } else {
+      await ctx.reply(`❌ Phone number (${phone}) does not match the configured admin phone number. Please update it in the settings panel or try again.`)
+    }
   })
 
   // Register bot commands and callbacks

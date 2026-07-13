@@ -1,4 +1,19 @@
-import { InlineKeyboard } from 'grammy'
+import { InlineKeyboard, Keyboard } from 'grammy'
+
+export function requestPhoneKB() {
+  return new Keyboard()
+    .requestContact('📞 Share Phone Number to Verify')
+    .resized()
+    .oneTime()
+}
+
+export function mainMenuKB() {
+  return new Keyboard()
+    .text('👤 Profile').text('📝 Blogs').text('🖥️ Projects').row()
+    .text('📊 Skills').text('🖼️ Gallery').text('🏅 Certs').row()
+    .text('💼 Exp').text('🎓 Edu').text('📬 Messages').row()
+    .resized()
+}
 
 export function confirmKB(prefix: string, id?: string | number): InlineKeyboard {
   const suffix = id !== undefined ? `_${id}` : ''
