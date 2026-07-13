@@ -109,9 +109,9 @@
   color: var(--text-primary) !important;
 }
 
-/* Restore white text color for specific dark/gradient backgrounds in light mode */
-[data-theme="light"] .bg-gradient-to-r,
-[data-theme="light"] .bg-gradient-to-r * {
+/* Restore white text color for specific dark/gradient backgrounds in light mode (excluding gradient text elements) */
+[data-theme="light"] .bg-gradient-to-r:not(.bg-clip-text):not(.text-transparent),
+[data-theme="light"] .bg-gradient-to-r:not(.bg-clip-text):not(.text-transparent) * {
   color: #ffffff !important;
 }
 [data-theme="light"] .bg-purple-500,
@@ -187,7 +187,7 @@
 }
 
 [data-theme="light"] body {
-  background-color: transparent !important;
+  background-color: var(--background);
   color: var(--foreground);
 }
 
@@ -236,11 +236,10 @@
 /* --- Base Styles --- */
 html {
   scroll-behavior: smooth;
-  background-color: var(--background);
 }
 
 body {
-  background-color: transparent !important;
+  background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
   overflow-x: hidden;

@@ -171,7 +171,7 @@ export default function ParticleBg() {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed top-0 left-0 w-full h-full -z-10 bg-[#07090e] pointer-events-none"
+      className="fixed top-0 left-0 w-full h-full z-0 bg-[#07090e] pointer-events-none"
     />
   )
 }

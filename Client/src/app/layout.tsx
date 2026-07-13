@@ -138,7 +138,9 @@ export default function RootLayout({
         <ThemeProvider>
           <ParticleBg />
           <CustomCursor />
-          {children}
+          <div className="relative z-10">
+            {children}
+          </div>
           <Analytics />
           <PwaRegister />
           <WebVitalsReporter />
