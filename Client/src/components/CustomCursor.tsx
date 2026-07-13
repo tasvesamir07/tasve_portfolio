@@ -17,7 +17,6 @@ export default function CustomCursor() {
     if (!mounted) return
 
     const hasHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (!hasHover) return
 
     const canvas = canvasRef.current
@@ -66,12 +65,12 @@ export default function CustomCursor() {
 
       if (initialized && mouseX >= 0 && mouseY >= 0) {
         const hov = hoveredRef.current
-        const lerpSpeed = prefersReduced ? 1.0 : 0.15
+        const lerpSpeed = 0.15
         ringX += (mouseX - ringX) * lerpSpeed
         ringY += (mouseY - ringY) * lerpSpeed
 
         const targetRadius = hov ? 22 : 10
-        currentRadius += (targetRadius - currentRadius) * (prefersReduced ? 1.0 : 0.15)
+        currentRadius += (targetRadius - currentRadius) * 0.15
 
         // Outer Ring
         ctx.beginPath()
