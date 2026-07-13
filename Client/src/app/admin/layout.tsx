@@ -13,7 +13,7 @@ import LoginPage from '@/components/admin/LoginPage'
 import { useTheme } from '@/lib/theme'
 
 const tabs = [
-  { key: '/admin', tab: null, label: 'Dashboard', icon: <LayoutDashboard className="w-4 h-4" /> },
+  { key: '/admin?tab=dashboard', tab: 'dashboard', label: 'Dashboard', icon: <LayoutDashboard className="w-4 h-4" /> },
   { key: '/admin?tab=profile', tab: 'profile', label: 'Profile', icon: <User className="w-4 h-4" /> },
   { key: '/admin?tab=projects', tab: 'projects', label: 'Projects', icon: <FolderKanban className="w-4 h-4" /> },
   { key: '/admin?tab=skills', tab: 'skills', label: 'Skills', icon: <BarChart3 className="w-4 h-4" /> },
