@@ -24,6 +24,7 @@ interface ProfileData {
   name: string; title: string; intro: string; description: string; email: string
   location: string; github: string; linkedin: string; twitter: string; codepen: string
   bio_paragraphs: string; tech_list: string; avatar: string; resume_url: string; passion: string; roles_list: string
+  phone?: string; telegram_bot_token?: string; telegram_bot_username?: string
 }
 
 interface ProjectData { id?: number; title: string; category: string; tag: string; desc: string; tags: string; github: string; live: string; image: string; diagram_url: string; sort_order: number }

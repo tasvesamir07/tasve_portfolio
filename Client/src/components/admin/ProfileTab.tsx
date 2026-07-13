@@ -20,6 +20,9 @@ interface ProfileData {
   resume_url: string
   passion: string
   roles_list: string
+  phone?: string
+  telegram_bot_token?: string
+  telegram_bot_username?: string
 }
 
 interface Props {
