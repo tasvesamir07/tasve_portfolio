@@ -65,6 +65,32 @@ export default function Navbar({ logoText }: Props) {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [pathname])
 
+  useEffect(() => {
+    const scrollToHash = () => {
+      const hash = window.location.hash
+      if (!hash) return
+
+      const targetId = hash.replace('#', '')
+      let attempts = 0
+      const interval = setInterval(() => {
+        const el = document.getElementById(targetId)
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth' })
+          setActiveSection(targetId)
+          clearInterval(interval)
+        }
+        attempts++
+        if (attempts > 40) {
+          clearInterval(interval)
+        }
+      }, 100)
+    }
+
+    scrollToHash()
+    window.addEventListener('hashchange', scrollToHash)
+    return () => window.removeEventListener('hashchange', scrollToHash)
+  }, [pathname])
+
   const navLinks = ['home', 'about', 'skills', 'projects', 'experience', 'education']
 
   return (
@@ -102,7 +128,7 @@ export default function Navbar({ logoText }: Props) {
             </li>
             {navLinks.map((link) => (
               <li key={link}>
-                <a
+                <Link
                   href={pathname === '/' ? `#${link}` : `/#${link}`}
                   className={`relative text-sm font-semibold capitalize tracking-wider transition-colors duration-200 hover:text-white ${
                     activeSection === link ? 'text-white' : 'text-gray-400'
@@ -113,7 +139,7 @@ export default function Navbar({ logoText }: Props) {
                   {activeSection === link && (
                     <span className="absolute bottom-[-6px] left-0 w-full h-[2px] bg-gradient-to-r from-purple-500 to-cyan-500" />
                   )}
-                </a>
+                </Link>
               </li>
             ))}
 
@@ -150,7 +176,7 @@ export default function Navbar({ logoText }: Props) {
 
               {/* Dropdown Box */}
               <div className="absolute right-0 top-full mt-2 w-52 bg-[#0a0c14]/95 backdrop-blur-xl border border-white/5 rounded-xl p-2 shadow-2xl transition-all duration-200 opacity-0 translate-y-2 invisible group-hover/more:opacity-100 group-hover/more:translate-y-0 group-hover/more:visible z-50">
-                <a
+                <Link
                   href={pathname === '/' ? '#certifications' : '/#certifications'}
                   className={`block px-4 py-2.5 text-xs font-semibold uppercase tracking-wider hover:bg-white/5 rounded-lg transition-colors duration-200 hover:text-white ${
                     activeSection === 'certifications'
@@ -160,8 +186,8 @@ export default function Navbar({ logoText }: Props) {
                   aria-label="Certifications section"
                 >
                   Certifications & Awards
-                </a>
-                <a
+                </Link>
+                <Link
                   href={pathname === '/' ? '#gallery' : '/#gallery'}
                   className={`block px-4 py-2.5 text-xs font-semibold uppercase tracking-wider hover:bg-white/5 rounded-lg transition-colors duration-200 hover:text-white ${
                     activeSection === 'gallery' ? 'text-cyan-400 bg-white/5' : 'text-gray-400'
@@ -169,8 +195,8 @@ export default function Navbar({ logoText }: Props) {
                   aria-label="Gallery section"
                 >
                   Gallery
-                </a>
-                <a
+                </Link>
+                <Link
                   href={pathname === '/' ? '#contact' : '/#contact'}
                   className={`block px-4 py-2.5 text-xs font-semibold uppercase tracking-wider hover:bg-white/5 rounded-lg transition-colors duration-200 hover:text-white ${
                     activeSection === 'contact' ? 'text-cyan-400 bg-white/5' : 'text-gray-400'
@@ -178,7 +204,7 @@ export default function Navbar({ logoText }: Props) {
                   aria-label="Contact section"
                 >
                   Contact
-                </a>
+                </Link>
               </div>
             </li>
           </ul>
@@ -204,7 +230,7 @@ export default function Navbar({ logoText }: Props) {
           <ul className="flex flex-col items-center gap-6">
             {navLinks.map((link) => (
               <li key={link}>
-                <a
+                <Link
                   href={pathname === '/' ? `#${link}` : `/#${link}`}
                   onClick={() => setIsOpen(false)}
                   className={`text-xl font-bold font-heading capitalize tracking-wider transition-colors duration-200 hover:text-cyan-400 ${
@@ -213,7 +239,7 @@ export default function Navbar({ logoText }: Props) {
                   aria-label={`Navigate to ${link} section`}
                 >
                   {link}
-                </a>
+                </Link>
               </li>
             ))}
             <li>
@@ -226,7 +252,7 @@ export default function Navbar({ logoText }: Props) {
               </Link>
             </li>
             <li>
-              <a
+              <Link
                 href={pathname === '/' ? '#certifications' : '/#certifications'}
                 onClick={() => setIsOpen(false)}
                 className={`text-xl font-bold font-heading capitalize tracking-wider transition-colors duration-200 hover:text-cyan-400 ${
@@ -234,10 +260,10 @@ export default function Navbar({ logoText }: Props) {
                 }`}
               >
                 Certifications & Awards
-              </a>
+              </Link>
             </li>
             <li>
-              <a
+              <Link
                 href={pathname === '/' ? '#gallery' : '/#gallery'}
                 onClick={() => setIsOpen(false)}
                 className={`text-xl font-bold font-heading capitalize tracking-wider transition-colors duration-200 hover:text-cyan-400 ${
@@ -245,10 +271,10 @@ export default function Navbar({ logoText }: Props) {
                 }`}
               >
                 Gallery
-              </a>
+              </Link>
             </li>
             <li>
-              <a
+              <Link
                 href={pathname === '/' ? '#contact' : '/#contact'}
                 onClick={() => setIsOpen(false)}
                 className={`text-xl font-bold font-heading capitalize tracking-wider transition-colors duration-200 hover:text-cyan-400 ${
@@ -256,7 +282,7 @@ export default function Navbar({ logoText }: Props) {
                 }`}
               >
                 contact
-              </a>
+              </Link>
             </li>
             <li>
               <button
