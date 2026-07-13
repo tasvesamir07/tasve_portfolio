@@ -6,6 +6,8 @@ import {
   SiKubernetes, SiGooglecloud, SiLinux, SiPostman, SiOpenjdk,
   SiCplusplus,
 } from 'react-icons/si'
+import { DiPhotoshop, DiIllustrator } from 'react-icons/di'
+import { FaPalette, FaMicrosoft } from 'react-icons/fa'
 import type { IconType } from 'react-icons'
 
 const iconMap: Record<string, IconType> = {
@@ -15,6 +17,7 @@ const iconMap: Record<string, IconType> = {
   SiFigma, SiVuedotjs, SiAngular, SiSass, SiRedux, SiGraphql,
   SiKubernetes, SiGooglecloud, SiLinux, SiPostman, SiOpenjdk,
   SiCplusplus,
+  DiPhotoshop, DiIllustrator, FaPalette, FaMicrosoft,
 }
 
 const nameToIcon: Record<string, IconType> = {
@@ -64,19 +67,27 @@ const nameToIcon: Record<string, IconType> = {
   gcp: SiGooglecloud,
   linux: SiLinux,
   postman: SiPostman,
-  photoshop: SiPython,
-  illustrator: SiPython,
-  canva: SiPython,
-  'microsoft office': SiPython,
-  'ms office': SiPython,
+  photoshop: DiPhotoshop,
+  'adobe photoshop': DiPhotoshop,
+  illustrator: DiIllustrator,
+  'adobe illustrator': DiIllustrator,
+  canva: FaPalette,
+  'microsoft office': FaMicrosoft,
+  'ms office': FaMicrosoft,
   aws: SiGooglecloud,
 }
 
 export function getSkillIcon(iconName: string, skillName: string): IconType {
   if (iconName && iconMap[iconName]) return iconMap[iconName]
   const key = skillName.toLowerCase().trim()
+  
+  if (nameToIcon[key]) return nameToIcon[key]
+  
+  const words = key.split(/[\s\-_./\\#+]+/)
   for (const [name, icon] of Object.entries(nameToIcon)) {
-    if (key === name || key.startsWith(name) || key.includes(name)) return icon
+    if (words.includes(name) || key.startsWith(name + ' ') || key.endsWith(' ' + name)) {
+      return icon
+    }
   }
   return SiReact
 }
@@ -112,4 +123,8 @@ export const SKILL_ICON_OPTIONS = [
   { value: 'SiVuedotjs', label: 'Vue.js' },
   { value: 'SiSass', label: 'Sass' },
   { value: 'SiRedux', label: 'Redux' },
+  { value: 'DiPhotoshop', label: 'Adobe Photoshop' },
+  { value: 'DiIllustrator', label: 'Adobe Illustrator' },
+  { value: 'FaPalette', label: 'Canva' },
+  { value: 'FaMicrosoft', label: 'Microsoft Office' },
 ]
