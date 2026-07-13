@@ -16,6 +16,7 @@ export interface ProfileRow {
   resume_url: string
   passion: string
   roles_list: string
+  phone: string
   created_at: string
   updated_at: string
 }
@@ -130,4 +131,19 @@ export interface ContactRow {
   subject: string
   message: string
   created_at: string
+}
+
+export interface AuthorizedChatIdRow {
+  id: number
+  chat_id: number
+  verified_at: string
+}
+
+export interface ConversationStateRow {
+  id: number
+  user_id: number
+  command: string
+  step: number
+  data: Record<string, unknown>
+  updated_at: string
 }

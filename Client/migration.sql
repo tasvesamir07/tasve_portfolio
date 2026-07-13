@@ -238,3 +238,27 @@ CREATE TABLE IF NOT EXISTS blogs (
 
 ALTER TABLE blogs ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow public read" ON blogs FOR SELECT USING (true);
+
+-- Add phone to profile (hidden from public API, used only for bot auth)
+ALTER TABLE profile ADD COLUMN IF NOT EXISTS phone TEXT NOT NULL DEFAULT '';
+
+-- Track verified Telegram users (one-time phone verification)
+CREATE TABLE IF NOT EXISTS authorized_chat_ids (
+  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  chat_id BIGINT NOT NULL UNIQUE,
+  verified_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE authorized_chat_ids ENABLE ROW LEVEL SECURITY;
+
+-- Multi-step conversation state (survives Vercel cold starts)
+CREATE TABLE IF NOT EXISTS conversation_state (
+  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  user_id BIGINT NOT NULL UNIQUE,
+  command TEXT NOT NULL DEFAULT '',
+  step INT NOT NULL DEFAULT 0,
+  data JSONB NOT NULL DEFAULT '{}',
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE conversation_state ENABLE ROW LEVEL SECURITY;
