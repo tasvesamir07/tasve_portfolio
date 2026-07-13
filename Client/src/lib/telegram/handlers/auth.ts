@@ -1,6 +1,6 @@
-import type { Context } from 'grammy'
+import { Context } from 'grammy'
 import { verifyPhone, authorizeChat, clearConversation, setConversation } from '../store'
-import { requestPhoneKB, mainMenuKB } from '../keyboards'
+import { requestPhoneKB } from '../keyboards'
 
 export async function handleVerificationStart(ctx: Context) {
   const chatId = ctx.chat?.id
@@ -21,7 +21,7 @@ export async function handleVerificationStep(ctx: Context, text: string) {
     if (success) {
       await clearConversation(chatId)
       await ctx.reply('✅ Identity verified successfully! You are now authorized to manage the portfolio.', {
-        reply_markup: mainMenuKB(),
+        reply_markup: { remove_keyboard: true },
       })
     } else {
       await ctx.reply('❌ Failed to authorize this chat ID in the database. Please try again.')

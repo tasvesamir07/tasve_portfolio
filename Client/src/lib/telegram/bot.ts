@@ -3,7 +3,6 @@ import { resolveBotToken } from './config'
 import { isAuthorized, getConversation, verifyPhone, authorizeChat, clearConversation } from './store'
 import { handleVerificationStart } from './handlers/auth'
 import { registerHandlers, handleFallback } from './handlers'
-import { mainMenuKB } from './keyboards'
 
 let _bot: Bot | null = null
 
@@ -51,7 +50,7 @@ export async function getBot(): Promise<Bot> {
     const authorized = await isAuthorized(chatId)
     if (authorized) {
       await ctx.reply('✅ You are already verified!', {
-        reply_markup: mainMenuKB(),
+        reply_markup: { remove_keyboard: true },
       })
       return
     }
@@ -76,7 +75,7 @@ export async function getBot(): Promise<Bot> {
       if (success) {
         await clearConversation(chatId)
         await ctx.reply('🎉 Identity verified successfully! Welcome, Admin.', {
-          reply_markup: mainMenuKB(),
+          reply_markup: { remove_keyboard: true },
         })
       } else {
         await ctx.reply('❌ Failed to authorize this chat ID in the database. Please try again.')

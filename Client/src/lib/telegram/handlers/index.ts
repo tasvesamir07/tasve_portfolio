@@ -1,7 +1,6 @@
 import type { Bot, Context } from 'grammy'
 import { getConversation, clearConversation } from '../store'
 import { helpText } from '../formats'
-import { mainMenuKB } from '../keyboards'
 
 // Import all handlers
 import { handleVerificationStep } from './auth'
@@ -23,7 +22,7 @@ You can manage all sections of your website directly from Telegram.
 
 ${helpText()}`, {
       parse_mode: 'Markdown',
-      reply_markup: mainMenuKB(),
+      reply_markup: { remove_keyboard: true },
     })
   })
 
@@ -33,20 +32,9 @@ ${helpText()}`, {
       await clearConversation(chatId)
     }
     await ctx.reply('❌ Current operation has been cancelled.', {
-      reply_markup: mainMenuKB(),
+      reply_markup: { remove_keyboard: true },
     })
   })
-
-  // Keyboard button text listeners
-  bot.hears('👤 Profile', handleProfileCommand)
-  bot.hears('📝 Blogs', handleBlogCommand)
-  bot.hears('🖥️ Projects', handleProjectCommand)
-  bot.hears('📊 Skills', handleSkillCommand)
-  bot.hears('🖼️ Gallery', handleGalleryCommand)
-  bot.hears('🏅 Certs', handleCertCommand)
-  bot.hears('💼 Exp', handleExperienceCommand)
-  bot.hears('🎓 Edu', handleEducationCommand)
-  bot.hears('📬 Messages', handleMessagesCommand)
 
   bot.command('profile', handleProfileCommand)
   bot.command('blog', handleBlogCommand)
