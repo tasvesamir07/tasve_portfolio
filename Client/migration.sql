@@ -220,3 +220,21 @@ INSERT INTO projects (title, category, tag, "desc", tags, github, live, image, s
 ('Prachar AI', 'ai', 'AI Powered', 'Developed a robust application to automate and schedule posts across multiple social media platforms, improving content strategy and user engagement.', 'JavaScript, Node.js, React, Social Media APIs', 'https://github.com/tasvesamir07', '#', '', 2),
 ('Face Recognition Attendance System', 'iot', 'Computer Vision', 'Engineered an automated attendance system using facial recognition technology to ensure accurate and efficient tracking.', 'Python, OpenCV, ESP32-cam', 'https://github.com/tasvesamir07', '#', '', 3),
 ('OBE Assistant', 'ai', 'AI Assistant', 'Developed an AI-powered assistant to streamline and support Outcome-Based Education (OBE) processes, enhancing administrative efficiency.', 'Python, ESP32-cam, Gemini API', 'https://github.com/tasvesamir07', '#', '', 4);
+
+CREATE TABLE IF NOT EXISTS blogs (
+  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  title TEXT NOT NULL DEFAULT '',
+  slug TEXT NOT NULL UNIQUE,
+  excerpt TEXT NOT NULL DEFAULT '',
+  content TEXT NOT NULL DEFAULT '',
+  cover_image TEXT NOT NULL DEFAULT '',
+  tags TEXT NOT NULL DEFAULT '',
+  published BOOLEAN DEFAULT FALSE,
+  read_time TEXT NOT NULL DEFAULT '',
+  sort_order INT DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE blogs ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow public read" ON blogs FOR SELECT USING (true);
