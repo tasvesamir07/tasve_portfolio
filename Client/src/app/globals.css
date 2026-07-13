@@ -100,14 +100,14 @@ body {
 
 /* Hide standard cursor on desktop (custom cursor active) */
 @media (hover: hover) and (pointer: fine) {
-  body, a, button, select, input, textarea {
-    cursor: none;
+  body, body * {
+    cursor: none !important;
   }
 }
 /* Restore native cursor when user prefers reduced motion */
 @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: reduce) {
-  body, a, button, select, input, textarea {
-    cursor: auto;
+  body, body * {
+    cursor: auto !important;
   }
 }
 
