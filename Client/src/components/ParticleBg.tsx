@@ -61,8 +61,9 @@ export default function ParticleBg() {
         this.x = Math.random() * (canvas?.width || 800)
         this.y = Math.random() * (canvas?.height || 600)
         this.size = Math.random() * 2 + 1
-        this.speedX = Math.random() * 0.8 - 0.4
-        this.speedY = Math.random() * 0.8 - 0.4
+        const minSpeed = 0.15
+        this.speedX = (Math.random() * 0.5 + minSpeed) * (Math.random() > 0.5 ? 1 : -1)
+        this.speedY = (Math.random() * 0.5 + minSpeed) * (Math.random() > 0.5 ? 1 : -1)
         this.color = theme === 'dark' 
           ? 'rgba(167, 139, 250, 0.8)' 
           : 'rgba(79, 70, 229, 0.8)'
@@ -148,9 +149,7 @@ export default function ParticleBg() {
         particlesArray[i].update()
         particlesArray[i].draw()
       }
-      if (frameCount % 2 === 0) {
-        connectParticles()
-      }
+      connectParticles()
       animationFrameId = requestAnimationFrame(animateParticles)
     }
 

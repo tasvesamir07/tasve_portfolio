@@ -101,12 +101,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           ))}
         </nav>
         <div className="p-2 border-t border-white/5 space-y-1">
-          <Link
+          <a
             href="/"
             className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
           >
             <ChevronLeft className="w-4 h-4" /> View Site
-          </Link>
+          </a>
           <button
             onClick={handleLogout}
             className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-gray-400 hover:text-red-400 hover:bg-red-400/5 rounded-lg transition-colors cursor-pointer"
