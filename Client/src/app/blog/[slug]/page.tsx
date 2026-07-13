@@ -49,7 +49,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     fetchBlogPost(slug),
     fetchProfile().catch(() => null),
   ])
-  const logoText = profile ? profile.name.replace(/\s+/g, '') : 'Blog'
+  const logoText = profile ? profile.name.replace(/\s+/g, '') : 'MDTASVEALSAMIR'
 
   if (!post) {
     return (

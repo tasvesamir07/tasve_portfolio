@@ -150,6 +150,20 @@ export async function migrate(): Promise<{ ok: boolean; reason?: string }> {
       }
 
       if (stmt.isSeed) {
+        const match = stmt.sql.match(/INSERT\s+INTO\s+([a-zA-Z0-9_"]+)/i)
+        if (match) {
+          const tableName = match[1].replace(/"/g, '')
+          try {
+            const { rows } = await client.query(`SELECT 1 FROM "${tableName}" LIMIT 1`)
+            if (rows.length > 0) {
+              console.log(`[migrate] Seed skipped (table "${tableName}" already has data)`)
+              continue
+            }
+          } catch (err) {
+            // Table doesn't exist or other error — proceed and let the client query throw normally
+          }
+        }
+
         const hash = hashStatement(stmt.sql)
         const alreadyRun = await hasStatementRun(client, hash)
         if (alreadyRun) {

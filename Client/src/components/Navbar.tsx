@@ -68,7 +68,7 @@ export default function Navbar({ logoText }: Props) {
       <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center">
         {/* Brand Logo */}
         <a
-          href="#home"
+          href="/"
           className="font-heading font-extrabold text-xl text-white flex items-center gap-1 group"
         >
           <span className="text-cyan-400 group-hover:text-pink-500 transition-colors duration-200">

@@ -40,7 +40,7 @@ export default async function BlogPage({
     fetchBlogPosts().catch(() => []),
     fetchProfile().catch(() => null),
   ])
-  const logoText = profile ? profile.name.replace(/\s+/g, '') : 'Blog'
+  const logoText = profile ? profile.name.replace(/\s+/g, '') : 'MDTASVEALSAMIR'
 
   const totalPages = Math.max(1, Math.ceil(allPosts.length / perPage))
   const start = (currentPage - 1) * perPage
