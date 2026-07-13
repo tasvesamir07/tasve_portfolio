@@ -55,7 +55,11 @@ export function useCrud<T extends CrudItem>(
   }, [load])
 
   const addItem = async () => {
-    const newItem = { ...defaults, sort_order: items.length } as unknown as T
+    const newItem = { ...defaults, sort_order: items.length } as unknown as any
+    if (table === 'blogs') {
+      newItem.title = newItem.title || 'New Article'
+      newItem.slug = 'new-article-' + Date.now() + '-' + Math.floor(Math.random() * 1000)
+    }
     const res = await fetch(`/api/admin/${table}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
