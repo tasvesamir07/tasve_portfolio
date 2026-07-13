@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from 'react'
 
 export default function CustomCursor() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
-  const [hovered, setHovered] = useState(false)
+  const hoveredRef = useRef(false)
   const [isMobile, setIsMobile] = useState(true)
   const [reducedMotion, setReducedMotion] = useState(false)
 
@@ -14,7 +14,6 @@ export default function CustomCursor() {
     const motionHandler = (e: MediaQueryListEvent) => setReducedMotion(e.matches)
     mq.addEventListener('change', motionHandler)
 
-    // Check if device is desktop
     const checkDevice = () => {
       const mobile = window.innerWidth <= 1024
       setIsMobile(mobile)
@@ -22,11 +21,9 @@ export default function CustomCursor() {
     checkDevice()
     window.addEventListener('resize', checkDevice)
 
-    if (isMobile || reducedMotion) {
-      return () => {
-        mq.removeEventListener('change', motionHandler)
-        window.removeEventListener('resize', checkDevice)
-      }
+    if (isMobile || reducedMotion) return () => {
+      mq.removeEventListener('change', motionHandler)
+      window.removeEventListener('resize', checkDevice)
     }
 
     const canvas = canvasRef.current
@@ -34,7 +31,6 @@ export default function CustomCursor() {
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
-    // Resize canvas
     const resizeCanvas = () => {
       canvas.width = window.innerWidth
       canvas.height = window.innerHeight
@@ -53,7 +49,6 @@ export default function CustomCursor() {
     const handleMouseMove = (e: MouseEvent) => {
       mouseX = e.clientX
       mouseY = e.clientY
-      
       if (!initialized) {
         ringX = mouseX
         ringY = mouseY
@@ -63,45 +58,40 @@ export default function CustomCursor() {
 
     window.addEventListener('mousemove', handleMouseMove)
 
-    // Track interactive hovers
     const handleMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement
       const isInteractive = target.closest(
         'a, button, [role="button"], input, textarea, select, .project-card, .info-card, .cursor-zoom-in'
       )
-      setHovered(!!isInteractive)
+      hoveredRef.current = !!isInteractive
     }
     document.addEventListener('mouseover', handleMouseOver)
 
-    // Animation Loop
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
 
       if (initialized && mouseX >= 0 && mouseY >= 0) {
-        // Smoothly interpolate outer ring position (Lerp)
+        const hov = hoveredRef.current
         const lerpSpeed = 0.15
         ringX += (mouseX - ringX) * lerpSpeed
         ringY += (mouseY - ringY) * lerpSpeed
 
-        // Smoothly interpolate outer ring radius
-        const targetRadius = hovered ? 22 : 10
+        const targetRadius = hov ? 22 : 10
         currentRadius += (targetRadius - currentRadius) * 0.15
 
-        // Draw outer floating ring
         ctx.beginPath()
         ctx.arc(ringX, ringY, currentRadius, 0, Math.PI * 2)
-        ctx.strokeStyle = hovered ? 'rgba(236, 72, 153, 0.5)' : 'rgba(6, 182, 212, 0.4)'
-        ctx.lineWidth = hovered ? 2.0 : 1.5
+        ctx.strokeStyle = hov ? 'rgba(236, 72, 153, 0.5)' : 'rgba(6, 182, 212, 0.4)'
+        ctx.lineWidth = hov ? 2.0 : 1.5
         ctx.stroke()
 
-        // Draw center dot
         ctx.beginPath()
-        ctx.arc(mouseX, mouseY, hovered ? 4 : 3, 0, Math.PI * 2)
-        ctx.fillStyle = hovered ? 'rgb(236, 72, 153)' : 'rgb(6, 182, 212)'
-        ctx.shadowBlur = hovered ? 8 : 4
-        ctx.shadowColor = hovered ? 'rgba(236, 72, 153, 0.6)' : 'rgba(6, 182, 212, 0.6)'
+        ctx.arc(mouseX, mouseY, hov ? 4 : 3, 0, Math.PI * 2)
+        ctx.fillStyle = hov ? 'rgb(236, 72, 153)' : 'rgb(6, 182, 212)'
+        ctx.shadowBlur = hov ? 8 : 4
+        ctx.shadowColor = hov ? 'rgba(236, 72, 153, 0.6)' : 'rgba(6, 182, 212, 0.6)'
         ctx.fill()
-        ctx.shadowBlur = 0 // reset shadow
+        ctx.shadowBlur = 0
       }
 
       animationFrameId = requestAnimationFrame(animate)
@@ -116,7 +106,7 @@ export default function CustomCursor() {
       document.removeEventListener('mouseover', handleMouseOver)
       cancelAnimationFrame(animationFrameId)
     }
-  }, [isMobile, hovered])
+  }, [isMobile, reducedMotion])
 
   if (isMobile || reducedMotion) return null
 
