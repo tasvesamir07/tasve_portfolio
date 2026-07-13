@@ -1,7 +1,9 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { Menu, X, ChevronDown } from 'lucide-react'
+import Link from 'next/link'
+import { Menu, X, ChevronDown, Sun, Moon } from 'lucide-react'
+import { useTheme } from '@/lib/theme'
 
 interface Props {
   logoText: string
@@ -11,6 +13,7 @@ export default function Navbar({ logoText }: Props) {
   const [scrolled, setScrolled] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
   const [activeSection, setActiveSection] = useState('home')
+  const { theme, toggle } = useTheme()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -80,6 +83,15 @@ export default function Navbar({ logoText }: Props) {
         {/* Desktop Nav links */}
         <nav className="hidden md:block">
           <ul className="flex items-center gap-8">
+            <li>
+              <button
+                onClick={toggle}
+                className="flex items-center justify-center w-9 h-9 rounded-lg text-gray-400 hover:text-cyan-400 hover:bg-white/5 transition-all duration-200 cursor-pointer"
+                aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+              >
+                {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              </button>
+            </li>
             {navLinks.map((link) => (
               <li key={link}>
                 <a
@@ -87,6 +99,7 @@ export default function Navbar({ logoText }: Props) {
                   className={`relative text-sm font-semibold capitalize tracking-wider transition-colors duration-200 hover:text-white ${
                     activeSection === link ? 'text-white' : 'text-gray-400'
                   }`}
+                  aria-label={`Navigate to ${link} section`}
                 >
                   {link}
                   {activeSection === link && (
@@ -95,6 +108,21 @@ export default function Navbar({ logoText }: Props) {
                 </a>
               </li>
             ))}
+
+            <li>
+              <Link
+                href="/blog"
+                className={`relative text-sm font-semibold capitalize tracking-wider transition-colors duration-200 hover:text-white ${
+                  activeSection === 'blog' ? 'text-white' : 'text-gray-400'
+                }`}
+                aria-label="Visit blog"
+              >
+                Blog
+                {activeSection === 'blog' && (
+                  <span className="absolute bottom-[-6px] left-0 w-full h-[2px] bg-gradient-to-r from-purple-500 to-cyan-500" />
+                )}
+              </Link>
+            </li>
 
             {/* "More" Dropdown Menu */}
             <li className="relative group/more">
@@ -121,6 +149,7 @@ export default function Navbar({ logoText }: Props) {
                       ? 'text-cyan-400 bg-white/5'
                       : 'text-gray-400'
                   }`}
+                  aria-label="Certifications section"
                 >
                   Certifications & Awards
                 </a>
@@ -129,6 +158,7 @@ export default function Navbar({ logoText }: Props) {
                   className={`block px-4 py-2.5 text-xs font-semibold uppercase tracking-wider hover:bg-white/5 rounded-lg transition-colors duration-200 hover:text-white ${
                     activeSection === 'gallery' ? 'text-cyan-400 bg-white/5' : 'text-gray-400'
                   }`}
+                  aria-label="Gallery section"
                 >
                   Gallery
                 </a>
@@ -137,6 +167,7 @@ export default function Navbar({ logoText }: Props) {
                   className={`block px-4 py-2.5 text-xs font-semibold uppercase tracking-wider hover:bg-white/5 rounded-lg transition-colors duration-200 hover:text-white ${
                     activeSection === 'contact' ? 'text-cyan-400 bg-white/5' : 'text-gray-400'
                   }`}
+                  aria-label="Contact section"
                 >
                   Contact
                 </a>
@@ -171,11 +202,21 @@ export default function Navbar({ logoText }: Props) {
                   className={`text-xl font-bold font-heading capitalize tracking-wider transition-colors duration-200 hover:text-cyan-400 ${
                     activeSection === link ? 'text-cyan-400' : 'text-gray-300'
                   }`}
+                  aria-label={`Navigate to ${link} section`}
                 >
                   {link}
                 </a>
               </li>
             ))}
+            <li>
+              <Link
+                href="/blog"
+                onClick={() => setIsOpen(false)}
+                className="text-xl font-bold font-heading capitalize tracking-wider text-gray-300 hover:text-cyan-400 transition-colors duration-200"
+              >
+                Blog
+              </Link>
+            </li>
             <li>
               <a
                 href="#certifications"
@@ -208,6 +249,15 @@ export default function Navbar({ logoText }: Props) {
               >
                 contact
               </a>
+            </li>
+            <li>
+              <button
+                onClick={() => { toggle(); setIsOpen(false) }}
+                className="flex items-center gap-2 text-xl font-bold font-heading tracking-wider text-gray-300 hover:text-cyan-400 transition-colors duration-200 cursor-pointer"
+                aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+              >
+                {theme === 'dark' ? <><Sun className="w-5 h-5" /> Light Mode</> : <><Moon className="w-5 h-5" /> Dark Mode</>}
+              </button>
             </li>
           </ul>
         </nav>

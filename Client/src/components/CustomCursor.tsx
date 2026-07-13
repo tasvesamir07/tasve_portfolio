@@ -6,8 +6,14 @@ export default function CustomCursor() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const [hovered, setHovered] = useState(false)
   const [isMobile, setIsMobile] = useState(true)
+  const [reducedMotion, setReducedMotion] = useState(false)
 
   useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
+    setReducedMotion(mq.matches)
+    const motionHandler = (e: MediaQueryListEvent) => setReducedMotion(e.matches)
+    mq.addEventListener('change', motionHandler)
+
     // Check if device is desktop
     const checkDevice = () => {
       const mobile = window.innerWidth <= 1024
@@ -16,7 +22,12 @@ export default function CustomCursor() {
     checkDevice()
     window.addEventListener('resize', checkDevice)
 
-    if (isMobile) return
+    if (isMobile || reducedMotion) {
+      return () => {
+        mq.removeEventListener('change', motionHandler)
+        window.removeEventListener('resize', checkDevice)
+      }
+    }
 
     const canvas = canvasRef.current
     if (!canvas) return
@@ -100,13 +111,14 @@ export default function CustomCursor() {
     return () => {
       window.removeEventListener('resize', checkDevice)
       window.removeEventListener('resize', resizeCanvas)
+      mq.removeEventListener('change', motionHandler)
       window.removeEventListener('mousemove', handleMouseMove)
       document.removeEventListener('mouseover', handleMouseOver)
       cancelAnimationFrame(animationFrameId)
     }
   }, [isMobile, hovered])
 
-  if (isMobile) return null
+  if (isMobile || reducedMotion) return null
 
   return (
     <canvas

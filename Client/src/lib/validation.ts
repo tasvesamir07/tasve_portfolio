@@ -36,6 +36,7 @@ export const SkillSchema = z.object({
   category: z.string().max(200),
   name: z.string().max(200),
   value: z.number().int().min(0).max(100),
+  icon: z.string().max(100).default(''),
   sort_order: z.number().int().optional(),
 })
 
@@ -82,6 +83,18 @@ export const ContactSchema = z.object({
 export const LoginSchema = z.object({
   username: z.string().min(1),
   password: z.string().min(1),
+})
+
+export const BlogSchema = z.object({
+  title: z.string().min(1).max(300),
+  slug: z.string().min(1).max(300),
+  excerpt: z.string().max(1000).default(''),
+  content: z.string().default(''),
+  cover_image: z.string().max(1000).default(''),
+  tags: z.string().max(1000).default(''),
+  published: z.boolean().default(false),
+  read_time: z.string().max(50).default(''),
+  sort_order: z.number().int().optional(),
 })
 
 export type ProfileInput = z.infer<typeof ProfileSchema>

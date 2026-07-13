@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { CheckCircle, Loader, ArrowRight } from 'lucide-react'
+import { CheckCircle, ArrowRight } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 export default function ContactForm() {
@@ -87,6 +87,7 @@ export default function ContactForm() {
                 value={form.name}
                 onChange={handleChange}
                 placeholder=" "
+                aria-label="Your name"
                 className="w-full py-2 bg-transparent border-b-2 border-white/10 outline-none text-white text-base transition-colors duration-200 focus:border-b-transparent peer"
               />
               <label className="absolute left-0 top-2 text-base text-gray-400 pointer-events-none transition-all duration-200 peer-focus:-top-4 peer-focus:text-xs peer-focus:text-cyan-400 peer-[:not(:placeholder-shown)]:-top-4 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:text-cyan-400">
@@ -103,6 +104,7 @@ export default function ContactForm() {
                 value={form.email}
                 onChange={handleChange}
                 placeholder=" "
+                aria-label="Your email address"
                 className="w-full py-2 bg-transparent border-b-2 border-white/10 outline-none text-white text-base transition-colors duration-200 focus:border-b-transparent peer"
               />
               <label className="absolute left-0 top-2 text-base text-gray-400 pointer-events-none transition-all duration-200 peer-focus:-top-4 peer-focus:text-xs peer-focus:text-cyan-400 peer-[:not(:placeholder-shown)]:-top-4 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:text-cyan-400">
@@ -119,6 +121,7 @@ export default function ContactForm() {
                 value={form.subject}
                 onChange={handleChange}
                 placeholder=" "
+                aria-label="Message subject"
                 className="w-full py-2 bg-transparent border-b-2 border-white/10 outline-none text-white text-base transition-colors duration-200 focus:border-b-transparent peer"
               />
               <label className="absolute left-0 top-2 text-base text-gray-400 pointer-events-none transition-all duration-200 peer-focus:-top-4 peer-focus:text-xs peer-focus:text-cyan-400 peer-[:not(:placeholder-shown)]:-top-4 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:text-cyan-400">
@@ -135,6 +138,7 @@ export default function ContactForm() {
                 value={form.message}
                 onChange={handleChange}
                 placeholder=" "
+                aria-label="Your message"
                 className="w-full py-2 bg-transparent border-b-2 border-white/10 outline-none text-white text-base transition-colors duration-200 focus:border-b-transparent resize-none peer"
               />
               <label className="absolute left-0 top-2 text-base text-gray-400 pointer-events-none transition-all duration-200 peer-focus:-top-4 peer-focus:text-xs peer-focus:text-cyan-400 peer-[:not(:placeholder-shown)]:-top-4 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:text-cyan-400">
@@ -153,8 +157,9 @@ export default function ContactForm() {
               type="submit"
               disabled={status === 'loading'}
               className="flex items-center justify-center gap-3 w-full py-3 bg-gradient-to-r from-purple-500 to-cyan-500 hover:from-pink-500 hover:to-purple-500 text-white font-semibold rounded-lg shadow-lg hover:shadow-pink-500/20 transform hover:-translate-y-1 transition-all duration-200 cursor-pointer disabled:opacity-50"
+              aria-label={status === 'loading' ? 'Sending message' : 'Send message'}
             >
-              Send Message
+                {status === 'loading' ? 'Sending...' : 'Send Message'}
               <svg
                 viewBox="0 0 24 24"
                 fill="none"

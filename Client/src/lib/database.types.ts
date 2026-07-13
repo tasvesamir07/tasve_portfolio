@@ -41,6 +41,7 @@ export interface SkillRow {
   category: string
   name: string
   value: number
+  icon: string
   sort_order: number
   created_at: string
 }
@@ -106,6 +107,20 @@ export interface GalleryRow {
   description: string
   sort_order: number
   created_at: string
+}
+
+export interface BlogRow {
+  id: number
+  title: string
+  slug: string
+  excerpt: string
+  content: string
+  cover_image: string
+  tags: string
+  published: boolean
+  read_time: string
+  created_at: string
+  updated_at: string
 }
 
 export interface ContactRow {

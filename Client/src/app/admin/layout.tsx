@@ -6,10 +6,11 @@ import Link from 'next/link'
 import { Toaster } from 'sonner'
 import {
   LogOut, Settings, Award, Image as ImageIcon, User, FolderKanban,
-  BarChart3, Briefcase, GraduationCap, Mail, Menu, X, ChevronLeft, LayoutDashboard,
+  BarChart3, Briefcase, GraduationCap, Mail, Menu, X, ChevronLeft, LayoutDashboard, Sun, Moon, FileText,
 } from 'lucide-react'
 import { AdminSkeleton } from '@/components/Skeleton'
 import LoginPage from '@/components/admin/LoginPage'
+import { useTheme } from '@/lib/theme'
 
 const tabs = [
   { key: '/admin', tab: null, label: 'Dashboard', icon: <LayoutDashboard className="w-4 h-4" /> },
@@ -18,6 +19,7 @@ const tabs = [
   { key: '/admin?tab=skills', tab: 'skills', label: 'Skills', icon: <BarChart3 className="w-4 h-4" /> },
   { key: '/admin?tab=experiences', tab: 'experiences', label: 'Experience', icon: <Briefcase className="w-4 h-4" /> },
   { key: '/admin?tab=education', tab: 'education', label: 'Education', icon: <GraduationCap className="w-4 h-4" /> },
+  { key: '/admin?tab=blogs', tab: 'blogs', label: 'Blog', icon: <FileText className="w-4 h-4" /> },
   { key: '/admin?tab=certifications', tab: 'certifications', label: 'Certifications', icon: <Award className="w-4 h-4" /> },
   { key: '/admin?tab=gallery', tab: 'gallery', label: 'Gallery', icon: <ImageIcon className="w-4 h-4" /> },
   { key: '/admin?tab=messages', tab: 'messages', label: 'Messages', icon: <Mail className="w-4 h-4" /> },
@@ -28,6 +30,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const searchParams = useSearchParams()
   const [authed, setAuthed] = useState<boolean | null>(null)
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const { theme, toggle } = useTheme()
 
   useEffect(() => {
     fetch('/api/admin/auth')
@@ -126,12 +129,21 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               {tabs.find((t) => t.tab === currentTab)?.label || 'Dashboard'}
             </span>
           </div>
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors cursor-pointer"
-          >
-            <LogOut className="w-4 h-4" /> Logout
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={toggle}
+              className="flex items-center justify-center w-8 h-8 rounded-lg text-gray-400 hover:text-cyan-400 hover:bg-white/5 transition-all duration-200 cursor-pointer"
+              aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+            >
+              {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </button>
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors cursor-pointer"
+            >
+              <LogOut className="w-4 h-4" /> Logout
+            </button>
+          </div>
         </header>
         <div className="p-4 md:p-6 max-w-4xl mx-auto w-full">
           {children}

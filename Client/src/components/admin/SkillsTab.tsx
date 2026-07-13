@@ -1,12 +1,14 @@
 'use client'
 
 import { Plus, Trash2, Save, Loader, ChevronUp, ChevronDown, GripVertical } from 'lucide-react'
+import { SKILL_ICON_OPTIONS } from '@/lib/skill-icons'
 
 interface SkillData {
   id?: number
   category: string
   name: string
   value: number
+  icon: string
   sort_order: number
 }
 
@@ -117,6 +119,25 @@ export default function SkillsTab({
                 className={inputClass}
                 placeholder="e.g. Python, React"
               />
+            </div>
+
+            <div className="w-full sm:w-[160px] shrink-0">
+              <label className="text-[10px] text-gray-500 font-bold uppercase tracking-wider block mb-1.5">
+                Icon
+              </label>
+              <select
+                value={s.icon}
+                onChange={(e) => {
+                  const u = { ...s, icon: e.target.value }
+                  onUpdate(idx, u)
+                }}
+                className={inputClass}
+              >
+                <option value="">Auto</option>
+                {SKILL_ICON_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
             </div>
 
             <div className="w-full sm:w-[220px] shrink-0">

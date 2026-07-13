@@ -1,4 +1,5 @@
 import React, { Suspense } from 'react'
+import Image from 'next/image'
 import {
   fetchProfile,
   fetchProjects,
@@ -14,6 +15,7 @@ import Typewriter from '@/components/Typewriter'
 import ProjectsGrid from '@/components/ProjectsGrid'
 import ContactForm from '@/components/ContactForm'
 import Card3DTilt from '@/components/Card3DTilt'
+import ErrorBoundary from '@/components/ErrorBoundary'
 import {
   ArrowRight,
   Mail,
@@ -24,6 +26,10 @@ import {
   Award,
   Layers,
   Briefcase,
+  Code,
+  Palette,
+  Wrench,
+  Database,
 } from 'lucide-react'
 import AnimatedSection from '@/components/AnimatedSection'
 import ScrollToTop from '@/components/ScrollToTop'
@@ -31,6 +37,7 @@ import SkillBar from '@/components/SkillBar'
 import CertificationsGrid from '@/components/CertificationsGrid'
 import GalleryGrid from '@/components/GalleryGrid'
 import { SkeletonBlock, SkeletonLine, SkeletonCard } from '@/components/Skeleton'
+import { blurDataURL } from '@/lib/images'
 
 export const revalidate = 3600
 
@@ -176,11 +183,16 @@ async function HeroSection({
         <div className="lg:col-span-7 flex flex-col gap-6 text-center lg:text-left">
           {profile.avatar && (
             <div className="w-36 h-36 md:w-44 md:h-44 rounded-full border-2 border-cyan-400/30 p-1 bg-[#0f121d] shadow-2xl shadow-cyan-500/10 mb-4 mx-auto lg:mx-0 relative group overflow-hidden shrink-0">
-              <div className="w-full h-full rounded-full overflow-hidden">
-                <img
+              <div className="w-full h-full rounded-full overflow-hidden relative">
+                <Image
                   src={profile.avatar}
                   alt={profile.name}
-                  className="w-full h-full object-cover transition-transform group-hover:scale-108 duration-300"
+                  fill
+                  className="object-cover transition-transform group-hover:scale-108 duration-300"
+                  sizes="176px"
+                  priority
+                  placeholder="blur"
+                  blurDataURL={blurDataURL}
                 />
               </div>
               <div className="absolute inset-0 rounded-full border border-cyan-400/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
@@ -205,12 +217,14 @@ async function HeroSection({
             <a
               href="#projects"
               className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-purple-500 to-cyan-500 hover:from-pink-500 hover:to-purple-500 text-white font-semibold rounded-lg shadow-lg hover:shadow-cyan-500/20 transform hover:-translate-y-0.5 transition-all duration-200 cursor-pointer"
+              aria-label="View featured projects"
             >
               View Work <ArrowRight className="w-4 h-4" />
             </a>
             <a
               href="#contact"
               className="inline-flex items-center gap-3 px-6 py-3 bg-transparent border border-white/10 hover:border-cyan-400 hover:bg-cyan-500/5 text-white font-semibold rounded-lg backdrop-blur-md transform hover:-translate-y-0.5 transition-all duration-200 cursor-pointer"
+              aria-label="Get in touch"
             >
               Let&apos;s Talk
             </a>
@@ -220,6 +234,7 @@ async function HeroSection({
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-3 px-6 py-3 bg-transparent border border-cyan-400/30 hover:border-cyan-400 hover:bg-cyan-500/10 text-cyan-400 font-semibold rounded-lg backdrop-blur-md transform hover:-translate-y-0.5 transition-all duration-200 cursor-pointer"
+                aria-label="Download resume"
               >
                 <svg
                   className="w-4 h-4"
@@ -268,7 +283,7 @@ async function HeroSection({
                   ,{'\n'} <span className="text-pink-500">{'"skills"'}</span>: [
                   {profile.techList.slice(0, 4).map((tech, idx, arr) => (
                     <React.Fragment key={tech}>
-                      {'\n'}   <span className="text-cyan-400">"{tech}"</span>
+                      {'\n'}   <span className="text-cyan-400">{'"'}{tech}{'"'}</span>
                       {idx < arr.length - 1 ? ',' : ''}
                     </React.Fragment>
                   ))}
@@ -396,6 +411,15 @@ async function AboutSection({
   )
 }
 
+function skillCategoryIcon(cat: string) {
+  const l = cat.toLowerCase()
+  if (l.includes('language')) return 'Code'
+  if (l.includes('framework') || l.includes('library')) return 'Database'
+  if (l.includes('tool')) return 'Wrench'
+  if (l.includes('design') || l.includes('documentation')) return 'Palette'
+  return 'Layers'
+}
+
 async function SkillsSection() {
   const skills = await fetchSkills().catch(() => [])
   return (
@@ -427,7 +451,7 @@ async function SkillsSection() {
               </div>
               <div className="flex flex-col gap-5">
                 {cat.items.map((item) => (
-                  <SkillBar key={item.name} name={item.name} value={item.value} />
+                  <SkillBar key={item.name} name={item.name} value={item.value} icon={item.icon} />
                 ))}
               </div>
             </div>
@@ -681,37 +705,54 @@ export default async function Home() {
   return (
     <>
       <Navbar logoText={logoText} />
+      <div id="main-content" />
 
       <Suspense fallback={<HeroSkeleton />}>
-        <HeroSection profile={profile} />
+        <ErrorBoundary>
+          <HeroSection profile={profile} />
+        </ErrorBoundary>
       </Suspense>
 
       <Suspense fallback={null}>
-        <AboutSection profile={profile} />
+        <ErrorBoundary>
+          <AboutSection profile={profile} />
+        </ErrorBoundary>
       </Suspense>
 
       <Suspense fallback={<SkillsSkeleton />}>
-        <SkillsSection />
+        <ErrorBoundary>
+          <SkillsSection />
+        </ErrorBoundary>
       </Suspense>
 
       <Suspense fallback={<ProjectsSkeleton />}>
-        <ProjectsSection />
+        <ErrorBoundary>
+          <ProjectsSection />
+        </ErrorBoundary>
       </Suspense>
 
       <Suspense fallback={<ExperienceSkeleton />}>
-        <ExperienceSection />
+        <ErrorBoundary>
+          <ExperienceSection />
+        </ErrorBoundary>
       </Suspense>
 
       <Suspense fallback={<EducationSkeleton />}>
-        <EducationSection />
+        <ErrorBoundary>
+          <EducationSection />
+        </ErrorBoundary>
       </Suspense>
 
       <Suspense fallback={<CertificationsSkeleton />}>
-        <CertificationsSection />
+        <ErrorBoundary>
+          <CertificationsSection />
+        </ErrorBoundary>
       </Suspense>
 
       <Suspense fallback={<GallerySkeleton />}>
-        <GallerySection />
+        <ErrorBoundary>
+          <GallerySection />
+        </ErrorBoundary>
       </Suspense>
 
       {/* --- CONTACT SECTION --- */}
@@ -762,6 +803,64 @@ export default async function Home() {
                     <span className="text-gray-300 font-semibold">{profile.location}</span>
                   </div>
                 </div>
+
+                <div className="border-t border-white/5 pt-4 mt-2">
+                  <span className="block font-mono text-[10px] text-gray-500 mb-3">Find Me On</span>
+                  <div className="flex items-center gap-3">
+                    {profile.github && profile.github !== '#' && (
+                      <a
+                        href={profile.github}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-11 h-11 bg-cyan-400/5 border border-cyan-400/10 rounded-lg flex items-center justify-center text-gray-400 hover:text-cyan-400 hover:border-cyan-400/30 transition-all duration-200"
+                        aria-label="GitHub"
+                      >
+                        <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                          <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.11.82-.26.82-.577v-2.234c-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.43.372.82 1.102.82 2.222v3.293c0 .319.22.694.825.576C20.565 21.795 24 17.3 24 12c0-6.63-5.37-12-12-12z" />
+                        </svg>
+                      </a>
+                    )}
+                    {profile.linkedin && profile.linkedin !== '#' && (
+                      <a
+                        href={profile.linkedin.startsWith('http') ? profile.linkedin : `https://${profile.linkedin}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-11 h-11 bg-cyan-400/5 border border-cyan-400/10 rounded-lg flex items-center justify-center text-gray-400 hover:text-cyan-400 hover:border-cyan-400/30 transition-all duration-200"
+                        aria-label="LinkedIn"
+                      >
+                        <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                          <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                        </svg>
+                      </a>
+                    )}
+                    {profile.twitter && profile.twitter !== '#' && (
+                      <a
+                        href={profile.twitter.startsWith('http') ? profile.twitter : `https://${profile.twitter}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-11 h-11 bg-cyan-400/5 border border-cyan-400/10 rounded-lg flex items-center justify-center text-gray-400 hover:text-cyan-400 hover:border-cyan-400/30 transition-all duration-200"
+                        aria-label="Twitter / X"
+                      >
+                        <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                        </svg>
+                      </a>
+                    )}
+                    {profile.codepen && profile.codepen !== '#' && (
+                      <a
+                        href={profile.codepen.startsWith('http') ? profile.codepen : `https://${profile.codepen}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-11 h-11 bg-cyan-400/5 border border-cyan-400/10 rounded-lg flex items-center justify-center text-gray-400 hover:text-cyan-400 hover:border-cyan-400/30 transition-all duration-200"
+                        aria-label="CodePen"
+                      >
+                        <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                          <path d="M3.5 8.91l7.5 5.18v4.47L1.5 13.23 3.5 8.91zm0 6.18l3.5 2.42v-3.07L3.5 15.09zm.53-7.05L12 3.32l7.97 4.72-3.87 2.56L12 7.43 8.84 10.6 4.03 8.04zM12 13.02l3.57-2.44L12 8.12 8.43 10.58 12 13.02zm-2 4.54l-3.5-2.42v3.07L10 17.56zM20.5 8.91l-2 4.32 2 4.32v-8.64zm0 6.18l-3.5 2.42v-3.07l3.5 2.42zM12 23.47l-9.5-5.63v-4.69l2 4.32v-1.81l7.5 5.18 7.5-5.18v1.81l2-4.32v4.69L12 23.47zM22.5 8.91v4.69l-2-4.32v1.81L12 10.42V5.73l7.97 4.72 2.53-1.54z" />
+                        </svg>
+                      </a>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -786,3 +885,4 @@ export default async function Home() {
     </>
   )
 }
+

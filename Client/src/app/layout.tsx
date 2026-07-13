@@ -5,6 +5,9 @@ import ParticleBg from '@/components/ParticleBg'
 import CustomCursor from '@/components/CustomCursor'
 import { Analytics } from '@vercel/analytics/react'
 import { getSupabase } from '@/lib/supabase'
+import { ThemeProvider } from '@/lib/theme'
+import PwaRegister from '@/components/PwaRegister'
+import { WebVitalsReporter } from '@/components/WebVitals'
 
 const outfit = Outfit({
   variable: '--font-outfit',
@@ -100,11 +103,38 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${outfit.variable} ${firaCode.variable} scroll-smooth antialiased`}>
-      <body className="font-sans bg-[#07090e] text-gray-100 min-h-screen relative overflow-x-hidden">
-        <ParticleBg />
-        <CustomCursor />
-        {children}
-        <Analytics />
+      <head>
+        <link rel="manifest" href="/manifest" />
+        <meta name="theme-color" content="#06b6d4" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'Person',
+              name: 'Md. Tasve Al Samir',
+              alternateName: 'Samir Anik',
+              description: 'Creative Software Engineer & Full-Stack Developer specializing in React, Next.js, TypeScript, and Node.js.',
+              knowsAbout: ['Software Engineering', 'Full-Stack Development', 'React', 'Next.js', 'TypeScript', 'Node.js'],
+              url: process.env.NEXT_PUBLIC_SITE_URL || 'https://tasvesamir.vercel.app',
+            }),
+          }}
+        />
+      </head>
+      <body className="font-sans min-h-screen relative overflow-x-hidden">
+        <a href="#main-content" className="skip-to-content">
+          Skip to main content
+        </a>
+        <ThemeProvider>
+          <ParticleBg />
+          <CustomCursor />
+          {children}
+          <Analytics />
+          <PwaRegister />
+          <WebVitalsReporter />
+        </ThemeProvider>
       </body>
     </html>
   )

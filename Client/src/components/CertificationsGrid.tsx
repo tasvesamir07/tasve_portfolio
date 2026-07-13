@@ -1,9 +1,11 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { X, ScrollText } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import AnimatedSection from './AnimatedSection'
+import { blurDataURL } from '@/lib/images'
 import type { Certification } from '@/lib/api'
 
 export default function CertificationsGrid({
@@ -42,12 +44,19 @@ export default function CertificationsGrid({
                   onClick={() => setSelectedImage(cert.image)}
                   className="w-full h-full block cursor-zoom-in bg-transparent border-0 p-0 outline-none"
                   title="View full certificate"
+                  aria-label={`View full certificate: ${cert.title || 'Certification'}`}
                 >
-                  <img
-                    src={cert.image}
-                    alt={cert.title || 'Certification badge'}
-                    className="w-full h-full object-contain transition-transform group-hover:scale-[1.02] duration-300"
-                  />
+                  <div className="relative w-full h-full">
+                    <Image
+                      src={cert.image}
+                      alt={cert.title || 'Certification badge'}
+                      fill
+                      className="object-contain transition-transform group-hover:scale-[1.02] duration-300"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 400px"
+                      placeholder="blur"
+                      blurDataURL={blurDataURL}
+                    />
+                  </div>
                 </button>
               ) : (
                 <ScrollText className="w-10 h-10 text-gray-600" />

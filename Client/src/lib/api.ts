@@ -7,6 +7,7 @@ import type {
   EducationRow,
   CertificationRow,
   GalleryRow,
+  BlogRow,
 } from './database.types'
 
 export interface Project {
@@ -43,7 +44,7 @@ export interface Profile {
 
 export interface Skill {
   category: string
-  items: { name: string; value: number }[]
+  items: { name: string; value: number; icon: string }[]
 }
 
 export interface Education {
@@ -99,11 +100,11 @@ export function formatProjects(data: ProjectRow[]): Project[] {
 }
 
 export function formatSkills(data: SkillRow[]): Skill[] {
-  const categories: { [key: string]: { name: string; value: number }[] } = {}
+  const categories: { [key: string]: { name: string; value: number; icon: string }[] } = {}
   data.forEach((item) => {
     const cat = item.category || 'General'
     if (!categories[cat]) categories[cat] = []
-    categories[cat].push({ name: item.name || '', value: item.value || 0 })
+    categories[cat].push({ name: item.name || '', value: item.value || 0, icon: item.icon || '' })
   })
   return Object.keys(categories).map((catName) => ({
     category: catName,
@@ -239,4 +240,63 @@ export async function fetchExperience(): Promise<Experience[]> {
     .order('sort_order', { ascending: true })
   if (error) throw error
   return formatExperiences(data as ExperienceRow[])
+}
+
+export interface BlogPost {
+  id: number
+  title: string
+  slug: string
+  excerpt: string
+  content: string
+  cover_image: string
+  tags: string[]
+  published: boolean
+  read_time: string
+  created_at: string
+}
+
+export async function fetchBlogPosts(): Promise<BlogPost[]> {
+  const supabase = getSupabase()
+  const { data, error } = await supabase
+    .from('blogs')
+    .select('*')
+    .eq('published', true)
+    .order('created_at', { ascending: false })
+  if (error) throw error
+  return (data as BlogRow[]).map((item) => ({
+    id: item.id,
+    title: item.title || '',
+    slug: item.slug || '',
+    excerpt: item.excerpt || '',
+    content: item.content || '',
+    cover_image: item.cover_image || '',
+    tags: item.tags ? item.tags.split(',').map((t: string) => t.trim()).filter(Boolean) : [],
+    published: item.published,
+    read_time: item.read_time || '',
+    created_at: item.created_at || '',
+  }))
+}
+
+export async function fetchBlogPost(slug: string): Promise<BlogPost | null> {
+  const supabase = getSupabase()
+  const { data, error } = await supabase
+    .from('blogs')
+    .select('*')
+    .eq('slug', slug)
+    .eq('published', true)
+    .single()
+  if (error) return null
+  const item = data as BlogRow
+  return {
+    id: item.id,
+    title: item.title || '',
+    slug: item.slug || '',
+    excerpt: item.excerpt || '',
+    content: item.content || '',
+    cover_image: item.cover_image || '',
+    tags: item.tags ? item.tags.split(',').map((t: string) => t.trim()).filter(Boolean) : [],
+    published: item.published,
+    read_time: item.read_time || '',
+    created_at: item.created_at || '',
+  }
 }

@@ -129,7 +129,7 @@ export function useCrud<T extends CrudItem>(
 
   const handleImageUpload = async (idx: number, file: File) => {
     try {
-      const oldUrl = (items[idx] as any)?.image as string | undefined
+      const oldUrl = (items[idx] as Record<string, unknown>)?.image as string | undefined
       const url = await uploadImage(file, oldUrl)
       setItems((prev) => {
         const updated = [...prev]

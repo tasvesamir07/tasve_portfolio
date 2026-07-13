@@ -68,6 +68,7 @@ CREATE TABLE IF NOT EXISTS skills (
   category TEXT NOT NULL DEFAULT '',
   name TEXT NOT NULL DEFAULT '',
   value INT DEFAULT 0,
+  icon TEXT NOT NULL DEFAULT '',
   sort_order INT DEFAULT 0,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -127,6 +128,9 @@ ALTER TABLE skills ENABLE ROW LEVEL SECURITY;
 ALTER TABLE experiences ENABLE ROW LEVEL SECURITY;
 ALTER TABLE contacts ENABLE ROW LEVEL SECURITY;
 
+-- Add icon column to skills (for existing databases)
+ALTER TABLE skills ADD COLUMN IF NOT EXISTS icon TEXT NOT NULL DEFAULT '';
+
 -- Allow public read access
 CREATE POLICY "Allow public read" ON profile FOR SELECT USING (true);
 CREATE POLICY "Allow public read" ON projects FOR SELECT USING (true);
@@ -148,7 +152,7 @@ VALUES (
   'tasvesamir15471@gmail.com',
   'Dhaka, Bangladesh',
   'https://github.com/tasvesamir07',
-  'www.linkedin.com/in/tasve-al-samir',
+  'https://www.linkedin.com/in/tasve-al-samir',
   '#',
   '#',
   'A highly motivated and dedicated Software Engineering student in 8th semester with a perfect CGPA of 4.00 and a consistent record of academic excellence, including multiple Dean''s List Awards.
@@ -166,23 +170,23 @@ Led frontend architecture decisions across 3 major internal projects, collaborat
 Authored engaging and informative content related to academics.', 2);
 
 -- Seed skills
-INSERT INTO skills (category, name, value, sort_order) VALUES
-('Programming Languages', 'Python', 90, 1),
-('Programming Languages', 'Java', 85, 2),
-('Programming Languages', 'JavaScript', 90, 3),
-('Programming Languages', 'C', 80, 4),
-('Programming Languages', 'SQL', 88, 5),
-('Frameworks & Libraries', 'React', 92, 6),
-('Frameworks & Libraries', 'Node.js', 90, 7),
-('Frameworks & Libraries', 'Spring Boot', 85, 8),
-('Frameworks & Libraries', 'TailwindCSS', 95, 9),
-('Developer Tools', 'Git', 90, 10),
-('Developer Tools', 'GitHub', 95, 11),
-('Developer Tools', 'Docker', 80, 12),
-('Design & Documentation', 'Adobe Photoshop', 85, 13),
-('Design & Documentation', 'Adobe Illustrator', 80, 14),
-('Design & Documentation', 'Canva', 90, 15),
-('Design & Documentation', 'Microsoft Office Suite', 85, 16);
+INSERT INTO skills (category, name, value, icon, sort_order) VALUES
+('Programming Languages', 'Python', 90, 'SiPython', 1),
+('Programming Languages', 'Java', 85, 'SiOpenjdk', 2),
+('Programming Languages', 'JavaScript', 90, 'SiJavascript', 3),
+('Programming Languages', 'C', 80, 'SiC', 4),
+('Programming Languages', 'SQL', 88, 'SiMysql', 5),
+('Frameworks & Libraries', 'React', 92, 'SiReact', 6),
+('Frameworks & Libraries', 'Node.js', 90, 'SiNodedotjs', 7),
+('Frameworks & Libraries', 'Spring Boot', 85, 'SiSpringboot', 8),
+('Frameworks & Libraries', 'TailwindCSS', 95, 'SiTailwindcss', 9),
+('Developer Tools', 'Git', 90, 'SiGit', 10),
+('Developer Tools', 'GitHub', 95, 'SiGithub', 11),
+('Developer Tools', 'Docker', 80, 'SiDocker', 12),
+('Design & Documentation', 'Adobe Photoshop', 85, '', 13),
+('Design & Documentation', 'Adobe Illustrator', 80, '', 14),
+('Design & Documentation', 'Canva', 90, '', 15),
+('Design & Documentation', 'Microsoft Office Suite', 85, '', 16);
 
 CREATE TABLE IF NOT EXISTS education (
   id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,

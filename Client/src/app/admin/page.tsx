@@ -9,6 +9,7 @@ import SkillsTab from '@/components/admin/SkillsTab'
 import ExperiencesTab from '@/components/admin/ExperiencesTab'
 import EducationTab from '@/components/admin/EducationTab'
 import CertificationsTab from '@/components/admin/CertificationsTab'
+import BlogsTab from '@/components/admin/BlogsTab'
 import GalleryTab from '@/components/admin/GalleryTab'
 import MessagesTab from '@/components/admin/MessagesTab'
 import SettingsTab from '@/components/admin/SettingsTab'
@@ -17,7 +18,7 @@ import { AdminSkeleton } from '@/components/Skeleton'
 import ScrollToTop from '@/components/ScrollToTop'
 import { useCrud, uploadImage } from '@/lib/use-crud'
 
-type Tab = 'dashboard' | 'profile' | 'projects' | 'skills' | 'experiences' | 'education' | 'certifications' | 'gallery' | 'messages' | 'settings'
+type Tab = 'dashboard' | 'profile' | 'projects' | 'skills' | 'experiences' | 'education' | 'blogs' | 'certifications' | 'gallery' | 'messages' | 'settings'
 
 interface ProfileData {
   name: string; title: string; intro: string; description: string; email: string
@@ -27,11 +28,13 @@ interface ProfileData {
 
 interface ProjectData { id?: number; title: string; category: string; tag: string; desc: string; tags: string; github: string; live: string; image: string; diagram_url: string; sort_order: number }
 
-interface SkillData { id?: number; category: string; name: string; value: number; sort_order: number }
+interface SkillData { id?: number; category: string; name: string; value: number; icon: string; sort_order: number }
 
 interface ExperienceData { id?: number; date: string; title: string; company: string; desc: string; sort_order: number }
 
 interface EducationData { id?: number; type: string; title: string; subtitle: string; date: string; details: string; sort_order: number }
+
+interface BlogData { id?: number; title: string; slug: string; excerpt: string; content: string; cover_image: string; tags: string; published: boolean; read_time: string }
 
 interface CertificationData { id?: number; title: string; issuer: string; date: string; credential_url: string; image: string; sort_order: number }
 
@@ -39,7 +42,7 @@ interface GalleryItemData { id?: number; title: string; image: string; descripti
 
 function AdminPageInner() {
   const searchParams = useSearchParams()
-  const validTabs = ['dashboard','profile','projects','skills','experiences','education','certifications','gallery','messages','settings']
+  const validTabs = ['dashboard','profile','projects','skills','experiences','education','blogs','certifications','gallery','messages','settings']
   const tabParam = searchParams.get('tab') as Tab | null
   const tab: Tab = tabParam && validTabs.includes(tabParam) ? tabParam : 'dashboard'
 
@@ -48,9 +51,10 @@ function AdminPageInner() {
   const [saving, setSaving] = useState(false)
 
   const crudProjects = useCrud<ProjectData>('projects', { title: '', category: '', tag: '', desc: '', tags: '', github: '', live: '', image: '', diagram_url: '' })
-  const crudSkills = useCrud<SkillData>('skills', { category: '', name: '', value: 0 })
+  const crudSkills = useCrud<SkillData>('skills', { category: '', name: '', value: 0, icon: '' })
   const crudExperiences = useCrud<ExperienceData>('experiences', { date: '', title: '', company: '', desc: '' })
   const crudEducation = useCrud<EducationData>('education', { type: 'education', title: '', subtitle: '', date: '', details: '' }, { saveMode: 'individual' })
+  const crudBlogs = useCrud<BlogData>('blogs', { title: '', slug: '', excerpt: '', content: '', cover_image: '', tags: '', published: false, read_time: '' })
   const crudCertifications = useCrud<CertificationData>('certifications', { title: '', issuer: '', date: '', credential_url: '', image: '' })
   const crudGallery = useCrud<GalleryItemData>('gallery', { title: '', image: '', description: '' })
 
@@ -148,6 +152,14 @@ function AdminPageInner() {
               onAdd={crudEducation.addItem}
               onUpdate={(idx, e) => { const u = [...crudEducation.items]; u[idx] = e; crudEducation.setItems(u) }}
               onDelete={crudEducation.deleteItem} onMove={crudEducation.moveItem} onSave={crudEducation.saveAll}
+            />
+          )}
+          {tab === 'blogs' && (
+            <BlogsTab
+              blogs={crudBlogs.items} saving={crudBlogs.saving}
+              onAdd={crudBlogs.addItem}
+              onUpdate={(idx, b) => { const u = [...crudBlogs.items]; u[idx] = b; crudBlogs.setItems(u) }}
+              onDelete={crudBlogs.deleteItem} onSave={crudBlogs.saveAll}
             />
           )}
           {tab === 'certifications' && (

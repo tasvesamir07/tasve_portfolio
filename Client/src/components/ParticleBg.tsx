@@ -6,6 +6,9 @@ export default function ParticleBg() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
 
   useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
+    if (mq.matches) return
+
     const canvas = canvasRef.current
     if (!canvas) return
 

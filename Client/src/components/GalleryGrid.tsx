@@ -1,9 +1,11 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { X, ImageOff } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import AnimatedSection from './AnimatedSection'
+import { blurDataURL } from '@/lib/images'
 
 interface GalleryItem {
   id: number
@@ -44,12 +46,19 @@ export default function GalleryGrid({ items }: { items: GalleryItem[] }) {
                   onClick={() => setSelectedImage(item.image)}
                   className="w-full h-full block cursor-zoom-in bg-transparent border-0 p-0 outline-none"
                   title="View full image"
+                  aria-label={`View full size: ${item.title || 'Gallery image'}`}
                 >
-                  <img
-                    src={item.image}
-                    alt={item.title || 'Gallery image'}
-                    className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-300"
-                  />
+                  <div className="relative w-full h-full">
+                    <Image
+                      src={item.image}
+                      alt={item.title || 'Gallery image'}
+                      fill
+                      className="object-cover transition-transform group-hover:scale-105 duration-300"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      placeholder="blur"
+                      blurDataURL={blurDataURL}
+                    />
+                  </div>
                 </button>
               ) : (
                 <ImageOff className="w-12 h-12 text-gray-600" />
