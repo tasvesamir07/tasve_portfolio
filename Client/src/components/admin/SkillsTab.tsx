@@ -91,7 +91,7 @@ export default function SkillsTab({
 
           {/* Form Fields */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 flex-grow w-full">
-            <div className="flex-grow sm:flex-1 min-w-[150px]">
+            <div className="flex-grow sm:flex-[2] min-w-[220px]">
               <label className="text-[10px] text-gray-500 font-bold uppercase tracking-wider block mb-1.5">
                 Category
               </label>
@@ -106,7 +106,7 @@ export default function SkillsTab({
               />
             </div>
 
-            <div className="flex-grow sm:flex-1 min-w-[150px]">
+            <div className="flex-grow sm:flex-1 min-w-[130px]">
               <label className="text-[10px] text-gray-500 font-bold uppercase tracking-wider block mb-1.5">
                 Skill Name
               </label>
