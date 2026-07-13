@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { Menu, X, ChevronDown, Sun, Moon } from 'lucide-react'
 import { useTheme } from '@/lib/theme'
 
@@ -10,6 +11,7 @@ interface Props {
 }
 
 export default function Navbar({ logoText }: Props) {
+  const pathname = usePathname()
   const [scrolled, setScrolled] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
   const [activeSection, setActiveSection] = useState('home')
@@ -95,7 +97,7 @@ export default function Navbar({ logoText }: Props) {
             {navLinks.map((link) => (
               <li key={link}>
                 <a
-                  href={`#${link}`}
+                  href={pathname === '/' ? `#${link}` : `/#${link}`}
                   className={`relative text-sm font-semibold capitalize tracking-wider transition-colors duration-200 hover:text-white ${
                     activeSection === link ? 'text-white' : 'text-gray-400'
                   }`}
@@ -143,7 +145,7 @@ export default function Navbar({ logoText }: Props) {
               {/* Dropdown Box */}
               <div className="absolute right-0 top-full mt-2 w-52 bg-[#0a0c14]/95 backdrop-blur-xl border border-white/5 rounded-xl p-2 shadow-2xl transition-all duration-200 opacity-0 translate-y-2 invisible group-hover/more:opacity-100 group-hover/more:translate-y-0 group-hover/more:visible z-50">
                 <a
-                  href="#certifications"
+                  href={pathname === '/' ? '#certifications' : '/#certifications'}
                   className={`block px-4 py-2.5 text-xs font-semibold uppercase tracking-wider hover:bg-white/5 rounded-lg transition-colors duration-200 hover:text-white ${
                     activeSection === 'certifications'
                       ? 'text-cyan-400 bg-white/5'
@@ -154,7 +156,7 @@ export default function Navbar({ logoText }: Props) {
                   Certifications & Awards
                 </a>
                 <a
-                  href="#gallery"
+                  href={pathname === '/' ? '#gallery' : '/#gallery'}
                   className={`block px-4 py-2.5 text-xs font-semibold uppercase tracking-wider hover:bg-white/5 rounded-lg transition-colors duration-200 hover:text-white ${
                     activeSection === 'gallery' ? 'text-cyan-400 bg-white/5' : 'text-gray-400'
                   }`}
@@ -163,7 +165,7 @@ export default function Navbar({ logoText }: Props) {
                   Gallery
                 </a>
                 <a
-                  href="#contact"
+                  href={pathname === '/' ? '#contact' : '/#contact'}
                   className={`block px-4 py-2.5 text-xs font-semibold uppercase tracking-wider hover:bg-white/5 rounded-lg transition-colors duration-200 hover:text-white ${
                     activeSection === 'contact' ? 'text-cyan-400 bg-white/5' : 'text-gray-400'
                   }`}
@@ -197,7 +199,7 @@ export default function Navbar({ logoText }: Props) {
             {navLinks.map((link) => (
               <li key={link}>
                 <a
-                  href={`#${link}`}
+                  href={pathname === '/' ? `#${link}` : `/#${link}`}
                   onClick={() => setIsOpen(false)}
                   className={`text-xl font-bold font-heading capitalize tracking-wider transition-colors duration-200 hover:text-cyan-400 ${
                     activeSection === link ? 'text-cyan-400' : 'text-gray-300'
@@ -219,7 +221,7 @@ export default function Navbar({ logoText }: Props) {
             </li>
             <li>
               <a
-                href="#certifications"
+                href={pathname === '/' ? '#certifications' : '/#certifications'}
                 onClick={() => setIsOpen(false)}
                 className={`text-xl font-bold font-heading capitalize tracking-wider transition-colors duration-200 hover:text-cyan-400 ${
                   activeSection === 'certifications' ? 'text-cyan-400' : 'text-gray-300'
@@ -230,7 +232,7 @@ export default function Navbar({ logoText }: Props) {
             </li>
             <li>
               <a
-                href="#gallery"
+                href={pathname === '/' ? '#gallery' : '/#gallery'}
                 onClick={() => setIsOpen(false)}
                 className={`text-xl font-bold font-heading capitalize tracking-wider transition-colors duration-200 hover:text-cyan-400 ${
                   activeSection === 'gallery' ? 'text-cyan-400' : 'text-gray-300'
@@ -241,7 +243,7 @@ export default function Navbar({ logoText }: Props) {
             </li>
             <li>
               <a
-                href="#contact"
+                href={pathname === '/' ? '#contact' : '/#contact'}
                 onClick={() => setIsOpen(false)}
                 className={`text-xl font-bold font-heading capitalize tracking-wider transition-colors duration-200 hover:text-cyan-400 ${
                   activeSection === 'contact' ? 'text-cyan-400' : 'text-gray-300'
