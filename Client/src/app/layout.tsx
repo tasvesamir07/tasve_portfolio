@@ -104,7 +104,15 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${outfit.variable} ${firaCode.variable} scroll-smooth antialiased`}>
       <head>
-        <link rel="manifest" href="/manifest" />
+        <script dangerouslySetInnerHTML={{
+          __html: `
+            (function(){try{
+              var t=localStorage.getItem('theme');
+              if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);
+            }catch(e){}})()
+          `,
+        }} />
+        <link rel="manifest" href="/manifest.webmanifest" />
         <meta name="theme-color" content="#06b6d4" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
