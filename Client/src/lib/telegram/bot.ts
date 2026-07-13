@@ -16,6 +16,9 @@ export async function getBot(): Promise<Bot> {
 
   const bot = new Bot(token)
 
+  // Initialize bot details (fetches bot info via getMe to enable update processing)
+  await bot.init()
+
   // Authorization Guard Middleware
   bot.use(async (ctx, next) => {
     // We only guard private chat operations
