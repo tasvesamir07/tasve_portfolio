@@ -23,9 +23,9 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
   }
 }
 
-export async function DELETE(request: Request) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = await request.json()
+    const { id } = await params
     const supabase = getSupabaseAdmin()
     const { error } = await supabase.from('blogs').delete().eq('id', id)
     if (error) throw error
