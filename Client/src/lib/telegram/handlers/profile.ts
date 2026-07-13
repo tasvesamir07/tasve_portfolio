@@ -3,7 +3,7 @@ import { getSupabaseAdmin } from '../config'
 import { getConversation, setConversation, clearConversation } from '../store'
 import { formatProfile } from '../formats'
 import { confirmKB, cancelKB, profileFieldKB } from '../keyboards'
-import { handlePhotoUpload } from './upload'
+import { handlePhotoUpload, handleFileUpload } from './upload'
 import { ProfileSchema } from '@/lib/validation'
 import { revalidateHome } from '@/lib/revalidate'
 
@@ -57,6 +57,22 @@ export async function handleProfileConversation(ctx: Context, command: string, d
   if (command === 'profile_edit') {
     const field = data.field
     let val: any = text.trim()
+
+    // Handle document upload if the user shares a PDF/document for their resume
+    if (field === 'resume_url' && ctx.message?.document) {
+      try {
+        await ctx.reply('⏳ Uploading resume document to storage...')
+        const { data: profile } = await supabase.from('profile').select('resume_url').eq('id', 1).single()
+        const fileUrl = await handleFileUpload(ctx, profile?.resume_url)
+        val = fileUrl
+      } catch (err: any) {
+        await ctx.reply(`❌ Resume upload failed: ${err.message}. Please send the PDF document again or enter a URL:`)
+        return
+      }
+    } else if (!text.trim()) {
+      await ctx.reply('❌ Value cannot be empty. Please enter the new value:')
+      return
+    }
 
     // Validate using ProfileSchema partial validation
     const parsed = ProfileSchema.partial().safeParse({ [field]: val })
