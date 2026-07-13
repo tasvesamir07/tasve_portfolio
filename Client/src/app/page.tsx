@@ -66,7 +66,7 @@ function HeroSkeleton() {
 
 function SkillsSkeleton() {
   return (
-    <section className="py-24 px-6 md:px-12 border-t border-white/5">
+    <section id="skills" className="py-24 px-6 md:px-12 border-t border-white/5">
       <div className="max-w-5xl mx-auto">
         <SkeletonLine className="w-32 h-4 mb-4" />
         <SkeletonLine className="w-64 h-8 mb-12" />
@@ -82,7 +82,7 @@ function SkillsSkeleton() {
 
 function ProjectsSkeleton() {
   return (
-    <section className="py-24 px-6 md:px-12 border-t border-white/5">
+    <section id="projects" className="py-24 px-6 md:px-12 border-t border-white/5">
       <div className="max-w-5xl mx-auto">
         <SkeletonLine className="w-32 h-4 mb-4" />
         <SkeletonLine className="w-64 h-8 mb-12" />
@@ -98,7 +98,7 @@ function ProjectsSkeleton() {
 
 function ExperienceSkeleton() {
   return (
-    <section className="py-24 px-6 md:px-12 border-t border-white/5">
+    <section id="experience" className="py-24 px-6 md:px-12 border-t border-white/5">
       <div className="max-w-4xl mx-auto">
         <SkeletonLine className="w-32 h-4 mb-4" />
         <SkeletonLine className="w-64 h-8 mb-16" />
@@ -114,7 +114,7 @@ function ExperienceSkeleton() {
 
 function CertificationsSkeleton() {
   return (
-    <section className="py-24 px-6 md:px-12 border-t border-white/5">
+    <section id="certifications" className="py-24 px-6 md:px-12 border-t border-white/5">
       <div className="max-w-5xl mx-auto">
         <SkeletonLine className="w-32 h-4 mb-4" />
         <SkeletonLine className="w-64 h-8 mb-12" />
@@ -130,7 +130,7 @@ function CertificationsSkeleton() {
 
 function GallerySkeleton() {
   return (
-    <section className="py-24 px-6 md:px-12 border-t border-white/5">
+    <section id="gallery" className="py-24 px-6 md:px-12 border-t border-white/5">
       <div className="max-w-5xl mx-auto">
         <SkeletonLine className="w-32 h-4 mb-4" />
         <SkeletonLine className="w-64 h-8 mb-12" />
@@ -146,7 +146,7 @@ function GallerySkeleton() {
 
 function EducationSkeleton() {
   return (
-    <section className="py-24 px-6 md:px-12 border-t border-white/5">
+    <section id="education" className="py-24 px-6 md:px-12 border-t border-white/5">
       <div className="max-w-5xl mx-auto">
         <SkeletonLine className="w-32 h-4 mb-4" />
         <SkeletonLine className="w-64 h-8 mb-16" />
