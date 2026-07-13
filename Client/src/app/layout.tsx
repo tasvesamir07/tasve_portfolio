@@ -109,7 +109,17 @@ export default function RootLayout({
             (function(){try{
               var t=localStorage.getItem('theme');
               if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);
-            }catch(e){}})()
+            }catch(e){}})();
+            window.addEventListener('error', function(e) {
+              var msg = e.message || '';
+              var target = e.target || {};
+              var isChunkError = msg.indexOf('ChunkLoadError') !== -1 || 
+                                 msg.indexOf('Loading chunk') !== -1 ||
+                                 (target.tagName === 'SCRIPT' && target.src && target.src.indexOf('/_next/static/chunks/') !== -1);
+              if (isChunkError) {
+                window.location.reload();
+              }
+            }, true);
           `,
         }} />
         <link rel="manifest" href="/manifest.webmanifest" />

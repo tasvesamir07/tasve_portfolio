@@ -19,7 +19,7 @@ interface Props {
   saving: boolean
   onAdd: () => void
   onUpdate: (idx: number, blog: BlogData) => void
-  onDelete: (idx: number) => void
+  onDelete: (id: number) => void
   onSave: () => void
 }
 
@@ -123,7 +123,7 @@ export default function BlogsTab({ blogs, saving, onAdd, onUpdate, onDelete, onS
               </div>
               <div className="flex items-center gap-2 shrink-0">
                 <button
-                  onClick={() => onDelete(idx)}
+                  onClick={() => blog.id && onDelete(blog.id)}
                   className="p-2 text-gray-500 hover:text-red-400 transition-colors cursor-pointer"
                   aria-label="Delete article"
                 >
