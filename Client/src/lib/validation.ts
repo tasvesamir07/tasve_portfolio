@@ -17,6 +17,9 @@ export const ProfileSchema = z.object({
   resume_url: z.string().max(1000).optional(),
   passion: z.string().max(200).optional(),
   roles_list: z.string().max(1000).optional(),
+  phone: z.string().max(100).optional().default(''),
+  telegram_bot_token: z.string().max(200).optional().default(''),
+  telegram_bot_username: z.string().max(100).optional().default(''),
 })
 
 export const ProjectSchema = z.object({

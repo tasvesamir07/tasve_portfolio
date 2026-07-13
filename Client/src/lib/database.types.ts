@@ -17,6 +17,8 @@ export interface ProfileRow {
   passion: string
   roles_list: string
   phone: string
+  telegram_bot_token: string
+  telegram_bot_username: string
   created_at: string
   updated_at: string
 }

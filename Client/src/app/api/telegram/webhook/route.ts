@@ -3,7 +3,7 @@ import { getBot } from '@/lib/telegram/bot'
 
 export async function POST(req: Request) {
   try {
-    const bot = getBot()
+    const bot = await getBot()
     const body = await req.json()
     
     // grammY handles parsing and routing internally

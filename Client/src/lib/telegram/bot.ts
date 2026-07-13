@@ -1,19 +1,20 @@
 import { Bot } from 'grammy'
-import { BOT_TOKEN } from './config'
+import { resolveBotToken } from './config'
 import { isAuthorized, getConversation } from './store'
 import { handleVerificationStart } from './handlers/auth'
 import { registerHandlers, handleFallback } from './handlers'
 
 let _bot: Bot | null = null
 
-export function getBot(): Bot {
+export async function getBot(): Promise<Bot> {
   if (_bot) return _bot
 
-  if (!BOT_TOKEN) {
-    throw new Error('Missing TELEGRAM_BOT_TOKEN environment variable')
+  const token = await resolveBotToken()
+  if (!token) {
+    throw new Error('Telegram Bot Token is not configured (missing in process.env.TELEGRAM_BOT_TOKEN and profile settings)')
   }
 
-  const bot = new Bot(BOT_TOKEN)
+  const bot = new Bot(token)
 
   // Authorization Guard Middleware
   bot.use(async (ctx, next) => {

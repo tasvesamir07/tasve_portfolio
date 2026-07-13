@@ -239,8 +239,10 @@ CREATE TABLE IF NOT EXISTS blogs (
 ALTER TABLE blogs ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow public read" ON blogs FOR SELECT USING (true);
 
--- Add phone to profile (hidden from public API, used only for bot auth)
+-- Add phone and bot configuration to profile (hidden from public API, used only for bot auth)
 ALTER TABLE profile ADD COLUMN IF NOT EXISTS phone TEXT NOT NULL DEFAULT '';
+ALTER TABLE profile ADD COLUMN IF NOT EXISTS telegram_bot_token TEXT NOT NULL DEFAULT '';
+ALTER TABLE profile ADD COLUMN IF NOT EXISTS telegram_bot_username TEXT NOT NULL DEFAULT '';
 
 -- Track verified Telegram users (one-time phone verification)
 CREATE TABLE IF NOT EXISTS authorized_chat_ids (

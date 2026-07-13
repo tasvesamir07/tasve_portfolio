@@ -1,4 +1,4 @@
-import { BOT_TOKEN, getSupabaseAdmin } from '../config'
+import { resolveBotToken, getSupabaseAdmin } from '../config'
 import type { Context } from 'grammy'
 
 export async function handlePhotoUpload(ctx: Context, oldUrl?: string): Promise<string> {
@@ -9,7 +9,8 @@ export async function handlePhotoUpload(ctx: Context, oldUrl?: string): Promise<
   const filePath = file.file_path
   if (!filePath) throw new Error('No file path returned')
   
-  const fileUrl = `https://api.telegram.org/file/bot${BOT_TOKEN}/${filePath}`
+  const token = await resolveBotToken()
+  const fileUrl = `https://api.telegram.org/file/bot${token}/${filePath}`
   const res = await fetch(fileUrl)
   if (!res.ok) throw new Error('Failed to download file from Telegram')
   const blob = await res.blob()
@@ -51,7 +52,8 @@ export async function handleDocumentUpload(ctx: Context): Promise<string> {
   const filePath = file.file_path
   if (!filePath) throw new Error('No file path returned')
   
-  const fileUrl = `https://api.telegram.org/file/bot${BOT_TOKEN}/${filePath}`
+  const token = await resolveBotToken()
+  const fileUrl = `https://api.telegram.org/file/bot${token}/${filePath}`
   const res = await fetch(fileUrl)
   if (!res.ok) throw new Error('Failed to download file from Telegram')
   return await res.text()

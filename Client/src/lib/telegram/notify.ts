@@ -22,7 +22,7 @@ export async function notifyAdmin(body: {
       return
     }
 
-    const bot = getBot()
+    const bot = await getBot()
     const truncatedMsg = body.message.length > 3000 ? body.message.substring(0, 3000) + '...' : body.message
 
     const text = `📬 *New Portfolio Contact Message*

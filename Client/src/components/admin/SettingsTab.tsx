@@ -28,6 +28,9 @@ export default function SettingsTab() {
 
   const [displayName, setDisplayName] = useState('')
   const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('')
+  const [botToken, setBotToken] = useState('')
+  const [botUsername, setBotUsername] = useState('')
   const [savingProfile, setSavingProfile] = useState(false)
 
   const [currentPassword, setCurrentPassword] = useState('')
@@ -49,38 +52,73 @@ export default function SettingsTab() {
   const [status, setStatus] = useState('')
 
   useEffect(() => {
-    fetch('/api/admin/auth')
-      .then((r) => r.json())
-      .then((d) => {
-        if (d.authenticated) {
-          const info = {
-            username: d.username || 'admin',
-            display_name: d.display_name || 'Admin',
-            email: d.email || '',
-          }
-          setAdminInfo(info)
-          setDisplayName(info.display_name)
-          setEmail(info.email)
+    Promise.all([
+      fetch('/api/admin/auth').then((r) => r.json()).catch(() => ({})),
+      fetch('/api/admin/profile').then((r) => r.json()).catch(() => ({}))
+    ]).then(([authData, profileData]) => {
+      if (authData.authenticated) {
+        const info = {
+          username: authData.username || 'admin',
+          display_name: authData.display_name || 'Admin',
+          email: authData.email || '',
         }
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false))
+        setAdminInfo(info)
+        setDisplayName(info.display_name)
+        setEmail(info.email)
+      }
+      if (profileData) {
+        setPhone(profileData.phone || '')
+        setBotToken(profileData.telegram_bot_token || '')
+        setBotUsername(profileData.telegram_bot_username || '')
+      }
+    }).catch((err) => {
+      console.error('Settings load error:', err)
+    }).finally(() => {
+      setLoading(false)
+    })
   }, [])
 
   const handleSaveProfile = async () => {
     setSavingProfile(true)
     setError('')
-    const res = await fetch('/api/admin/auth/update-admin', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ display_name: displayName, email }),
-    })
-    setSavingProfile(false)
-    if (res.ok) {
-      toast('Settings saved')
+    try {
+      // 1. Update admin account info
+      const authRes = await fetch('/api/admin/auth/update-admin', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ display_name: displayName, email }),
+      })
+      if (!authRes.ok) throw new Error('Failed to update admin account settings')
+
+      // 2. Fetch current profile to prevent data loss, merge and update phone and bot tokens
+      const profileGetRes = await fetch('/api/admin/profile')
+      if (!profileGetRes.ok) throw new Error('Failed to retrieve profile data')
+      const profileData = await profileGetRes.json()
+
+      const profilePutRes = await fetch('/api/admin/profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...profileData,
+          phone: phone,
+          telegram_bot_token: botToken,
+          telegram_bot_username: botUsername,
+        }),
+      })
+      if (!profilePutRes.ok) {
+        const errJson = await profilePutRes.json().catch(() => ({}))
+        const errorMsg = errJson.error ? JSON.stringify(errJson.error) : 'Failed to update profile settings'
+        throw new Error(errorMsg)
+      }
+
+      toast('Settings saved successfully')
       setAdminInfo((prev) => (prev ? { ...prev, display_name: displayName, email } : prev))
-    } else {
-      setError('Failed to save settings')
+    } catch (err: any) {
+      console.error(err)
+      setError(err.message || 'Failed to save settings')
+      toast('Failed to save settings')
+    } finally {
+      setSavingProfile(false)
     }
   }
 
@@ -321,6 +359,42 @@ export default function SettingsTab() {
               onChange={(e) => setEmail(e.target.value)}
               className={inputClass}
               placeholder="admin@example.com"
+            />
+          </div>
+          <div>
+            <label className="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-1.5 block font-mono">
+              Admin Phone (for Telegram Bot Auth)
+            </label>
+            <input
+              type="text"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              className={inputClass}
+              placeholder="+8801XXXXXXXXX"
+            />
+          </div>
+          <div>
+            <label className="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-1.5 block font-mono">
+              Telegram Bot Token
+            </label>
+            <input
+              type="password"
+              value={botToken}
+              onChange={(e) => setBotToken(e.target.value)}
+              className={inputClass}
+              placeholder="123456789:ABCdefGhIJKlmNoPQRsTUVwxyZ"
+            />
+          </div>
+          <div>
+            <label className="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-1.5 block font-mono">
+              Telegram Bot Username (without @)
+            </label>
+            <input
+              type="text"
+              value={botUsername}
+              onChange={(e) => setBotUsername(e.target.value)}
+              className={inputClass}
+              placeholder="MyPortfolioBot"
             />
           </div>
           {error && <p className="text-red-400 text-xs">{error}</p>}

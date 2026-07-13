@@ -3,7 +3,7 @@ import { getBot } from '@/lib/telegram/bot'
 
 export async function GET(req: Request) {
   try {
-    const bot = getBot()
+    const bot = await getBot()
     
     // Dynamically check request headers to determine current domain, falling back to env site URL
     const host = req.headers.get('host')
