@@ -18,6 +18,11 @@ export default function Navbar({ logoText }: Props) {
   const { theme, toggle } = useTheme()
 
   useEffect(() => {
+    if (pathname.startsWith('/blog')) {
+      setActiveSection('blog')
+      return
+    }
+
     const handleScroll = () => {
       setScrolled(window.scrollY > 50)
 
@@ -55,9 +60,10 @@ export default function Navbar({ logoText }: Props) {
       setActiveSection(current)
     }
 
+    handleScroll()
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+  }, [pathname])
 
   const navLinks = ['home', 'about', 'skills', 'projects', 'experience', 'education']
 
